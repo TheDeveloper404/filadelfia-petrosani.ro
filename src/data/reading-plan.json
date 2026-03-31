@@ -1,0 +1,1103 @@
+{
+  "planName": "Planul anual de citire al Bibliei",
+  "description": "Citește Biblia și vei deveni mai înțelept, crede-o ca să fii în siguranță și aplică-o, ca să trăiești o viață adevărată! Urmați planul zilnic pentru a parcurge atât Vechiul cât și Noul Testament.",
+  "startDate": "2026-01-01",
+  "note": "Indexul se calculează automat pe baza datei de start.",
+  "readings": [
+    {
+      "reading": "Geneza 1-2"
+    },
+    {
+      "reading": "Geneza 3-5"
+    },
+    {
+      "reading": "Geneza 6-9"
+    },
+    {
+      "reading": "Geneza 10-11"
+    },
+    {
+      "reading": "Geneza 12-15"
+    },
+    {
+      "reading": "Geneza 16-19"
+    },
+    {
+      "reading": "Geneza 20-22"
+    },
+    {
+      "reading": "Geneza 23-26"
+    },
+    {
+      "reading": "Geneza 27-29"
+    },
+    {
+      "reading": "Geneza 30-32"
+    },
+    {
+      "reading": "Geneza 33-36"
+    },
+    {
+      "reading": "Geneza 37-39"
+    },
+    {
+      "reading": "Geneza 40-42"
+    },
+    {
+      "reading": "Geneza 43-46"
+    },
+    {
+      "reading": "Geneza 47-50"
+    },
+    {
+      "reading": "Exodul 1-4"
+    },
+    {
+      "reading": "Exodul 5-7"
+    },
+    {
+      "reading": "Exodul 8-10"
+    },
+    {
+      "reading": "Exodul 11-13"
+    },
+    {
+      "reading": "Exodul 14-17"
+    },
+    {
+      "reading": "Exodul 18-20"
+    },
+    {
+      "reading": "Exodul 21-24"
+    },
+    {
+      "reading": "Exodul 25-27"
+    },
+    {
+      "reading": "Exodul 28-31"
+    },
+    {
+      "reading": "Exodul 32-34"
+    },
+    {
+      "reading": "Exodul 35-37"
+    },
+    {
+      "reading": "Exodul 38-40"
+    },
+    {
+      "reading": "Levitic 1-4"
+    },
+    {
+      "reading": "Levitic 5-7"
+    },
+    {
+      "reading": "Levitic 8-10"
+    },
+    {
+      "reading": "Levitic 11-13"
+    },
+    {
+      "reading": "Levitic 14-16"
+    },
+    {
+      "reading": "Levitic 17-19"
+    },
+    {
+      "reading": "Levitic 20-23"
+    },
+    {
+      "reading": "Levitic 24-27"
+    },
+    {
+      "reading": "Numeri 1-3"
+    },
+    {
+      "reading": "Numeri 4-6"
+    },
+    {
+      "reading": "Numeri 7-10"
+    },
+    {
+      "reading": "Numeri 11-14"
+    },
+    {
+      "reading": "Numeri 15-17"
+    },
+    {
+      "reading": "Numeri 18-20"
+    },
+    {
+      "reading": "Numeri 21-24"
+    },
+    {
+      "reading": "Numeri 25-27"
+    },
+    {
+      "reading": "Numeri 28-30"
+    },
+    {
+      "reading": "Numeri 31-33"
+    },
+    {
+      "reading": "Numeri 34-36"
+    },
+    {
+      "reading": "Deuteronom 1-3"
+    },
+    {
+      "reading": "Deuteronom 4-6"
+    },
+    {
+      "reading": "Deuteronom 7-9"
+    },
+    {
+      "reading": "Deuteronom 10-12"
+    },
+    {
+      "reading": "Deuteronom 13-16"
+    },
+    {
+      "reading": "Deuteronom 17-19"
+    },
+    {
+      "reading": "Deuteronom 20-22"
+    },
+    {
+      "reading": "Deuteronom 23-25"
+    },
+    {
+      "reading": "Deuteronom 26-28"
+    },
+    {
+      "reading": "Deuteronom 29-31"
+    },
+    {
+      "reading": "Deuteronom 32-34"
+    },
+    {
+      "reading": "Iosua 1-3"
+    },
+    {
+      "reading": "Iosua 4-6"
+    },
+    {
+      "reading": "Iosua 7-9"
+    },
+    {
+      "reading": "Iosua 10-12"
+    },
+    {
+      "reading": "Iosua 13-15"
+    },
+    {
+      "reading": "Iosua 16-18"
+    },
+    {
+      "reading": "Iosua 19-21"
+    },
+    {
+      "reading": "Iosua 22-24"
+    },
+    {
+      "reading": "Judecători 1-4"
+    },
+    {
+      "reading": "Judecători 5-8"
+    },
+    {
+      "reading": "Judecători 9-12"
+    },
+    {
+      "reading": "Judecători 13-15"
+    },
+    {
+      "reading": "Judecători 16-18"
+    },
+    {
+      "reading": "Judecători 19-21"
+    },
+    {
+      "reading": "Rut 1-4"
+    },
+    {
+      "reading": "1 Samuel 1-3"
+    },
+    {
+      "reading": "1 Samuel 4-7"
+    },
+    {
+      "reading": "1 Samuel 8-10"
+    },
+    {
+      "reading": "1 Samuel 11-13"
+    },
+    {
+      "reading": "1 Samuel 14-16"
+    },
+    {
+      "reading": "1 Samuel 17-20"
+    },
+    {
+      "reading": "1 Samuel 21-24"
+    },
+    {
+      "reading": "1 Samuel 25-28"
+    },
+    {
+      "reading": "1 Samuel 29-31"
+    },
+    {
+      "reading": "2 Samuel 1-4"
+    },
+    {
+      "reading": "2 Samuel 5-8"
+    },
+    {
+      "reading": "2 Samuel 9-12"
+    },
+    {
+      "reading": "2 Samuel 13-15"
+    },
+    {
+      "reading": "2 Samuel 16-18"
+    },
+    {
+      "reading": "2 Samuel 19-21"
+    },
+    {
+      "reading": "2 Samuel 22-24"
+    },
+    {
+      "reading": "1 Împărați 1-4"
+    },
+    {
+      "reading": "1 Împărați 5-7"
+    },
+    {
+      "reading": "1 Împărați 8-10"
+    },
+    {
+      "reading": "1 Împărați 11-13"
+    },
+    {
+      "reading": "1 Împărați 14-16"
+    },
+    {
+      "reading": "1 Împărați 17-19"
+    },
+    {
+      "reading": "1 Împărați 20-22"
+    },
+    {
+      "reading": "2 Împărați 1-3"
+    },
+    {
+      "reading": "2 Împărați 4-6"
+    },
+    {
+      "reading": "2 Împărați 7-10"
+    },
+    {
+      "reading": "2 Împărați 11-14"
+    },
+    {
+      "reading": "2 Împărați 15-17"
+    },
+    {
+      "reading": "2 Împărați 18-20"
+    },
+    {
+      "reading": "2 Împărați 21-22"
+    },
+    {
+      "reading": "2 Împărați 23-25"
+    },
+    {
+      "reading": "1 Cronici 1-3"
+    },
+    {
+      "reading": "1 Cronici 4-6"
+    },
+    {
+      "reading": "1 Cronici 7-9"
+    },
+    {
+      "reading": "1 Cronici 10-13"
+    },
+    {
+      "reading": "1 Cronici 14-16"
+    },
+    {
+      "reading": "1 Cronici 17-19"
+    },
+    {
+      "reading": "1 Cronici 20-23"
+    },
+    {
+      "reading": "1 Cronici 24-26"
+    },
+    {
+      "reading": "1 Cronici 27-29"
+    },
+    {
+      "reading": "2 Cronici 1-3"
+    },
+    {
+      "reading": "2 Cronici 4-6"
+    },
+    {
+      "reading": "2 Cronici 7-9"
+    },
+    {
+      "reading": "2 Cronici 10-13"
+    },
+    {
+      "reading": "2 Cronici 14-16"
+    },
+    {
+      "reading": "2 Cronici 17-19"
+    },
+    {
+      "reading": "2 Cronici 20-22"
+    },
+    {
+      "reading": "2 Cronici 23-25"
+    },
+    {
+      "reading": "2 Cronici 26-29"
+    },
+    {
+      "reading": "2 Cronici 30-32"
+    },
+    {
+      "reading": "2 Cronici 33-36"
+    },
+    {
+      "reading": "Ezra 1-4"
+    },
+    {
+      "reading": "Ezra 5-7"
+    },
+    {
+      "reading": "Ezra 8-10"
+    },
+    {
+      "reading": "Neemia 1-3"
+    },
+    {
+      "reading": "Neemia 4-6"
+    },
+    {
+      "reading": "Neemia 7-9"
+    },
+    {
+      "reading": "Neemia 10-13"
+    },
+    {
+      "reading": "Estera 1-3"
+    },
+    {
+      "reading": "Estera 4-7"
+    },
+    {
+      "reading": "Estera 8-10"
+    },
+    {
+      "reading": "Iov 1-4"
+    },
+    {
+      "reading": "Iov 5-7"
+    },
+    {
+      "reading": "Iov 8-10"
+    },
+    {
+      "reading": "Iov 11-13"
+    },
+    {
+      "reading": "Iov 14-17"
+    },
+    {
+      "reading": "Iov 18-20"
+    },
+    {
+      "reading": "Iov 21-24"
+    },
+    {
+      "reading": "Iov 25-27"
+    },
+    {
+      "reading": "Iov 28-31"
+    },
+    {
+      "reading": "Iov 32-34"
+    },
+    {
+      "reading": "Iov 35-37"
+    },
+    {
+      "reading": "Iov 38-42"
+    },
+    {
+      "reading": "Psalmii 1-3"
+    },
+    {
+      "reading": "Psalmii 4-6"
+    },
+    {
+      "reading": "Psalmii 7-9"
+    },
+    {
+      "reading": "Psalmii 10-12"
+    },
+    {
+      "reading": "Psalmii 13-15"
+    },
+    {
+      "reading": "Psalmii 16-18"
+    },
+    {
+      "reading": "Psalmii 19-21"
+    },
+    {
+      "reading": "Psalmii 22-24"
+    },
+    {
+      "reading": "Psalmii 25-27"
+    },
+    {
+      "reading": "Psalmii 28-30"
+    },
+    {
+      "reading": "Psalmii 31-33"
+    },
+    {
+      "reading": "Psalmii 34-36"
+    },
+    {
+      "reading": "Psalmii 37-39"
+    },
+    {
+      "reading": "Psalmii 40-42"
+    },
+    {
+      "reading": "Psalmii 43-45"
+    },
+    {
+      "reading": "Psalmii 46-48"
+    },
+    {
+      "reading": "Psalmii 49-51"
+    },
+    {
+      "reading": "Psalmii 52-54"
+    },
+    {
+      "reading": "Psalmii 55-57"
+    },
+    {
+      "reading": "Psalmii 58-60"
+    },
+    {
+      "reading": "Psalmii 61-63"
+    },
+    {
+      "reading": "Psalmii 64-66"
+    },
+    {
+      "reading": "Psalmii 67-69"
+    },
+    {
+      "reading": "Psalmii 70-72"
+    },
+    {
+      "reading": "Psalmii 73-75"
+    },
+    {
+      "reading": "Psalmii 76-78"
+    },
+    {
+      "reading": "Psalmii 79-81"
+    },
+    {
+      "reading": "Psalmii 82-84"
+    },
+    {
+      "reading": "Psalmii 85-87"
+    },
+    {
+      "reading": "Psalmii 88-90"
+    },
+    {
+      "reading": "Psalmii 91-93"
+    },
+    {
+      "reading": "Psalmii 94-96"
+    },
+    {
+      "reading": "Psalmii 97-99"
+    },
+    {
+      "reading": "Psalmii 100-102"
+    },
+    {
+      "reading": "Psalmii 103-105"
+    },
+    {
+      "reading": "Psalmii 106-108"
+    },
+    {
+      "reading": "Psalmii 109-111"
+    },
+    {
+      "reading": "Psalmii 112-114"
+    },
+    {
+      "reading": "Psalmii 115-118"
+    },
+    {
+      "reading": "Psalmii 119"
+    },
+    {
+      "reading": "Psalmii 120-123"
+    },
+    {
+      "reading": "Psalmii 124-128"
+    },
+    {
+      "reading": "Psalmii 129-132"
+    },
+    {
+      "reading": "Psalmii 133-136"
+    },
+    {
+      "reading": "Psalmii 137-139"
+    },
+    {
+      "reading": "Psalmii 140-144"
+    },
+    {
+      "reading": "Psalmii 145-147"
+    },
+    {
+      "reading": "Psalmii 148-150"
+    },
+    {
+      "reading": "Proverbe 1-3"
+    },
+    {
+      "reading": "Proverbe 4-7"
+    },
+    {
+      "reading": "Proverbe 8-11"
+    },
+    {
+      "reading": "Proverbe 12-14"
+    },
+    {
+      "reading": "Proverbe 15-18"
+    },
+    {
+      "reading": "Proverbe 19-21"
+    },
+    {
+      "reading": "Proverbe 22-24"
+    },
+    {
+      "reading": "Proverbe 25-28"
+    },
+    {
+      "reading": "Proverbe 29-31"
+    },
+    {
+      "reading": "Eclesiastul 1-3"
+    },
+    {
+      "reading": "Eclesiastul 4-6"
+    },
+    {
+      "reading": "Eclesiastul 7-9"
+    },
+    {
+      "reading": "Eclesiastul 10-12"
+    },
+    {
+      "reading": "Cântarea Cântărilor 1-4"
+    },
+    {
+      "reading": "Cântarea Cântărilor 5-8"
+    },
+    {
+      "reading": "Isaia 1-3"
+    },
+    {
+      "reading": "Isaia 4-6"
+    },
+    {
+      "reading": "Isaia 7-9"
+    },
+    {
+      "reading": "Isaia 10-12"
+    },
+    {
+      "reading": "Isaia 13-15"
+    },
+    {
+      "reading": "Isaia 16-18"
+    },
+    {
+      "reading": "Isaia 19-21"
+    },
+    {
+      "reading": "Isaia 22-24"
+    },
+    {
+      "reading": "Isaia 25-27"
+    },
+    {
+      "reading": "Isaia 28-30"
+    },
+    {
+      "reading": "Isaia 31-33"
+    },
+    {
+      "reading": "Isaia 34-36"
+    },
+    {
+      "reading": "Isaia 37-39"
+    },
+    {
+      "reading": "Isaia 40-42"
+    },
+    {
+      "reading": "Isaia 43-45"
+    },
+    {
+      "reading": "Isaia 46-48"
+    },
+    {
+      "reading": "Isaia 49-51"
+    },
+    {
+      "reading": "Isaia 52-54"
+    },
+    {
+      "reading": "Isaia 55-57"
+    },
+    {
+      "reading": "Isaia 58-60"
+    },
+    {
+      "reading": "Isaia 61-63"
+    },
+    {
+      "reading": "Isaia 64-66"
+    },
+    {
+      "reading": "Ieremia 1-2"
+    },
+    {
+      "reading": "Ieremia 3-5"
+    },
+    {
+      "reading": "Ieremia 6-8"
+    },
+    {
+      "reading": "Ieremia 9-12"
+    },
+    {
+      "reading": "Ieremia 13-16"
+    },
+    {
+      "reading": "Ieremia 17-20"
+    },
+    {
+      "reading": "Ieremia 21-23"
+    },
+    {
+      "reading": "Ieremia 24-26"
+    },
+    {
+      "reading": "Ieremia 27-29"
+    },
+    {
+      "reading": "Ieremia 30-32"
+    },
+    {
+      "reading": "Ieremia 33-36"
+    },
+    {
+      "reading": "Ieremia 37-39"
+    },
+    {
+      "reading": "Ieremia 40-42"
+    },
+    {
+      "reading": "Ieremia 43-46"
+    },
+    {
+      "reading": "Ieremia 47-49"
+    },
+    {
+      "reading": "Ieremia 50-52"
+    },
+    {
+      "reading": "Plângeri 1-3"
+    },
+    {
+      "reading": "Ezechiel 1-3"
+    },
+    {
+      "reading": "Ezechiel 4-7"
+    },
+    {
+      "reading": "Ezechiel 8-11"
+    },
+    {
+      "reading": "Ezechiel 12-14"
+    },
+    {
+      "reading": "Ezechiel 15-18"
+    },
+    {
+      "reading": "Ezechiel 19-21"
+    },
+    {
+      "reading": "Ezechiel 22-24"
+    },
+    {
+      "reading": "Ezechiel 25-27"
+    },
+    {
+      "reading": "Ezechiel 28-30"
+    },
+    {
+      "reading": "Ezechiel 31-33"
+    },
+    {
+      "reading": "Ezechiel 34-36"
+    },
+    {
+      "reading": "Ezechiel 37-39"
+    },
+    {
+      "reading": "Ezechiel 40-42"
+    },
+    {
+      "reading": "Ezechiel 43-45"
+    },
+    {
+      "reading": "Ezechiel 46-48"
+    },
+    {
+      "reading": "Daniel 1-3"
+    },
+    {
+      "reading": "Daniel 4-6"
+    },
+    {
+      "reading": "Daniel 7-9"
+    },
+    {
+      "reading": "Daniel 10-12"
+    },
+    {
+      "reading": "Osea 1-4"
+    },
+    {
+      "reading": "Osea 5-7"
+    },
+    {
+      "reading": "Osea 8-10"
+    },
+    {
+      "reading": "Osea 11-14"
+    },
+    {
+      "reading": "Ioel 1-3"
+    },
+    {
+      "reading": "Amos 1-3"
+    },
+    {
+      "reading": "Amos 4-6"
+    },
+    {
+      "reading": "Amos 7-9"
+    },
+    {
+      "reading": "Obadia - Iona"
+    },
+    {
+      "reading": "Mica 1-4"
+    },
+    {
+      "reading": "Mica 5-7"
+    },
+    {
+      "reading": "Naum 1-3"
+    },
+    {
+      "reading": "Habacuc 1-3"
+    },
+    {
+      "reading": "Tefania 1-3"
+    },
+    {
+      "reading": "Hagai 1-2"
+    },
+    {
+      "reading": "Zaharia 1-2"
+    },
+    {
+      "reading": "Zaharia 3-6"
+    },
+    {
+      "reading": "Zaharia 7-10"
+    },
+    {
+      "reading": "Zaharia 11-14"
+    },
+    {
+      "reading": "Maleahi 1-4"
+    },
+    {
+      "reading": "Matei 1-4"
+    },
+    {
+      "reading": "Matei 5-7"
+    },
+    {
+      "reading": "Matei 8-11"
+    },
+    {
+      "reading": "Matei 12-15"
+    },
+    {
+      "reading": "Matei 16-19"
+    },
+    {
+      "reading": "Matei 20-22"
+    },
+    {
+      "reading": "Matei 23-25"
+    },
+    {
+      "reading": "Matei 26-28"
+    },
+    {
+      "reading": "Marcu 1-3"
+    },
+    {
+      "reading": "Marcu 4-6"
+    },
+    {
+      "reading": "Marcu 7-10"
+    },
+    {
+      "reading": "Marcu 11-13"
+    },
+    {
+      "reading": "Marcu 14-16"
+    },
+    {
+      "reading": "Luca 1-3"
+    },
+    {
+      "reading": "Luca 4-6"
+    },
+    {
+      "reading": "Luca 7-9"
+    },
+    {
+      "reading": "Luca 10-13"
+    },
+    {
+      "reading": "Luca 14-17"
+    },
+    {
+      "reading": "Luca 18-21"
+    },
+    {
+      "reading": "Luca 22-24"
+    },
+    {
+      "reading": "Ioan 1-3"
+    },
+    {
+      "reading": "Ioan 4-6"
+    },
+    {
+      "reading": "Ioan 7-10"
+    },
+    {
+      "reading": "Ioan 11-13"
+    },
+    {
+      "reading": "Ioan 14-17"
+    },
+    {
+      "reading": "Ioan 18-21"
+    },
+    {
+      "reading": "Fapte 1-2"
+    },
+    {
+      "reading": "Fapte 3-5"
+    },
+    {
+      "reading": "Fapte 6-9"
+    },
+    {
+      "reading": "Fapte 10-12"
+    },
+    {
+      "reading": "Fapte 13-14"
+    },
+    {
+      "reading": "Fapte 15-16"
+    },
+    {
+      "reading": "Fapte 17-18"
+    },
+    {
+      "reading": "Fapte 19-21"
+    },
+    {
+      "reading": "Fapte 22-24"
+    },
+    {
+      "reading": "Fapte 25-26"
+    },
+    {
+      "reading": "Fapte 27-28"
+    },
+    {
+      "reading": "Romani 1-4"
+    },
+    {
+      "reading": "Romani 5-8"
+    },
+    {
+      "reading": "Romani 9-11"
+    },
+    {
+      "reading": "Romani 12-16"
+    },
+    {
+      "reading": "1 Corinteni 1-4"
+    },
+    {
+      "reading": "1 Corinteni 5-8"
+    },
+    {
+      "reading": "1 Corinteni 9-12"
+    },
+    {
+      "reading": "1 Corinteni 13-16"
+    },
+    {
+      "reading": "2 Corinteni 1-3"
+    },
+    {
+      "reading": "2 Corinteni 4-6"
+    },
+    {
+      "reading": "2 Corinteni 7-9"
+    },
+    {
+      "reading": "2 Corinteni 10-13"
+    },
+    {
+      "reading": "Galateni 1-3"
+    },
+    {
+      "reading": "Galateni 4-6"
+    },
+    {
+      "reading": "Efeseni 1-3"
+    },
+    {
+      "reading": "Efeseni 4-6"
+    },
+    {
+      "reading": "Filipeni 1-4"
+    },
+    {
+      "reading": "Coloseni 1-4"
+    },
+    {
+      "reading": "1 Tesaloniceni 1-5"
+    },
+    {
+      "reading": "2 Tesaloniceni 1-3"
+    },
+    {
+      "reading": "1 Timotei 1-3"
+    },
+    {
+      "reading": "1 Timotei 4-6"
+    },
+    {
+      "reading": "2 Timotei 1-4"
+    },
+    {
+      "reading": "Tit 1-3"
+    },
+    {
+      "reading": "Filimon"
+    },
+    {
+      "reading": "Evrei 1-4"
+    },
+    {
+      "reading": "Evrei 5-7"
+    },
+    {
+      "reading": "Evrei 8-10"
+    },
+    {
+      "reading": "Evrei 11-13"
+    },
+    {
+      "reading": "Iacov 1-2"
+    },
+    {
+      "reading": "Iacov 3-5"
+    },
+    {
+      "reading": "1 Petru 1-2"
+    },
+    {
+      "reading": "1 Petru 3-5"
+    },
+    {
+      "reading": "2 Petru 1-3"
+    },
+    {
+      "reading": "1 Ioan 1-2"
+    },
+    {
+      "reading": "1 Ioan 3-5"
+    },
+    {
+      "reading": "2 Ioan, 3 Ioan, Iuda"
+    },
+    {
+      "reading": "Apocalipsa 1-3"
+    },
+    {
+      "reading": "Apocalipsa 4-8"
+    },
+    {
+      "reading": "Apocalipsa 9-12"
+    },
+    {
+      "reading": "Apocalipsa 13-15"
+    },
+    {
+      "reading": "Apocalipsa 16-18"
+    }
+  ]
+}

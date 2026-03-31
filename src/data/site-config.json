@@ -1,0 +1,44 @@
+{
+  "churchName": "Biserica Filadelfia",
+  "fullName": "Biserica Penticostală Filadelfia - Petroșani",
+  "tagline": "Un loc al întâlnirii cu Dumnezeu",
+  "description": "Bine ai venit la Biserica Filadelfia. Urmărește live, ascultă predici, află programul serviciilor și contactează-ne.",
+  "contact": {
+    "address": "Str. 9 Mai, Petroșani, Hunedoara",
+    "phone": "",
+    "email": "",
+    "mapEmbedUrl": "https://maps.google.com/maps?q=strada+9+mai+petrosani+hunedoara+romania&output=embed"
+  },
+  "social": {
+    "youtube": "https://www.youtube.com/channel/UCgD-Qqh0_gQnBluzEEuPddw",
+    "facebook": "https://www.facebook.com/bisericafiladelfiapetrosani",
+    "instagram": ""
+  },
+  "youtube": {
+    "channelId": "UCgD-Qqh0_gQnBluzEEuPddw",
+    "liveVideoId": "",
+    "playlistId": "PLxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "channelUrl": "https://www.youtube.com/channel/UCgD-Qqh0_gQnBluzEEuPddw"
+  },
+  "ticker": {
+    "enabled": true,
+    "text": "Bine ați venit la Biserica Penticostală Filadelfia Petroșani! Urmăriți serviciile LIVE duminică dimineața și seara, și joi seara."
+  },
+  "serviceWindows": {
+    "sundayMorning": {
+      "dayOfWeek": 0,
+      "startHour": 9,
+      "endHour": 13
+    },
+    "sundayEvening": {
+      "dayOfWeek": 0,
+      "startHour": 18,
+      "endHour": 21
+    },
+    "thursday": {
+      "dayOfWeek": 4,
+      "startHour": 18,
+      "endHour": 21
+    }
+  }
+}
