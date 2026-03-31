@@ -15,7 +15,7 @@ export default function ContactPage() {
         </div>
         <Container className="relative text-center">
           <p className="mb-3 text-sm font-semibold uppercase tracking-[0.3em] text-slate-400">Vino să ne cunoști</p>
-          <h1 className="text-5xl font-bold tracking-tight sm:text-6xl md:text-7xl">Contact</h1>
+          <h1 className="text-5xl font-bold tracking-tight sm:text-6xl md:text-7xl" style={{ color: '#d4ab84' }}>Contact</h1>
           <p className="mx-auto mt-4 max-w-lg text-xl leading-8 text-slate-300">
             Alege metoda de contact care ți se potrivește și ne vom întâlni cu bucurie.
           </p>

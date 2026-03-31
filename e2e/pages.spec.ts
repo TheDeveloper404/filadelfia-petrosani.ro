@@ -12,12 +12,10 @@ test.describe('LivePage', () => {
 
   test('shows live player or offline message', async ({ page }) => {
     await page.goto('/live');
-    const iframe = page.frameLocator('iframe[title="Transmisie live"]');
-    const offlineMsg = page.getByText(/momentan nu este transmisie live/i);
-    // One of the two must be present
-    const hasIframe = await page.locator('iframe[title="Transmisie live"]').count();
-    const hasOffline = await offlineMsg.count();
-    expect(hasIframe + hasOffline).toBeGreaterThan(0);
+    const hasLive = await page.locator('iframe[title="Transmisie live"]').count();
+    const hasOffline = await page.getByText(/nu se transmite live/i).count();
+    const hasLastVideo = await page.locator('iframe[title="Ultimul program"]').count();
+    expect(hasLive + hasOffline + hasLastVideo).toBeGreaterThan(0);
   });
 });
 
@@ -58,7 +56,7 @@ test.describe('ReadingPlanPage', () => {
 
   test('shows Astăzi button', async ({ page }) => {
     await page.goto('/plan-citire');
-    await expect(page.getByRole('button', { name: /astăzi/i })).toBeVisible();
+    await expect(page.getByRole('button', { name: /mergi la ziua de azi/i })).toBeVisible();
   });
 
   test('shows reading plan entries', async ({ page }) => {
@@ -68,7 +66,7 @@ test.describe('ReadingPlanPage', () => {
 
   test('Astăzi button scrolls to today row', async ({ page }) => {
     await page.goto('/plan-citire');
-    await page.getByRole('button', { name: /astăzi/i }).click();
+    await page.getByRole('button', { name: /mergi la ziua de azi/i }).click();
     const todayRow = page.locator('#today-row');
     await expect(todayRow).toBeVisible();
   });

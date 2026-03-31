@@ -33,12 +33,12 @@ afterEach(() => {
 describe('HomePage', () => {
   it('renders the church name in hero', () => {
     renderPage(<HomePage />);
-    expect(screen.getByText(/filadelfia/i)).toBeInTheDocument();
+    expect(screen.getAllByText(/filadelfia/i).length).toBeGreaterThan(0);
   });
 
   it('renders the tagline', () => {
     renderPage(<HomePage />);
-    expect(screen.getByText(/un loc al întâlnirii cu Dumnezeu/i)).toBeInTheDocument();
+    expect(screen.getByText(/o comunitate vie în prezența lui Dumnezeu/i)).toBeInTheDocument();
   });
 
   it('renders Program & Comunitate section', () => {
@@ -81,14 +81,9 @@ describe('LivePage', () => {
     expect(screen.getByRole('heading', { level: 1 })).toBeInTheDocument();
   });
 
-  it('renders Programul serviciilor section', () => {
+  it('renders the last recorded video section', () => {
     renderPage(<LivePage />);
-    expect(screen.getAllByText(/programul serviciilor/i).length).toBeGreaterThan(0);
-  });
-
-  it('renders schedule service items', () => {
-    renderPage(<LivePage />);
-    expect(screen.getAllByText(/duminică/i).length).toBeGreaterThan(0);
+    expect(screen.getByText(/ultimul program înregistrat/i)).toBeInTheDocument();
   });
 });
 
@@ -126,9 +121,9 @@ describe('ReadingPlanPage', () => {
     expect(screen.getByRole('heading', { level: 1 })).toBeInTheDocument();
   });
 
-  it('renders the Astăzi button', () => {
+  it('renders the scroll-to-today button', () => {
     renderPage(<ReadingPlanPage />);
-    expect(screen.getByRole('button', { name: /astăzi/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /mergi la ziua de azi/i })).toBeInTheDocument();
   });
 
   it('renders reading plan rows', () => {

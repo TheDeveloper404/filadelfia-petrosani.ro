@@ -14,7 +14,7 @@ export default function LivePage() {
         </div>
         <Container className="relative text-center">
           <p className="mb-3 text-sm font-semibold uppercase tracking-[0.3em] text-slate-400">Transmisie în direct</p>
-          <h1 className="text-5xl font-bold tracking-tight sm:text-6xl md:text-7xl">Live</h1>
+          <h1 className="text-5xl font-bold tracking-tight sm:text-6xl md:text-7xl" style={{ color: '#d4ab84' }}>Live</h1>
           <p className="mx-auto mt-4 max-w-lg text-xl leading-8 text-slate-300">
             Urmărește predicile noastre în direct.
           </p>

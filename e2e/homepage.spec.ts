@@ -12,7 +12,7 @@ test.describe('HomePage', () => {
   });
 
   test('tagline is visible', async ({ page }) => {
-    await expect(page.getByText(/un loc al întâlnirii cu Dumnezeu/i)).toBeVisible();
+    await expect(page.getByText(/o comunitate vie în prezența lui Dumnezeu/i).first()).toBeVisible();
   });
 
   test('CTA buttons are visible and linked correctly', async ({ page }) => {

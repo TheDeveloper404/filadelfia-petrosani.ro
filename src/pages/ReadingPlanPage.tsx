@@ -32,7 +32,7 @@ export default function ReadingPlanPage() {
         </div>
         <Container className="relative text-center">
           <p className="mb-3 text-sm font-semibold uppercase tracking-[0.3em] text-slate-400">Lectură zilnică</p>
-          <h1 className="text-5xl font-bold tracking-tight sm:text-6xl md:text-7xl">{plan.planName}</h1>
+          <h1 className="text-5xl font-bold tracking-tight sm:text-6xl md:text-7xl" style={{ color: '#d4ab84' }}>{plan.planName}</h1>
           <p className="mx-auto mt-4 max-w-xl text-xl leading-8 text-slate-300">
             Citește Biblia și vei deveni mai înțelept, crede-o ca să fii în siguranță și aplică-o, ca să trăiești o viață adevărată!
           </p>
