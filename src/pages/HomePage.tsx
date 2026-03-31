@@ -69,9 +69,9 @@ export default function HomePage() {
 
         <Container className="relative py-32 md:py-40">
           <div className="flex flex-col items-center text-center">
-            <h1 className="text-5xl font-bold leading-tight tracking-tight text-white sm:text-6xl md:text-7xl">
-              <span className="block whitespace-nowrap">Biserica Penticostală Filadelfia</span>
-              <span className="mt-2 block text-3xl font-light tracking-[0.2em] text-slate-400 sm:text-4xl">— Petroșani —</span>
+            <h1 className="text-4xl font-bold leading-tight tracking-tight text-white sm:text-6xl md:text-7xl">
+              <span className="block">Biserica Penticostală Filadelfia</span>
+              <span className="mt-2 block text-2xl font-light tracking-[0.2em] text-slate-400 sm:text-4xl">— Petroșani —</span>
             </h1>
 
             <p className="mt-6 max-w-xl text-2xl leading-9 text-slate-200">
