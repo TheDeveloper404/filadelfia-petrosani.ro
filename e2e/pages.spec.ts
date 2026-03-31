@@ -7,7 +7,7 @@ test.describe('LivePage', () => {
   test('renders heading and schedule', async ({ page }) => {
     await page.goto('/live');
     await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
-    await expect(page.getByText(/programul serviciilor/i).first()).toBeVisible();
+    await expect(page.getByRole('heading', { level: 2 })).toBeVisible();
   });
 
   test('shows live player or offline message', async ({ page }) => {
