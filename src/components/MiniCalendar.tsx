@@ -7,6 +7,7 @@ interface CalEvent {
 
 interface MiniCalendarProps {
   events: CalEvent[];
+  holidays?: CalEvent[];
 }
 
 const MONTH_NAMES = [
@@ -15,7 +16,7 @@ const MONTH_NAMES = [
 ];
 const DAY_NAMES = ['Lu', 'Ma', 'Mi', 'Jo', 'Vi', 'Sâ', 'Du'];
 
-export default function MiniCalendar({ events }: MiniCalendarProps) {
+export default function MiniCalendar({ events, holidays = [] }: MiniCalendarProps) {
   const today = new Date();
   const [year, setYear] = useState(today.getFullYear());
   const [month, setMonth] = useState(today.getMonth());
@@ -31,6 +32,15 @@ export default function MiniCalendar({ events }: MiniCalendarProps) {
         return d.getFullYear() === year && d.getMonth() === month;
       })
       .map(e => new Date(e.date).getDate()),
+  );
+
+  const holidayMap = new Map<number, string>(
+    holidays
+      .filter(h => {
+        const d = new Date(h.date);
+        return d.getFullYear() === year && d.getMonth() === month;
+      })
+      .map(h => [new Date(h.date).getDate(), h.title]),
   );
 
   const cells: (number | null)[] = [
@@ -73,8 +83,13 @@ export default function MiniCalendar({ events }: MiniCalendarProps) {
 
       {/* Day headers */}
       <div className="mb-1 grid grid-cols-7">
-        {DAY_NAMES.map(d => (
-          <div key={d} className="py-1 text-center text-[0.7rem] font-bold uppercase tracking-wider text-slate-400">
+        {DAY_NAMES.map((d, idx) => (
+          <div
+            key={d}
+            className={`py-1 text-center text-[0.7rem] font-bold uppercase tracking-wider ${
+              idx === 5 || idx === 6 ? 'text-secondary/70' : 'text-slate-400'
+            }`}
+          >
             {d}
           </div>
         ))}
@@ -89,16 +104,24 @@ export default function MiniCalendar({ events }: MiniCalendarProps) {
             month === today.getMonth() &&
             year === today.getFullYear();
           const hasEvent = eventDays.has(day);
+          const holidayName = holidayMap.get(day);
+          const col = i % 7;
+          const isWeekend = col === 5 || col === 6;
+
           return (
             <div
               key={day}
-              className={`relative flex h-9 flex-col items-center justify-center rounded-xl text-sm font-semibold transition ${
+              className={`relative flex h-9 flex-col items-center justify-center rounded-xl text-sm font-semibold transition cursor-default ${
                 isToday && hasEvent
                   ? 'bg-red-500 text-white shadow-md shadow-red-200'
                   : isToday
                   ? 'bg-secondary text-secondary-foreground shadow-md shadow-secondary/30'
                   : hasEvent
                   ? 'bg-red-50 text-red-600 font-bold hover:bg-red-100'
+                  : holidayName
+                  ? 'bg-amber-50 text-amber-700 font-bold hover:bg-amber-100'
+                  : isWeekend
+                  ? 'text-secondary/80 hover:bg-secondary/10 hover:shadow-sm'
                   : 'text-slate-700 hover:bg-white hover:shadow-sm'
               }`}
             >
@@ -109,22 +132,44 @@ export default function MiniCalendar({ events }: MiniCalendarProps) {
               {hasEvent && isToday && (
                 <span className="absolute bottom-1 h-1.5 w-1.5 rounded-full bg-white/60" />
               )}
+              {holidayName && !hasEvent && !isToday && (
+                <span className="absolute bottom-1 h-1.5 w-1.5 rounded-full bg-amber-400" />
+              )}
             </div>
           );
         })}
       </div>
 
       {/* Legend */}
-      <div className="mt-4 flex items-center gap-4 text-xs text-slate-400">
+      <div className="mt-4 flex flex-wrap items-center gap-4 text-xs text-slate-400">
         <span className="flex items-center gap-1.5">
           <span className="h-2.5 w-2.5 rounded-full bg-secondary" />
           Astăzi
         </span>
         <span className="flex items-center gap-1.5">
           <span className="h-2.5 w-2.5 rounded-full bg-red-400" />
-          Sărbătoare / Eveniment
+          Eveniment
+        </span>
+        <span className="flex items-center gap-1.5">
+          <span className="h-2.5 w-2.5 rounded-full bg-amber-400" />
+          Sărbătoare
         </span>
       </div>
+
+      {/* Holidays this month */}
+      {holidayMap.size > 0 && (
+        <div className="mt-4 space-y-1.5">
+          {Array.from(holidayMap.entries())
+            .sort((a, b) => a[0] - b[0])
+            .map(([day, name]) => (
+              <div key={day} className="flex items-center gap-2 rounded-lg bg-amber-50 border border-amber-100 px-3 py-1.5">
+                <span className="h-2 w-2 shrink-0 rounded-full bg-amber-400" />
+                <span className="text-xs font-semibold text-amber-800">{day} {MONTH_NAMES[month]}</span>
+                <span className="text-xs text-amber-700">— {name}</span>
+              </div>
+            ))}
+        </div>
+      )}
     </div>
   );
 }

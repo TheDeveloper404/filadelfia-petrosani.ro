@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import siteConfig from '@/data/site-config.json';
 import staticEvents from '@/data/events.json';
+import holidays from '@/data/holidays.json';
 import schedule from '@/data/schedule.json';
 import versesData from '@/data/verses.json';
 import { getVerseOfTheDay } from '@/utils/verse';
@@ -18,6 +19,7 @@ import PageMeta from '@/components/PageMeta';
 import VerseOfTheDay from '@/components/VerseOfTheDay';
 
 const EVENTS_KEY = 'filadelfia_events';
+const SCHEDULE_KEY = 'filadelfia_schedule';
 
 function loadCachedEvents(): CustomEvent[] {
   try {
@@ -27,9 +29,18 @@ function loadCachedEvents(): CustomEvent[] {
   return [];
 }
 
+function loadCachedSchedule(): typeof schedule.services {
+  try {
+    const stored = localStorage.getItem(SCHEDULE_KEY);
+    if (stored) return JSON.parse(stored);
+  } catch {}
+  return schedule.services;
+}
+
 export default function HomePage() {
-  // Initialise from localStorage cache instantly, then sync from Firebase
   const [customEvents, setCustomEvents] = useState<CustomEvent[]>(loadCachedEvents);
+  const [services, setServices] = useState<typeof schedule.services>(loadCachedSchedule);
+  const [nextService, setNextService] = useState(() => getNextService(schedule.services, new Date()));
   const verse = getVerseOfTheDay(versesData);
 
   useEffect(() => {
@@ -39,10 +50,26 @@ export default function HomePage() {
         localStorage.setItem(EVENTS_KEY, JSON.stringify(remote));
       }
     });
+    dbRead<typeof schedule.services>('schedule').then(remote => {
+      if (remote && Array.isArray(remote) && remote.length > 0) {
+        setServices(remote);
+        localStorage.setItem(SCHEDULE_KEY, JSON.stringify(remote));
+      }
+    });
   }, []);
+
+  // Recalculate next service every minute so the highlight updates without refresh
+  useEffect(() => {
+    setNextService(getNextService(services, new Date()));
+    const interval = setInterval(
+      () => setNextService(getNextService(services, new Date())),
+      60_000,
+    );
+    return () => clearInterval(interval);
+  }, [services]);
+
   const allEvents = [...staticEvents, ...customEvents].sort((a, b) => a.date.localeCompare(b.date));
   const upcomingEvents = allEvents.filter(event => isUpcoming(event.date)).slice(0, 3);
-  const nextService = getNextService(schedule.services, new Date());
 
   return (
     <div>
@@ -122,7 +149,7 @@ export default function HomePage() {
                 Program săptămânal
               </p>
               <div className="grid grid-cols-2 gap-3 sm:flex sm:flex-wrap sm:justify-center">
-                {schedule.services.map(service => {
+                {services.map(service => {
                   const isNext = nextService?.service.id === service.id;
                   return (
                     <div
@@ -178,7 +205,7 @@ export default function HomePage() {
                 <p className="mb-4 text-center text-xs font-bold uppercase tracking-[0.3em] text-slate-700">
                   Calendar
                 </p>
-                <MiniCalendar events={allEvents} />
+                <MiniCalendar events={allEvents} holidays={holidays} />
               </div>
 
             </div>
