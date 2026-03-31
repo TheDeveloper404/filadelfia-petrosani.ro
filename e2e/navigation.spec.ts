@@ -5,6 +5,9 @@ const nav = (page: import('@playwright/test').Page) =>
   page.locator('[data-testid="desktop-nav"]');
 
 test.describe('Navigation', () => {
+  // These tests rely on the desktop nav (links hidden on mobile viewport)
+  test.use({ viewport: { width: 1280, height: 720 } });
+
   test('homepage loads and shows church name', async ({ page }) => {
     await page.goto('/');
     await expect(page.locator('h1').first()).toBeVisible();

@@ -142,8 +142,29 @@ test.describe('AdminPage', () => {
     await expect(page.getByRole('button', { name: /resetează/i })).toBeVisible();
   });
 
+  test('delete event shows confirmation modal', async ({ page }) => {
+    // Seed one event in localStorage so there's something to delete
+    await page.goto('/admin');
+    await page.evaluate(() => {
+      localStorage.setItem('filadelfia_events', JSON.stringify([
+        { id: 'test-del', title: 'Eveniment de sters', date: '2026-12-25', endDate: null, time: null, location: null, description: 'desc', registrationUrl: null, tags: [] }
+      ]));
+      sessionStorage.setItem('filadelfia_admin_unlocked', '1');
+    });
+    await page.reload();
+    await page.locator('[aria-label="Șterge eveniment"]').first().click();
+    await expect(page.getByText(/confirmare ștergere/i)).toBeVisible();
+    // Cancel — event stays
+    await page.getByRole('button', { name: /anulează/i }).last().click();
+    await expect(page.getByText(/confirmare ștergere/i)).not.toBeVisible();
+  });
+
   test('can add a new event', async ({ page }) => {
-    await unlockAdmin(page);
+    // Clear cached events to avoid strict-mode violations from repeated runs
+    await page.goto('/admin');
+    await page.evaluate(() => localStorage.removeItem('filadelfia_events'));
+    await page.evaluate(() => sessionStorage.setItem('filadelfia_admin_unlocked', '1'));
+    await page.reload();
     // Click the Events "Adaugă" button (first one)
     await page.getByRole('button', { name: /adaugă/i }).first().click();
     await page.getByPlaceholder(/conferință de tineret/i).fill('Test eveniment');
@@ -154,6 +175,6 @@ test.describe('AdminPage', () => {
     await dateSelects.nth(2).selectOption('2026');
     await page.getByPlaceholder(/descrie evenimentul/i).fill('Descriere test');
     await page.getByRole('button', { name: /salvează evenimentul/i }).click();
-    await expect(page.getByText('Test eveniment')).toBeVisible();
+    await expect(page.getByText('Test eveniment').first()).toBeVisible();
   });
 });

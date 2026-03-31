@@ -30,14 +30,13 @@ export default function NewsTicker() {
   if (!config.enabled || !config.text.trim()) return null;
 
   return (
-    <div className="overflow-hidden bg-slate-900/60 backdrop-blur-md py-3 text-white border-b border-white/5">
+    <div className="overflow-hidden bg-transparent py-3 text-white">
       <div className="ticker-track flex whitespace-nowrap">
-        <span className="inline-block px-6 sm:px-16 text-sm font-semibold tracking-wide">
-          {config.text}
-        </span>
-        <span className="inline-block px-6 sm:px-16 text-sm font-semibold tracking-wide" aria-hidden>
-          {config.text}
-        </span>
+        {[0, 1, 2].map(i => (
+          <span key={i} className="inline-block px-6 sm:px-16 text-base font-semibold tracking-wide" aria-hidden={i > 0 ? true : undefined}>
+            {config.text}
+          </span>
+        ))}
       </div>
     </div>
   );
