@@ -144,9 +144,14 @@ test.describe('AdminPage', () => {
 
   test('can add a new event', async ({ page }) => {
     await unlockAdmin(page);
-    await page.getByRole('button', { name: /adaugă/i }).click();
+    // Click the Events "Adaugă" button (first one)
+    await page.getByRole('button', { name: /adaugă/i }).first().click();
     await page.getByPlaceholder(/conferință de tineret/i).fill('Test eveniment');
-    await page.locator('input[type="date"]').first().fill('2026-12-15');
+    // Date is now 3 selects: day / month / year
+    const dateSelects = page.locator('text=Data de început').locator('..').locator('select');
+    await dateSelects.nth(0).selectOption('15');
+    await dateSelects.nth(1).selectOption('12');
+    await dateSelects.nth(2).selectOption('2026');
     await page.getByPlaceholder(/descrie evenimentul/i).fill('Descriere test');
     await page.getByRole('button', { name: /salvează evenimentul/i }).click();
     await expect(page.getByText('Test eveniment')).toBeVisible();

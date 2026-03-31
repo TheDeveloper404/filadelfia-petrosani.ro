@@ -5,11 +5,12 @@
  */
 
 const BASE = import.meta.env.VITE_FIREBASE_DB_URL as string | undefined;
+const NS = import.meta.env.DEV ? 'dev' : 'prod';
 
 export async function dbRead<T>(path: string): Promise<T | null> {
   if (!BASE) return null;
   try {
-    const res = await fetch(`${BASE}/${path}.json`);
+    const res = await fetch(`${BASE}/${NS}/${path}.json`);
     if (!res.ok) return null;
     return (await res.json()) as T;
   } catch {
@@ -20,7 +21,7 @@ export async function dbRead<T>(path: string): Promise<T | null> {
 export async function dbWrite<T>(path: string, data: T): Promise<void> {
   if (!BASE) return;
   try {
-    await fetch(`${BASE}/${path}.json`, {
+    await fetch(`${BASE}/${NS}/${path}.json`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data),

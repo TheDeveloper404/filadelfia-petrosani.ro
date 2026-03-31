@@ -59,7 +59,7 @@ export default function Nav() {
           </Link>
 
           {/* Desktop nav */}
-          <nav className="hidden md:flex items-center gap-1">
+          <nav data-testid="desktop-nav" className="hidden md:flex items-center gap-1">
             {navLinks.map(link => {
               const active = location.pathname === link.to;
               return (

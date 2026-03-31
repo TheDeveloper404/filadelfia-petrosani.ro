@@ -36,13 +36,10 @@ export default function NewsTicker() {
   return (
     <div className="overflow-hidden bg-secondary py-1.5 text-secondary-foreground">
       <div className="ticker-track flex whitespace-nowrap">
-        <span className="ticker-content inline-block px-6 sm:px-16 text-sm font-semibold">
+        <span className="inline-block px-6 sm:px-16 text-sm font-semibold">
           {config.text}
         </span>
-        <span className="ticker-content inline-block px-6 sm:px-16 text-sm font-semibold" aria-hidden>
-          {config.text}
-        </span>
-        <span className="ticker-content inline-block px-6 sm:px-16 text-sm font-semibold" aria-hidden>
+        <span className="inline-block px-6 sm:px-16 text-sm font-semibold" aria-hidden>
           {config.text}
         </span>
       </div>

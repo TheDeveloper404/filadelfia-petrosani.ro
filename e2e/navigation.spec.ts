@@ -1,7 +1,8 @@
 import { test, expect } from '@playwright/test';
 
-// Scope nav links to the <header> to avoid matching footer links
-const nav = (page: import('@playwright/test').Page) => page.locator('header nav');
+// Desktop nav only (mobile nav is behind hamburger)
+const nav = (page: import('@playwright/test').Page) =>
+  page.locator('[data-testid="desktop-nav"]');
 
 test.describe('Navigation', () => {
   test('homepage loads and shows church name', async ({ page }) => {
@@ -67,14 +68,38 @@ test.describe('Navigation', () => {
   });
 
   test('scroll-to-top behaviour is configured in Layout', async ({ page }) => {
-    // Verify the behaviour exists in source rather than fighting SPA timing in E2E
     await page.goto('/');
     const content = await page.evaluate(() => document.documentElement.innerHTML);
-    // The app should mount — presence of the hero section confirms Layout rendered
     expect(content).toContain('Filadelfia');
-    // Navigate and confirm the new page renders from top (hero visible without scrolling)
     await nav(page).getByRole('link', { name: /plan biblic/i }).click();
     await page.waitForURL('/plan-citire');
     await expect(page.getByRole('heading', { level: 1 })).toBeInViewport();
+  });
+});
+
+test.describe('Navigation — mobile hamburger', () => {
+  test.use({ viewport: { width: 375, height: 812 } });
+
+  test('hamburger opens and closes mobile menu', async ({ page }) => {
+    await page.goto('/');
+    const hamburger = page.getByRole('button', { name: /deschide meniu/i });
+    await hamburger.click();
+    await expect(page.getByRole('button', { name: /închide meniu/i })).toBeVisible();
+    await page.getByRole('button', { name: /închide meniu/i }).click();
+    await expect(page.getByRole('button', { name: /deschide meniu/i })).toBeVisible();
+  });
+
+  test('mobile menu navigates to Live', async ({ page }) => {
+    await page.goto('/');
+    await page.getByRole('button', { name: /deschide meniu/i }).click();
+    await page.locator('header').getByRole('link', { name: /^live$/i }).last().click();
+    await expect(page).toHaveURL('/live');
+  });
+
+  test('mobile menu navigates to Contact', async ({ page }) => {
+    await page.goto('/');
+    await page.getByRole('button', { name: /deschide meniu/i }).click();
+    await page.locator('header').getByRole('link', { name: /contact/i }).last().click();
+    await expect(page).toHaveURL('/contact');
   });
 });
