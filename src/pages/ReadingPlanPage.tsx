@@ -16,9 +16,7 @@ export default function ReadingPlanPage() {
     const container = listRef.current;
     const row = document.getElementById('today-row');
     if (!container || !row) return;
-    const containerTop = container.getBoundingClientRect().top;
-    const rowTop = row.getBoundingClientRect().top;
-    container.scrollBy({ top: rowTop - containerTop - container.clientHeight / 2 + row.clientHeight / 2, behavior });
+    container.scrollBy({ top: row.getBoundingClientRect().top - container.getBoundingClientRect().top - container.clientHeight / 2 + row.clientHeight / 2, behavior });
   };
 
   useEffect(() => { scrollToToday('instant'); }, []);
@@ -50,52 +48,69 @@ export default function ReadingPlanPage() {
         <Container>
           <div className="rounded-3xl bg-white shadow-sm border border-slate-200/80 overflow-hidden">
 
-            {/* Card header — today's reading */}
-            <div className="px-4 py-6 sm:px-10 sm:py-10 text-center">
-              <p className="text-base font-semibold uppercase tracking-[0.3em]" style={{ color: '#d4ab84' }}>Citire zilnică · {todayLabel}</p>
-              <p className="mt-4 text-5xl font-bold text-slate-900">
-                {todayReading ? (todayReading as any).reading : '—'}
-              </p>
-              <p className="mt-3 text-base font-medium text-slate-400">Ziua {dayIndex + 1} din {plan.readings.length}</p>
-              <div className="mt-5 mx-auto max-w-sm">
-                <div className="flex items-center justify-between text-xs font-bold text-slate-400 mb-2">
-                  <span>Progres</span>
-                  <span className="text-secondary">{progress}%</span>
-                </div>
-                <div className="h-2 overflow-hidden rounded-full bg-slate-100">
-                  <div className="h-2 rounded-full bg-secondary transition-all" style={{ width: `${progress}%` }} />
-                </div>
-              </div>
-              <button
-                onClick={() => scrollToToday('smooth')}
-                className="mt-5 inline-flex items-center gap-2 rounded-full bg-secondary px-5 py-2 text-sm font-bold text-secondary-foreground transition hover:bg-secondary/90"
-              >
-                Astăzi
-              </button>
+            {/* Card header */}
+            <div className="border-b border-slate-100 px-4 py-6 sm:px-10 sm:py-8 text-center">
+              <p className="text-base font-semibold uppercase tracking-[0.3em]" style={{ color: '#d4ab84' }}>Lectură zilnică</p>
+              <h2 className="mt-2 text-4xl font-bold text-slate-900 sm:text-5xl">Fii la zi cu citirea Cuvântului lui Dumnezeu</h2>
             </div>
 
-            {/* Card body — all days scrollable */}
-            <div className="px-4 pb-6 sm:px-10 sm:pb-10">
-              <div ref={listRef} className="mx-auto max-w-2xl max-h-[420px] overflow-y-auto space-y-2 pr-1">
-                {plan.readings.map((row, index) => {
-                  const isToday = index === dayIndex;
-                  return (
-                    <div
-                      key={index}
-                      id={isToday ? 'today-row' : undefined}
-                      className={`rounded-xl border px-4 py-3 flex items-center justify-between gap-3 transition ${
-                        isToday ? 'border-secondary/40 bg-secondary/5' : 'border-slate-100 bg-slate-50'
-                      }`}
-                    >
-                      <div className="flex items-center gap-3">
-                        <span className="text-xs font-bold text-slate-400 w-14 shrink-0">Ziua {index + 1}</span>
-                        <span className="text-sm font-semibold text-slate-800">{(row as any).reading}</span>
-                      </div>
-                      {isToday ? <Badge>Astăzi</Badge> : null}
-                    </div>
-                  );
-                })}
+            {/* Two columns */}
+            <div className="grid divide-y divide-slate-100 lg:grid-cols-2 lg:divide-x lg:divide-y-0">
+
+              {/* LEFT — today */}
+              <div className="flex flex-col items-center justify-center gap-6 p-8 sm:p-12 text-center">
+                <p className="text-xs font-bold uppercase tracking-[0.3em] text-slate-400">{todayLabel}</p>
+                <p className="text-5xl font-bold text-slate-900 leading-tight">
+                  {todayReading ? (todayReading as any).reading : '—'}
+                </p>
+                <p className="text-sm text-slate-400">Ziua {dayIndex + 1} din {plan.readings.length}</p>
+
+                {/* Progress */}
+                <div className="w-full max-w-xs">
+                  <div className="flex justify-between text-xs font-bold text-slate-400 mb-2">
+                    <span>Progres</span>
+                    <span className="text-secondary">{progress}%</span>
+                  </div>
+                  <div className="h-2 overflow-hidden rounded-full bg-slate-100">
+                    <div className="h-2 rounded-full bg-secondary transition-all" style={{ width: `${progress}%` }} />
+                  </div>
+                </div>
+
+                <button
+                  onClick={() => scrollToToday('smooth')}
+                  className="inline-flex items-center gap-2 rounded-full bg-secondary px-6 py-2.5 text-sm font-bold text-secondary-foreground transition hover:bg-secondary/90"
+                >
+                  Mergi la ziua de azi
+                </button>
               </div>
+
+              {/* RIGHT — list */}
+              <div className="p-4 sm:p-8">
+                <div ref={listRef} className="max-h-[420px] overflow-y-auto space-y-1 pr-1">
+                  {plan.readings.map((row, index) => {
+                    const isToday = index === dayIndex;
+                    const isPast = index < dayIndex;
+                    return (
+                      <div
+                        key={index}
+                        id={isToday ? 'today-row' : undefined}
+                        className={`rounded-xl border px-4 py-3 flex items-center justify-between gap-3 transition ${
+                          isToday ? 'border-secondary/40 bg-secondary/5' : isPast ? 'border-slate-100 bg-slate-50 opacity-50' : 'border-slate-100 bg-slate-50'
+                        }`}
+                      >
+                        <div className="flex items-center gap-3">
+                          <span className="text-xs font-bold text-slate-400 w-14 shrink-0">Ziua {index + 1}</span>
+                          <span className={`text-sm font-semibold ${isToday ? 'text-slate-900' : 'text-slate-700'}`}>
+                            {(row as any).reading}
+                          </span>
+                        </div>
+                        {isToday ? <Badge>Astăzi</Badge> : isPast ? <span className="text-slate-400 text-sm">✓</span> : null}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
             </div>
           </div>
         </Container>
