@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import siteConfig from '@/data/site-config.json';
 import { dbRead } from '@/lib/db';
 
 const STORAGE_KEY = 'filadelfia_ticker';
@@ -10,17 +9,7 @@ interface TickerConfig {
 }
 
 export default function NewsTicker() {
-  const defaultConfig: TickerConfig = {
-    enabled: (siteConfig as any).ticker?.enabled ?? true,
-    text: (siteConfig as any).ticker?.text ?? '',
-  };
-
-  // Initialise instantly from localStorage (avoids flash), then sync from Firebase
-  const [config, setConfig] = useState<TickerConfig>(() => {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored) { try { return JSON.parse(stored); } catch {} }
-    return defaultConfig;
-  });
+  const [config, setConfig] = useState<TickerConfig>({ enabled: false, text: '' });
 
   useEffect(() => {
     dbRead<TickerConfig>('ticker').then(remote => {
