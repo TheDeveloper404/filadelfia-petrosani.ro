@@ -247,6 +247,9 @@ export default function AdminPage() {
   const [serviceSaved, setServiceSaved] = useState(false);
   const [serviceFormError, setServiceFormError] = useState('');
 
+  // Confirm delete
+  const [confirmDelete, setConfirmDelete] = useState<{ type: 'event' | 'service'; id: string; label: string } | null>(null);
+
   useEffect(() => {
     if (!unlocked) return;
 
@@ -362,7 +365,8 @@ export default function AdminPage() {
   };
 
   const handleDeleteEvent = (id: string) => {
-    persistEvents(events.filter(e => e.id !== id));
+    const ev = events.find(e => e.id === id);
+    setConfirmDelete({ type: 'event', id, label: ev?.title ?? 'eveniment' });
   };
 
   const handleLock = () => {
@@ -419,7 +423,18 @@ export default function AdminPage() {
   };
 
   const handleDeleteService = (id: string) => {
-    persistSchedule(services.filter(s => s.id !== id));
+    const svc = services.find(s => s.id === id);
+    setConfirmDelete({ type: 'service', id, label: svc?.title ?? 'serviciu' });
+  };
+
+  const confirmDeleteAction = () => {
+    if (!confirmDelete) return;
+    if (confirmDelete.type === 'event') {
+      persistEvents(events.filter(e => e.id !== confirmDelete.id));
+    } else {
+      persistSchedule(services.filter(s => s.id !== confirmDelete.id));
+    }
+    setConfirmDelete(null);
   };
 
   // ── Render ─────────────────────────────────────────────────────────────
@@ -766,8 +781,35 @@ export default function AdminPage() {
           </div>
         </Card>
 
-
       </div>
+
+      {/* ── Confirm delete modal ── */}
+      {confirmDelete && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+          <div className="mx-4 w-full max-w-sm rounded-2xl bg-white p-6 shadow-xl">
+            <h3 className="text-lg font-bold text-slate-900">Confirmare ștergere</h3>
+            <p className="mt-2 text-sm text-slate-600">
+              Ești sigur că vrei să ștergi{' '}
+              <span className="font-semibold">"{confirmDelete.label}"</span>?
+              Acțiunea nu poate fi anulată.
+            </p>
+            <div className="mt-5 flex justify-end gap-3">
+              <button
+                onClick={() => setConfirmDelete(null)}
+                className="rounded-full border border-slate-200 px-5 py-2 text-sm font-bold text-slate-700 transition hover:bg-slate-50"
+              >
+                Anulează
+              </button>
+              <button
+                onClick={confirmDeleteAction}
+                className="rounded-full bg-red-500 px-5 py-2 text-sm font-bold text-white transition hover:bg-red-600"
+              >
+                Șterge
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

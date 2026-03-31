@@ -30,12 +30,12 @@ export default function NewsTicker() {
   if (!config.enabled || !config.text.trim()) return null;
 
   return (
-    <div className="overflow-hidden bg-secondary py-1.5 text-secondary-foreground">
+    <div className="overflow-hidden bg-slate-900/60 backdrop-blur-md py-3 text-white border-b border-white/5">
       <div className="ticker-track flex whitespace-nowrap">
-        <span className="inline-block px-6 sm:px-16 text-sm font-semibold">
+        <span className="inline-block px-6 sm:px-16 text-sm font-semibold tracking-wide">
           {config.text}
         </span>
-        <span className="inline-block px-6 sm:px-16 text-sm font-semibold" aria-hidden>
+        <span className="inline-block px-6 sm:px-16 text-sm font-semibold tracking-wide" aria-hidden>
           {config.text}
         </span>
       </div>
