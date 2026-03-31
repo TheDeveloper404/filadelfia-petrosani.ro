@@ -121,16 +121,16 @@ export default function HomePage() {
               <p className="mb-5 text-center text-xs font-bold uppercase tracking-[0.3em] text-slate-700">
                 Program săptămânal
               </p>
-              <div className="flex flex-wrap justify-center gap-3">
+              <div className="grid grid-cols-2 gap-3 sm:flex sm:flex-wrap sm:justify-center">
                 {schedule.services.map(service => {
                   const isNext = nextService?.service.id === service.id;
                   return (
                     <div
                       key={service.id}
-                      className={`rounded-2xl px-5 py-3.5 transition ${
+                      className={`rounded-2xl px-4 py-4 sm:px-5 sm:py-3.5 transition-all duration-200 cursor-default ${
                         isNext
-                          ? 'bg-secondary text-secondary-foreground shadow-md shadow-secondary/20'
-                          : 'border border-slate-100 bg-slate-50 text-slate-700'
+                          ? 'bg-secondary text-secondary-foreground shadow-md shadow-secondary/20 scale-[1.02] hover:scale-[1.05] hover:shadow-lg hover:shadow-secondary/30'
+                          : 'border border-slate-100 bg-slate-50 text-slate-700 hover:border-secondary/30 hover:bg-secondary/5 hover:shadow-md hover:scale-[1.02]'
                       }`}
                     >
                       <p className={`text-[0.65rem] font-bold uppercase tracking-widest ${isNext ? 'text-secondary-foreground/70' : 'text-slate-400'}`}>
