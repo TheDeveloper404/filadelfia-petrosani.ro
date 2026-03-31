@@ -88,7 +88,7 @@ export default function HomePage() {
           style={{
             backgroundImage: 'url(/image_bg.jpg)',
             backgroundSize: 'cover',
-            backgroundPosition: 'right center',
+            backgroundPosition: '78% center',
             opacity: 0.25,
           }}
         />
