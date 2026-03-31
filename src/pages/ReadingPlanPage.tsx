@@ -46,7 +46,7 @@ export default function ReadingPlanPage() {
       </section>
 
       {/* ── Plan ── */}
-      <section className="py-20 sm:py-24 bg-slate-200">
+      <section className="py-20 sm:py-24 bg-[#d4ab84]">
         <Container>
           <div className="rounded-3xl bg-white shadow-sm border border-slate-200/80 overflow-hidden">
 

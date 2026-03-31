@@ -66,7 +66,7 @@ export default function Nav() {
                 <Link
                   key={link.to}
                   to={link.to}
-                  className={`nav-link px-4 py-3 text-base font-medium transition-colors duration-200 ${
+                  className={`nav-link px-4 py-3 text-lg font-medium transition-colors duration-200 ${
                     active ? 'nav-active text-white' : 'text-slate-300 hover:text-white'
                   }`}
                 >
@@ -77,7 +77,7 @@ export default function Nav() {
             <a
               href="#"
               onClick={handleArchiveClick}
-              className="nav-link px-4 py-3 text-base font-medium transition-colors duration-200 text-slate-300 hover:text-white"
+              className="nav-link px-4 py-3 text-lg font-medium transition-colors duration-200 text-slate-300 hover:text-white"
             >
               Arhivă
             </a>
@@ -87,7 +87,7 @@ export default function Nav() {
                 <Link
                   key={link.to}
                   to={link.to}
-                  className={`nav-link px-4 py-3 text-base font-medium transition-colors duration-200 ${
+                  className={`nav-link px-4 py-3 text-lg font-medium transition-colors duration-200 ${
                     active ? 'nav-active text-white' : 'text-slate-300 hover:text-white'
                   }`}
                 >

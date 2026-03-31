@@ -3,6 +3,7 @@ import { useLocation } from 'react-router-dom';
 import Nav from '@/components/Nav';
 import Footer from '@/components/Footer';
 import NewsTicker from '@/components/NewsTicker';
+import WelcomeModal from '@/components/WelcomeModal';
 
 interface LayoutProps {
   children: ReactNode;
@@ -43,6 +44,7 @@ export default function Layout({ children }: LayoutProps) {
 
   return (
     <div className="min-h-screen bg-background text-foreground antialiased">
+      <WelcomeModal />
       <a href="#main-content" className="skip-link">
         Sari la conținut
       </a>

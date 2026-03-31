@@ -78,7 +78,7 @@ export default function StiriPage() {
       </section>
 
       {/* Content */}
-      <section className="py-20 bg-slate-200 sm:py-24">
+      <section className="py-20 bg-[#d4ab84] sm:py-24">
         <Container>
           <div className="rounded-3xl bg-white shadow-sm border border-slate-200/80 overflow-hidden">
 

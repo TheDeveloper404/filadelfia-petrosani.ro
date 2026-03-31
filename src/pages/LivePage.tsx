@@ -23,7 +23,7 @@ export default function LivePage() {
       </section>
 
       {/* ── Player ── */}
-      <section className="py-20 sm:py-24 bg-slate-200">
+      <section className="py-20 sm:py-24 bg-[#d4ab84]">
         <Container>
           <div className="rounded-3xl bg-white shadow-sm border border-slate-200/80 overflow-hidden">
             <div className="border-b border-slate-100 px-4 py-6 sm:px-10 sm:py-8 text-center">

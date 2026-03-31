@@ -134,7 +134,7 @@ export default function HomePage() {
       </section>
 
       {/* ── Schedule + Events + Calendar ── */}
-      <section className="py-20 sm:py-24 bg-slate-200">
+      <section className="py-20 sm:py-24 bg-[#d4ab84]">
         <Container>
           <div className="rounded-3xl bg-white shadow-sm border border-slate-200/80 overflow-hidden">
 
@@ -155,21 +155,21 @@ export default function HomePage() {
                   return (
                     <div
                       key={service.id}
-                      className={`rounded-2xl px-4 py-4 sm:px-5 sm:py-3.5 transition-all duration-200 cursor-default ${
+                      className={`rounded-2xl px-5 py-5 sm:px-7 sm:py-5 transition-all duration-200 cursor-default ${
                         isNext
                           ? 'bg-secondary text-secondary-foreground shadow-md shadow-secondary/20 scale-[1.02] hover:scale-[1.05] hover:shadow-lg hover:shadow-secondary/30'
                           : 'border border-slate-100 bg-slate-50 text-slate-700 hover:border-secondary/30 hover:bg-secondary/5 hover:shadow-md hover:scale-[1.02]'
                       }`}
                     >
-                      <p className={`text-[0.65rem] font-bold uppercase tracking-widest ${isNext ? 'text-secondary-foreground/70' : 'text-slate-400'}`}>
+                      <p className={`text-xs font-bold uppercase tracking-widest ${isNext ? 'text-secondary-foreground/70' : 'text-slate-400'}`}>
                         {service.dayLabel}&nbsp;·&nbsp;{service.time}
                         {service.endTime ? ` – ${service.endTime}` : ''}
                       </p>
-                      <p className={`mt-1 text-sm font-bold ${isNext ? 'text-secondary-foreground' : 'text-slate-900'}`}>
+                      <p className={`mt-1 text-base font-bold ${isNext ? 'text-secondary-foreground' : 'text-slate-900'}`}>
                         {service.title}
                       </p>
                       {service.isLive && (
-                        <p className={`mt-0.5 text-[0.6rem] font-bold uppercase tracking-widest ${isNext ? 'text-secondary-foreground/60' : 'text-secondary'}`}>
+                        <p className={`mt-0.5 text-[0.65rem] font-bold uppercase tracking-widest ${isNext ? 'text-secondary-foreground/60' : 'text-secondary'}`}>
                           live
                         </p>
                       )}
@@ -215,13 +215,13 @@ export default function HomePage() {
       </section>
 
       {/* ── Misiunea Noastră ── */}
-      <section className="py-20 sm:py-28 bg-slate-900 text-white">
+      <section className="py-20 sm:py-28 bg-[#d4ab84]">
         <Container>
           <div className="mx-auto max-w-3xl text-center">
-            <p className="text-sm font-semibold uppercase tracking-[0.3em] text-secondary">Cine suntem</p>
-            <h2 className="mt-3 text-3xl font-bold sm:text-4xl">Misiunea Noastră</h2>
+            <p className="text-sm font-semibold uppercase tracking-[0.3em] text-slate-700">Cine suntem</p>
+            <h2 className="mt-3 text-3xl font-bold sm:text-4xl text-slate-900">Misiunea Noastră</h2>
 
-            <div className="mt-8 space-y-5 text-lg leading-8 text-slate-300">
+            <div className="mt-8 space-y-5 text-lg leading-8 text-slate-800">
               <p>
                 Misiunea Bisericii Filadelfia este să-L onoreze pe Dumnezeu prin creșterea unor oameni transformați,
                 care trăiesc după modelul lui Cristos în fiecare aspect al vieții. Ne ghidăm după chemarea lui Isus
@@ -235,13 +235,13 @@ export default function HomePage() {
               </p>
             </div>
 
-            <blockquote className="mt-12 rounded-2xl border border-secondary/20 bg-secondary/8 px-6 py-8 sm:px-10">
-              <p className="text-base leading-8 text-slate-200 italic">
+            <blockquote className="mt-12 rounded-2xl border border-slate-900/15 bg-slate-900/10 px-6 py-8 sm:px-10">
+              <p className="text-base leading-8 text-slate-800 italic">
                 „Prin urmare, duceți-vă și faceți ucenici din toate neamurile, botezându-i în Numele Tatălui,
                 al Fiului și al Duhului Sfânt și învățându-i să păzească tot ce v-am poruncit! Și iată că Eu
                 sunt cu voi în toate zilele, până la sfârșitul veacului!"
               </p>
-              <footer className="mt-4 text-sm font-bold tracking-wide text-secondary">Matei 28:19-20</footer>
+              <footer className="mt-4 text-sm font-bold tracking-wide text-slate-700">Matei 28:19-20</footer>
             </blockquote>
           </div>
         </Container>
