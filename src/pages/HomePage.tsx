@@ -61,8 +61,8 @@ export default function HomePage() {
           style={{
             backgroundImage: 'url(/image_bg.jpg)',
             backgroundSize: 'cover',
-            backgroundPosition: 'center top',
-            opacity: 0.45,
+            backgroundPosition: 'right center',
+            opacity: 0.25,
           }}
         />
         {/* Desktop — right side with gradient mask */}
