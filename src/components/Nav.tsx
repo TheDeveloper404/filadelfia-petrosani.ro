@@ -27,7 +27,6 @@ export default function Nav() {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  // Close mobile menu on route change
   useEffect(() => { setMenuOpen(false); }, [location.pathname]);
 
   const handleArchiveClick = (e: React.MouseEvent) => {
@@ -49,6 +48,7 @@ export default function Nav() {
             ? 'bg-slate-900/95 backdrop-blur-xl border-b border-white/8 shadow-lg shadow-black/20'
             : 'bg-slate-900'
         }`}
+        style={{ position: 'sticky' }}
       >
         <Container className="flex items-center justify-between py-3">
           <Link to="/" className="flex items-center gap-3 text-3xl font-bold text-white hover:text-white">
@@ -74,7 +74,6 @@ export default function Nav() {
                 </Link>
               );
             })}
-
             <a
               href="#"
               onClick={handleArchiveClick}
@@ -82,7 +81,6 @@ export default function Nav() {
             >
               Arhivă
             </a>
-
             {navLinksAfter.map(link => {
               const active = location.pathname === link.to;
               return (
@@ -117,9 +115,18 @@ export default function Nav() {
           </button>
         </Container>
 
-        {/* Mobile menu dropdown */}
-        {menuOpen && (
-          <div className="md:hidden border-t border-white/10 bg-slate-900/98 backdrop-blur-xl">
+        {/* Mobile menu — absolute, overlays hero */}
+        <div
+          className="absolute left-0 right-0 top-full z-50 md:hidden overflow-hidden transition-all duration-200"
+          style={{
+            maxHeight: menuOpen ? '400px' : '0px',
+            opacity: menuOpen ? 1 : 0,
+            background: 'rgba(15, 23, 42, 0.85)',
+            backdropFilter: 'blur(16px)',
+            WebkitBackdropFilter: 'blur(16px)',
+            borderTop: menuOpen ? '1px solid rgba(255,255,255,0.08)' : 'none',
+          }}
+        >
             <nav className="flex flex-col px-4 py-3">
               {navLinks.map(link => {
                 const active = location.pathname === link.to;
@@ -158,7 +165,6 @@ export default function Nav() {
               })}
             </nav>
           </div>
-        )}
       </header>
 
       {/* Popup confirmare */}
