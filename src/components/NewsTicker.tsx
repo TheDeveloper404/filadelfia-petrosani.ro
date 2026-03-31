@@ -9,11 +9,17 @@ interface TickerConfig {
 }
 
 export default function NewsTicker() {
-  const [config, setConfig] = useState<TickerConfig>({ enabled: false, text: '' });
+  const [config, setConfig] = useState<TickerConfig>(() => {
+    try {
+      const stored = localStorage.getItem(STORAGE_KEY);
+      if (stored) return JSON.parse(stored);
+    } catch {}
+    return { enabled: false, text: '' };
+  });
 
   useEffect(() => {
     dbRead<TickerConfig>('ticker').then(remote => {
-      if (remote) {
+      if (remote !== null) {
         setConfig(remote);
         localStorage.setItem(STORAGE_KEY, JSON.stringify(remote));
       }
