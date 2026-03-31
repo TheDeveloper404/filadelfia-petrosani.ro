@@ -46,7 +46,7 @@ export default function Nav() {
         }`}
       >
         <Container className="flex items-center justify-between py-3">
-          <Link to="/" className="flex items-center gap-3 text-3xl font-bold text-white">
+          <Link to="/" className="flex items-center gap-3 text-3xl font-bold text-white hover:text-white">
             <span className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-secondary text-secondary-foreground shadow-sm">
               <ChurchIcon className="h-7 w-7" />
             </span>
