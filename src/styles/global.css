@@ -398,7 +398,7 @@ p:last-child { margin-bottom: 0; }
   to   { transform: translateX(-33.333%); }
 }
 .ticker-track {
-  animation: tickerScroll 14s linear infinite;
+  animation: tickerScroll 8s linear infinite;
 }
 @media (min-width: 640px) {
   .ticker-track {
