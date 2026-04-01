@@ -154,7 +154,12 @@ export default function HomePage() {
                 Program săptămânal
               </p>
               <div className="grid grid-cols-2 gap-3 sm:flex sm:flex-wrap sm:justify-center">
-                {services.map(service => {
+                {[...services].sort((a, b) => {
+                  const day = (d: number) => d === 0 ? 7 : d;
+                  return day(a.dayOfWeek) !== day(b.dayOfWeek)
+                    ? day(a.dayOfWeek) - day(b.dayOfWeek)
+                    : a.time.localeCompare(b.time);
+                }).map(service => {
                   const isNext = nextService?.service.id === service.id && nextService.daysUntil === 0;
                   return (
                     <div
