@@ -33,7 +33,7 @@ export default function NewsTicker() {
     <div className="overflow-hidden bg-white/10 backdrop-blur-md border-y border-white/15 py-3 text-white relative z-10">
       <div className="ticker-track flex whitespace-nowrap">
         {[0, 1, 2, 3].map(i => (
-          <span key={i} className="inline-block px-6 sm:px-16 text-base font-semibold tracking-wide" aria-hidden={i > 0 ? true : undefined}>
+          <span key={i} className="inline-block min-w-[100vw] sm:min-w-0 px-6 sm:px-16 text-base font-semibold tracking-wide" aria-hidden={i > 0 ? true : undefined}>
             {config.text}
           </span>
         ))}

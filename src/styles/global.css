@@ -399,7 +399,7 @@ p:last-child { margin-bottom: 0; }
   to   { transform: translateX(-25%); }
 }
 .ticker-track {
-  animation: tickerScroll 20s linear infinite;
+  animation: tickerScroll 12s linear infinite;
 }
 @media (min-width: 640px) {
   .ticker-track {
