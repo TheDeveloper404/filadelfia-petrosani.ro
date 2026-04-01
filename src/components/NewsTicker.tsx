@@ -31,13 +31,29 @@ export default function NewsTicker() {
 
   return (
     <div className="overflow-hidden bg-white/10 backdrop-blur-md border-y border-white/15 py-3 text-white relative z-10">
-      <div className="ticker-track flex whitespace-nowrap">
-        {[0, 1, 2].map(i => (
-          <span key={i} className="inline-block px-6 sm:px-16 text-base font-semibold tracking-wide" aria-hidden={i > 0 ? true : undefined}>
-            {config.text}
-          </span>
-        ))}
-      </div>
+      <div className="ticker-track flex">
+  <div className="ticker-group flex">
+    {[0, 1, 2].map(i => (
+      <span
+        key={`a-${i}`}
+        className="inline-block px-6 sm:px-16 text-base font-semibold tracking-wide whitespace-nowrap"
+      >
+        {config.text}
+      </span>
+    ))}
+  </div>
+
+  <div className="ticker-group flex" aria-hidden="true">
+    {[0, 1, 2].map(i => (
+      <span
+        key={`b-${i}`}
+        className="inline-block px-6 sm:px-16 text-base font-semibold tracking-wide whitespace-nowrap"
+      >
+        {config.text}
+      </span>
+    ))}
+  </div>
+</div>
     </div>
   );
 }
