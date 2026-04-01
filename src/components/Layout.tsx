@@ -5,6 +5,7 @@ import { WaveDivider } from '@/components/WaveDivider';
 import Footer from '@/components/Footer';
 import WelcomeModal from '@/components/WelcomeModal';
 import { Analytics } from '@vercel/analytics/react';
+import { SpeedInsights } from '@vercel/speed-insights/react';
 
 interface LayoutProps {
   children: ReactNode;
@@ -31,6 +32,7 @@ export default function Layout({ children }: LayoutProps) {
       <WaveDivider topColor="#d4ab84" bottomColor="#0f172a" height={70} />
       <Footer />
       <Analytics />
+      <SpeedInsights />
     </div>
   );
 }
