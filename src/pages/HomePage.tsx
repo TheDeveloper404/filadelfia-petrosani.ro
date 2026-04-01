@@ -135,11 +135,7 @@ export default function HomePage() {
       </section>
 
       {/* ── Schedule + Events + Calendar ── */}
-      <section className="relative py-20 sm:py-24 bg-[#d4ab84]">
-        <div
-          className="pointer-events-none absolute top-0 inset-x-0 h-20 z-10"
-          style={{ background: 'linear-gradient(to bottom, rgba(15,23,42,1) 0%, rgba(15,23,42,0.35) 50%, transparent 100%)' }}
-        />
+      <section className="py-20 sm:py-24 bg-[#d4ab84]">
         <Container>
           <div className="rounded-3xl bg-white shadow-sm border border-slate-200/80 overflow-hidden">
 
@@ -220,7 +216,7 @@ export default function HomePage() {
       </section>
 
       {/* ── Misiunea Noastră ── */}
-      <section className="relative py-20 sm:py-28 bg-[#d4ab84]">
+      <section className="py-20 sm:py-28 bg-[#d4ab84]">
         <Container>
           <div className="mx-auto max-w-3xl text-center">
             <p className="text-base font-semibold uppercase tracking-[0.3em] text-slate-700">Cine suntem</p>
@@ -251,11 +247,6 @@ export default function HomePage() {
           </div>
         </Container>
 
-        {/* gradient fade into footer */}
-        <div
-          className="pointer-events-none absolute bottom-0 inset-x-0 h-20"
-          style={{ background: 'linear-gradient(to bottom, transparent 0%, rgba(15,23,42,0.35) 60%, rgba(15,23,42,1) 100%)' }}
-        />
       </section>
     </div>
   );

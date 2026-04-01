@@ -78,11 +78,7 @@ export default function StiriPage() {
       </section>
 
       {/* Content */}
-      <section className="relative py-20 bg-[#d4ab84] sm:py-24">
-        <div
-          className="pointer-events-none absolute top-0 inset-x-0 h-20 z-10"
-          style={{ background: 'linear-gradient(to bottom, rgba(15,23,42,1) 0%, rgba(15,23,42,0.35) 50%, transparent 100%)' }}
-        />
+      <section className="py-20 bg-[#d4ab84] sm:py-24">
         <Container>
           <div className="rounded-3xl bg-white shadow-sm border border-slate-200/80 overflow-hidden">
 
@@ -170,10 +166,6 @@ export default function StiriPage() {
             </div>
           </div>
         </Container>
-        <div
-          className="pointer-events-none absolute bottom-0 inset-x-0 h-20"
-          style={{ background: 'linear-gradient(to bottom, transparent 0%, rgba(15,23,42,0.35) 60%, rgba(15,23,42,1) 100%)' }}
-        />
       </section>
     </div>
   );
