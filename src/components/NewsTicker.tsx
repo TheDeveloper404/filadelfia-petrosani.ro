@@ -30,11 +30,18 @@ export default function NewsTicker() {
     });
   }, []);
 
-  // Calculate duration based on actual text width so speed is always consistent (~80px/s)
+  // Measure after fonts/layout settle using ResizeObserver
   useEffect(() => {
-    if (!spanRef.current) return;
-    const w = spanRef.current.offsetWidth;
-    if (w > 0) setDuration(Math.round(w / 80));
+    const el = spanRef.current;
+    if (!el) return;
+    const measure = () => {
+      const w = el.offsetWidth;
+      if (w > 0) setDuration(Math.round(w / 80));
+    };
+    const ro = new ResizeObserver(measure);
+    ro.observe(el);
+    measure();
+    return () => ro.disconnect();
   }, [config.text]);
 
   if (!config.enabled || !config.text.trim()) return null;
