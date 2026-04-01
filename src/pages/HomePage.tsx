@@ -134,7 +134,7 @@ export default function HomePage() {
         </Container>
 
         <div className="absolute inset-x-0 bottom-0 z-10">
-          <WaveDivider topColor="transparent" bottomColor="#d4ab84" height={160} />
+          <WaveDivider topColor="transparent" bottomColor="#d4ab84" height={90} />
         </div>
       </section>
       {/* ── Schedule + Events + Calendar ── */}
