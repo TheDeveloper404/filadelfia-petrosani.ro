@@ -396,28 +396,6 @@ p:last-child { margin-bottom: 0; }
    ============================================================ */
 @keyframes tickerScroll {
   from { transform: translateX(0); }
-  to   { transform: translateX(-50%); }
-}
-
-.ticker-track {
-  width: max-content;
-  animation: tickerScroll 24s linear infinite;
-  will-change: transform;
-}
-
-.ticker-group {
-  flex-shrink: 0;
-  white-space: nowrap;
-}
-
-@media (min-width: 640px) {
-  .ticker-track {
-    animation-duration: 40s;
-  }
-}
-
-/*@keyframes tickerScroll {
-  from { transform: translateX(0); }
   to   { transform: translateX(-33.33%); }
 }
 .ticker-track {
