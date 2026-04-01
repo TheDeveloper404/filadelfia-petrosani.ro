@@ -4,6 +4,7 @@ import PageMeta from '@/components/PageMeta';
 import { formatDateRo, getReadingPlanDayIndex } from '@/utils/date';
 import Container from '@/components/ui/container';
 import Badge from '@/components/ui/badge';
+import { WaveDivider } from '@/components/WaveDivider';
 
 export default function ReadingPlanPage() {
   const dayIndex = getReadingPlanDayIndex(plan.startDate, plan.readings.length);
@@ -38,7 +39,7 @@ export default function ReadingPlanPage() {
           </p>
         </Container>
       </section>
-
+      <WaveDivider bottomColor="#d4ab84" height={70} />
       {/* ── Plan ── */}
       <section className="py-20 sm:py-24 bg-[#d4ab84]">
         <Container>

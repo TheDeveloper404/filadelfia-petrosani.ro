@@ -17,6 +17,7 @@ import EventCard from '@/components/EventCard';
 import MiniCalendar from '@/components/MiniCalendar';
 import PageMeta from '@/components/PageMeta';
 import VerseOfTheDay from '@/components/VerseOfTheDay';
+import { WaveDivider } from '@/components/WaveDivider';
 
 const EVENTS_KEY = 'filadelfia_events';
 const SCHEDULE_KEY = 'filadelfia_schedule';
@@ -74,7 +75,7 @@ export default function HomePage() {
 
   return (
     <div>
-      <PageMeta title={siteConfig.churchName} description={siteConfig.description} />
+      <PageMeta title="Biserica Filadelfia | Petroșani" description={siteConfig.description} />
 
       {/* ── Hero ── */}
       <section className="relative overflow-hidden bg-slate-900 text-white min-h-screen">
@@ -132,8 +133,10 @@ export default function HomePage() {
           </div>
         </Container>
 
+        <div className="absolute inset-x-0 bottom-0 z-10">
+          <WaveDivider topColor="transparent" bottomColor="#d4ab84" height={160} />
+        </div>
       </section>
-
       {/* ── Schedule + Events + Calendar ── */}
       <section className="py-20 sm:py-24 bg-[#d4ab84]">
         <Container>

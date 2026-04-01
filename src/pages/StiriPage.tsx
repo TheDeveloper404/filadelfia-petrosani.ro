@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import Container from '@/components/ui/container';
 import PageMeta from '@/components/PageMeta';
+import { WaveDivider } from '@/components/WaveDivider';
 
 const API_URL =
   'https://crestintotal.ro/wp-json/wp/v2/posts?categories=35117&per_page=4&orderby=date&order=desc&_fields=id,title,date,link,excerpt,jetpack_featured_media_url';
@@ -76,7 +77,7 @@ export default function StiriPage() {
           </p>
         </Container>
       </section>
-
+      <WaveDivider bottomColor="#d4ab84" height={70} />
       {/* Content */}
       <section className="py-20 bg-[#d4ab84] sm:py-24">
         <Container>

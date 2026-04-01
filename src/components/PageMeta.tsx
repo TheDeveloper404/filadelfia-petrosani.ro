@@ -7,7 +7,8 @@ interface PageMetaProps {
 
 export default function PageMeta({ title, description }: PageMetaProps) {
   useEffect(() => {
-    document.title = title;
+    const base = title.replace(/\s*[|—–-]+\s*(Biserica\s+)?Filadelfia\s*/i, '').trim();
+    document.title = base ? `Biserica Filadelfia | ${base}` : 'Biserica Filadelfia';
     if (!description) return;
 
     let meta = document.querySelector('meta[name="description"]');

@@ -1,6 +1,7 @@
 import { ReactNode, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import Nav from '@/components/Nav';
+import { WaveDivider } from '@/components/WaveDivider';
 import Footer from '@/components/Footer';
 import WelcomeModal from '@/components/WelcomeModal';
 
@@ -26,6 +27,7 @@ export default function Layout({ children }: LayoutProps) {
       <main key={location.key} id="main-content" className="page-enter flex-1">
         {children}
       </main>
+      <WaveDivider topColor="#d4ab84" bottomColor="#0f172a" height={70} />
       <Footer />
     </div>
   );

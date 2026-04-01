@@ -2,6 +2,7 @@ import siteConfig from '@/data/site-config.json';
 import PageMeta from '@/components/PageMeta';
 import Container from '@/components/ui/container';
 import { Button } from '@/components/ui/button';
+import { WaveDivider } from '@/components/WaveDivider';
 
 export default function ContactPage() {
   return (
@@ -21,7 +22,7 @@ export default function ContactPage() {
           </p>
         </Container>
       </section>
-
+      <WaveDivider bottomColor="#d4ab84" height={70} />
       {/* ── Contact + Map ── */}
       <section className="py-20 sm:py-24 bg-[#d4ab84]">
         <Container>
