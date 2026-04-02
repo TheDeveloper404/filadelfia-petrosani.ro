@@ -368,7 +368,13 @@ p:last-child { margin-bottom: 0; }
 /* ============================================================
    Page transitions
    ============================================================ */
-.page-enter {}
+.page-enter {
+  animation: pageFade 0.2s ease both;
+}
+@keyframes pageFade {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
 
 /* ============================================================
    Scroll reveal
