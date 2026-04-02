@@ -83,27 +83,30 @@ export default function Nav() {
         </button>
       </Container>
 
-      {/* Mobile menu — absolute, overlays hero */}
+      {/* Mobile menu — card cu margini */}
+      <div className="absolute left-0 right-0 top-full z-50 md:hidden px-4 pt-2 pb-4">
       <div
-        className="absolute left-0 right-0 top-full z-50 md:hidden overflow-hidden transition-all duration-200"
+        className={`transition-all duration-300 ${
+          menuOpen ? 'opacity-100 translate-y-0 pointer-events-auto' : 'opacity-0 -translate-y-2 pointer-events-none'
+        }`}
         style={{
-          maxHeight: menuOpen ? '400px' : '0px',
-          opacity: menuOpen ? 1 : 0,
-          background: 'rgba(10, 15, 30, 0.98)',
-          backdropFilter: 'blur(16px)',
-          WebkitBackdropFilter: 'blur(16px)',
-          borderTop: menuOpen ? '1px solid rgba(255,255,255,0.08)' : 'none',
+          background: 'rgba(10, 15, 30, 0.97)',
+          backdropFilter: 'blur(20px)',
+          WebkitBackdropFilter: 'blur(20px)',
+          border: '1px solid rgba(255,255,255,0.1)',
+          borderRadius: '1.5rem',
+          boxShadow: '0 20px 40px rgba(0,0,0,0.4)',
         }}
       >
-        <nav className="flex flex-col px-4 py-3">
+        <nav className="flex flex-col p-3 gap-1">
           {navLinks.map(link => {
             const active = location.pathname === link.to;
             return (
               <Link
                 key={link.to}
                 to={link.to}
-                className={`rounded-lg px-4 py-3 text-base font-medium transition-colors ${
-                  active ? 'bg-white/10 text-white' : 'text-slate-300 hover:bg-white/5 hover:text-white'
+                className={`rounded-2xl px-5 py-3.5 text-base font-semibold transition-all ${
+                  active ? 'bg-secondary/20 text-secondary' : 'text-slate-300 hover:bg-white/8 hover:text-white'
                 }`}
               >
                 {link.label}
@@ -111,6 +114,7 @@ export default function Nav() {
             );
           })}
         </nav>
+      </div>
       </div>
     </header>
   );
