@@ -37,7 +37,7 @@ export default function Nav() {
         isHome ? 'fixed md:sticky' : 'sticky'
       } ${
         scrolled || menuOpen
-          ? 'bg-slate-900 border-b border-white/8 shadow-lg shadow-black/20'
+          ? `bg-slate-900 shadow-lg shadow-black/20${scrolled && !menuOpen ? ' border-b border-white/8' : ''}`
           : isHome
             ? 'bg-transparent md:bg-slate-900'
             : 'bg-slate-900'

@@ -78,7 +78,7 @@ export default function HomePage() {
       <PageMeta title="Biserica Filadelfia | Petroșani" description={siteConfig.description} />
 
       {/* ── Hero ── */}
-      <section className="relative overflow-hidden bg-slate-900 text-white min-h-[100svh]">
+      <section className="relative overflow-hidden bg-slate-900 text-white hero-full-height">
         <div className="pointer-events-none absolute inset-0">
           <div className="absolute left-1/2 top-0 -translate-x-1/2 h-[300px] w-[400px] rounded-full bg-secondary/8 blur-[80px] sm:h-[600px] sm:w-[900px] sm:blur-[120px]" />
           <div className="hidden sm:block absolute right-0 bottom-0 h-[400px] w-[500px] rounded-full bg-primary/20 blur-[100px]" />

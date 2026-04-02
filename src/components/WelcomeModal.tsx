@@ -5,12 +5,11 @@ import siteConfig from '@/data/site-config.json';
 const WELCOME_KEY = 'filadelfia_welcome_shown';
 
 export default function WelcomeModal() {
-  const [visible, setVisible] = useState(false);
+  const [visible, setVisible] = useState(() => !localStorage.getItem(WELCOME_KEY));
   const [fading, setFading] = useState(false);
 
   useEffect(() => {
-    if (!localStorage.getItem(WELCOME_KEY)) {
-      setVisible(true);
+    if (visible) {
       const fadeTimer = setTimeout(() => setFading(true), 2200);
       const hideTimer = setTimeout(() => {
         localStorage.setItem(WELCOME_KEY, '1');

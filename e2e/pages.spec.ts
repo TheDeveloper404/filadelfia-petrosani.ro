@@ -12,6 +12,7 @@ test.describe('LivePage', () => {
 
   test('shows live player or offline message', async ({ page }) => {
     await page.goto('/live');
+    await page.waitForLoadState('networkidle');
     const hasLive = await page.locator('iframe[title="Transmisie live"]').count();
     const hasOffline = await page.getByText(/nu se transmite live/i).count();
     const hasLastVideo = await page.locator('iframe[title="Ultimul program"]').count();
@@ -79,6 +80,8 @@ test.describe('StiriPage', () => {
 
   test('shows loading spinner then content', async ({ page }) => {
     await page.goto('/stiri');
+    // Wait for page chunk to render (heading appears)
+    await expect(page.getByRole('heading', { level: 1 })).toBeVisible({ timeout: 10000 });
     // Wait for spinner to disappear and content to load
     await expect(page.locator('.animate-spin')).not.toBeVisible({ timeout: 10000 });
     // Should show either articles or error message
@@ -134,6 +137,7 @@ test.describe('AdminPage', () => {
       sessionStorage.setItem('filadelfia_admin_unlocked', '1');
     });
     await page.reload();
+    await page.waitForLoadState('networkidle');
     await page.locator('[aria-label="Șterge eveniment"]').first().click();
     await expect(page.getByText(/confirmare ștergere/i)).toBeVisible();
     // Cancel — event stays
