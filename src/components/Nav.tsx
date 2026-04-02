@@ -24,6 +24,11 @@ export default function Nav() {
 
   useEffect(() => { setMenuOpen(false); }, [location.pathname]);
 
+  useEffect(() => {
+    document.body.style.overflow = menuOpen ? 'hidden' : '';
+    return () => { document.body.style.overflow = ''; };
+  }, [menuOpen]);
+
   const isHome = location.pathname === '/';
   const transparentMobile = isHome && !scrolled;
 
@@ -32,8 +37,8 @@ export default function Nav() {
       className={`top-0 z-50 transition-all duration-300 ${
         transparentMobile ? 'absolute md:sticky' : 'sticky'
       } ${
-        scrolled
-          ? 'bg-slate-900/95 backdrop-blur-xl border-b border-white/8 shadow-lg shadow-black/20'
+        scrolled || menuOpen
+          ? 'bg-slate-900 border-b border-white/8 shadow-lg shadow-black/20'
           : isHome
             ? 'bg-transparent md:bg-slate-900'
             : 'bg-slate-900'
