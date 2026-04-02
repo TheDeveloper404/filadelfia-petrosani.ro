@@ -47,17 +47,17 @@ test.describe('Navigation', () => {
   });
 
   test('Arhivă popup appears and closes', async ({ page }) => {
-    await page.goto('/');
-    await nav(page).getByText(/arhivă/i).click();
-    await expect(page.getByText(/arhivă predici/i)).toBeVisible();
+    await page.goto('/live');
+    await page.getByRole('button', { name: /vezi toate predicile/i }).click();
+    await expect(page.getByText(/vei fi direcționat/i)).toBeVisible();
     await page.getByRole('button', { name: /anulează/i }).click();
-    await expect(page.getByText(/arhivă predici/i)).not.toBeVisible();
+    await expect(page.getByText(/vei fi direcționat/i)).not.toBeVisible();
   });
 
   test('Arhivă popup opens YouTube on confirm', async ({ page, context }) => {
-    await page.goto('/');
-    await nav(page).getByText(/arhivă/i).click();
-    await expect(page.getByText(/arhivă predici/i)).toBeVisible();
+    await page.goto('/live');
+    await page.getByRole('button', { name: /vezi toate predicile/i }).click();
+    await expect(page.getByText(/vei fi direcționat/i)).toBeVisible();
     const [newPage] = await Promise.all([
       context.waitForEvent('page'),
       page.getByRole('button', { name: /deschide youtube/i }).click(),

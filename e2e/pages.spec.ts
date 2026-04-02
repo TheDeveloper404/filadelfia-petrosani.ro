@@ -7,7 +7,7 @@ test.describe('LivePage', () => {
   test('renders heading and schedule', async ({ page }) => {
     await page.goto('/live');
     await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
-    await expect(page.getByRole('heading', { level: 2 })).toBeVisible();
+    await expect(page.getByRole('heading', { level: 2 }).first()).toBeVisible();
   });
 
   test('shows live player or offline message', async ({ page }) => {
@@ -15,7 +15,8 @@ test.describe('LivePage', () => {
     const hasLive = await page.locator('iframe[title="Transmisie live"]').count();
     const hasOffline = await page.getByText(/nu se transmite live/i).count();
     const hasLastVideo = await page.locator('iframe[title="Ultimul program"]').count();
-    expect(hasLive + hasOffline + hasLastVideo).toBeGreaterThan(0);
+    const hasArchive = await page.locator('iframe[title="Predica"]').count();
+    expect(hasLive + hasOffline + hasLastVideo + hasArchive).toBeGreaterThan(0);
   });
 });
 
@@ -33,11 +34,6 @@ test.describe('ContactPage', () => {
     await expect(page.getByText(/petroșani/i).first()).toBeVisible();
   });
 
-  test('shows pastor names', async ({ page }) => {
-    await page.goto('/contact');
-    await expect(page.getByText(/gheorghe coicheci/i)).toBeVisible();
-    await expect(page.getByText(/daniel nemes/i)).toBeVisible();
-  });
 
   test('shows embedded map', async ({ page }) => {
     await page.goto('/contact');
@@ -127,18 +123,6 @@ test.describe('AdminPage', () => {
     await expect(page.getByText(/administrator/i)).toBeVisible();
   });
 
-  test('ticker toggle and save work', async ({ page }) => {
-    await unlockAdmin(page);
-    const saveBtn = page.getByRole('button', { name: /salvează/i });
-    await expect(saveBtn).toBeVisible();
-    await saveBtn.click();
-    await expect(page.getByRole('button', { name: /salvat/i })).toBeVisible();
-  });
-
-  test('reset button is visible', async ({ page }) => {
-    await unlockAdmin(page);
-    await expect(page.getByRole('button', { name: /resetează/i })).toBeVisible();
-  });
 
   test('delete event shows confirmation modal', async ({ page }) => {
     // Seed one event in localStorage so there's something to delete

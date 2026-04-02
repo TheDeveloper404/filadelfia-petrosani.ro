@@ -197,7 +197,7 @@ export default function HomePage() {
                   Evenimente
                 </p>
                 {upcomingEvents.length > 0 ? (
-                  <div className="max-h-[420px] overflow-y-auto space-y-3 pr-1">
+                  <div className="max-h-[420px] overflow-y-auto space-y-3 pr-1 overscroll-contain" style={{ WebkitOverflowScrolling: 'touch' }}>
                     {upcomingEvents.map(event => (
                       <EventCard key={event.id} {...event} />
                     ))}
