@@ -30,12 +30,11 @@ export default function Nav() {
   }, [menuOpen]);
 
   const isHome = location.pathname === '/';
-  const transparentMobile = isHome && !scrolled;
 
   return (
     <header
-      className={`top-0 z-50 transition-all duration-300 ${
-        transparentMobile ? 'absolute md:sticky' : 'sticky'
+      className={`top-0 z-50 w-full transition-all duration-300 ${
+        isHome ? 'fixed md:sticky' : 'sticky'
       } ${
         scrolled || menuOpen
           ? 'bg-slate-900 border-b border-white/8 shadow-lg shadow-black/20'
@@ -43,7 +42,6 @@ export default function Nav() {
             ? 'bg-transparent md:bg-slate-900'
             : 'bg-slate-900'
       }`}
-      style={{ width: '100%' }}
     >
       <Container className="flex items-center justify-between py-3">
         <Link to="/" className="flex items-center gap-3 text-3xl font-bold text-white hover:text-white">
