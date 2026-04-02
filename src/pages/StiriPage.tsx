@@ -6,7 +6,7 @@ import { WaveDivider } from '@/components/WaveDivider';
 const API_URL =
   'https://crestintotal.ro/wp-json/wp/v2/posts?categories=35117&per_page=4&orderby=date&order=desc&_fields=id,title,date,link,excerpt,jetpack_featured_media_url';
 const CACHE_KEY = 'filadelfia_stiri_cache';
-const CACHE_TTL = 48 * 60 * 60 * 1000;
+const CACHE_TTL = 2 * 60 * 60 * 1000;
 
 interface Article {
   id: number;
