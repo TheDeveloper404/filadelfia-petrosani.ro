@@ -27,6 +27,10 @@ export default function LivePlayer({ autoplay = false }: LivePlayerProps) {
   if (probablyLive) {
     return (
       <div className="rounded-3xl bg-white p-6 shadow-lg">
+        <p className="mb-4 flex items-center gap-2 text-sm text-slate-500">
+          <span className="h-2 w-2 animate-pulse rounded-full bg-red-500" />
+          Transmisie în direct
+        </p>
         <div className="aspect-video overflow-hidden rounded-3xl bg-slate-950">
           <iframe
             className="h-full w-full"
@@ -37,10 +41,6 @@ export default function LivePlayer({ autoplay = false }: LivePlayerProps) {
             loading="lazy"
           />
         </div>
-        <p className="mt-4 flex items-center gap-2 text-sm text-slate-500">
-          <span className="h-2 w-2 animate-pulse rounded-full bg-red-500" />
-          Transmisie în direct
-        </p>
       </div>
     );
   }

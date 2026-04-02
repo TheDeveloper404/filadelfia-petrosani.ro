@@ -12,7 +12,7 @@ test.describe('LivePage', () => {
 
   test('shows live player or offline message', async ({ page }) => {
     await page.goto('/live');
-    await page.waitForLoadState('networkidle');
+    await page.getByRole('heading', { level: 1 }).waitFor();
     const hasLive = await page.locator('iframe[title="Transmisie live"]').count();
     const hasOffline = await page.getByText(/nu se transmite live/i).count();
     const hasLastVideo = await page.locator('iframe[title="Ultimul program"]').count();

@@ -79,7 +79,7 @@ export default function Nav() {
       </Container>
 
       {/* Mobile menu — card cu margini */}
-      <div className="absolute left-0 right-0 top-full z-50 md:hidden px-4 pt-2 pb-4">
+      <div className={`absolute left-0 right-0 top-full z-50 md:hidden px-4 pt-2 pb-4 ${!menuOpen ? 'pointer-events-none' : ''}`}>
       <div
         className={`transition-all duration-300 ${
           menuOpen ? 'opacity-100 translate-y-0 pointer-events-auto' : 'opacity-0 -translate-y-2 pointer-events-none'

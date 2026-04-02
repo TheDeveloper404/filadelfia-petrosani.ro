@@ -161,6 +161,11 @@ export default function HomePage() {
                     : a.time.localeCompare(b.time);
                 }).map(service => {
                   const isNext = nextService?.service.id === service.id && nextService.daysUntil === 0;
+                  const now = new Date();
+                  const [sh, sm] = service.time.split(':').map(Number);
+                  const [eh, em] = service.endTime ? service.endTime.split(':').map(Number) : [sh + 2, 0];
+                  const cur = now.getHours() * 60 + now.getMinutes();
+                  const isLiveNow = service.isLive && now.getDay() === service.dayOfWeek && cur >= sh * 60 + (sm || 0) && cur < eh * 60 + (em || 0);
                   return (
                     <div
                       key={service.id}
@@ -178,7 +183,8 @@ export default function HomePage() {
                         {service.title}
                       </p>
                       {service.isLive && (
-                        <p className={`mt-0.5 text-[0.65rem] font-bold uppercase tracking-widest ${isNext ? 'text-secondary-foreground/60' : 'text-secondary'}`}>
+                        <p className={`mt-0.5 flex items-center gap-1.5 text-[0.65rem] font-bold uppercase tracking-widest ${isNext ? 'text-secondary-foreground/60' : 'text-secondary'}`}>
+                          {isLiveNow && <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-red-500 shrink-0" />}
                           live
                         </p>
                       )}
