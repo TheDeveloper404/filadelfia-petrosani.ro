@@ -138,7 +138,7 @@ export default function HomePage() {
         </div>
       </section>
       {/* ── Schedule + Events + Calendar ── */}
-      <section className="py-20 sm:py-24 bg-[#d4ab84]">
+      <section className="py-20 sm:py-24 bg-[#d4ab84] section-2-mobile">
         <Container>
           <div className="rounded-3xl bg-white shadow-sm border border-slate-200/80 overflow-hidden">
 

@@ -45,7 +45,7 @@ export default function Nav() {
     >
       <Container className="flex items-center justify-between py-3">
         <Link to="/" className="flex items-center gap-3 text-3xl font-bold text-white hover:text-white">
-          <img src="/logo.png" alt="Logo Filadelfia" className="h-12 w-12 object-contain" />
+          <img src="/logo.png" alt="Logo Filadelfia" className="h-12 w-12 object-contain" fetchPriority="high" />
           <span className="hidden sm:inline text-2xl sm:text-4xl">{siteConfig.churchName}</span>
         </Link>
 
