@@ -29,18 +29,10 @@ export default function Nav() {
     return () => { document.body.style.overflow = ''; };
   }, [menuOpen]);
 
-  const isHome = location.pathname === '/';
-
   return (
     <header
-      className={`top-0 z-50 w-full transition-all duration-300 ${
-        isHome ? 'fixed md:sticky' : 'sticky'
-      } ${
-        scrolled || menuOpen
-          ? `bg-slate-900 shadow-lg shadow-black/20${scrolled && !menuOpen ? ' border-b border-white/8' : ''}`
-          : isHome
-            ? 'bg-transparent md:bg-slate-900'
-            : 'bg-slate-900'
+      className={`sticky top-0 z-50 w-full bg-slate-900 transition-all duration-300 ${
+        scrolled ? 'border-b border-white/8 shadow-lg shadow-black/20' : ''
       }`}
     >
       <Container className="flex items-center justify-between py-3">
