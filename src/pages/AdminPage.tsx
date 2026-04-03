@@ -6,7 +6,7 @@ import { dbRead, dbWrite } from '@/lib/db';
 import PageMeta from '@/components/PageMeta';
 import defaultSchedule from '@/data/schedule.json';
 
-const ADMIN_PIN = '1526';
+const ADMIN_PIN = import.meta.env.VITE_ADMIN_PIN ?? '';
 const EVENTS_KEY = 'filadelfia_events';
 const SCHEDULE_KEY = 'filadelfia_schedule';
 const SESSION_KEY = 'filadelfia_admin_unlocked';

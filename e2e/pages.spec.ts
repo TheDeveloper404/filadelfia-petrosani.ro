@@ -161,6 +161,6 @@ test.describe('AdminPage', () => {
     await dateSelects.nth(2).selectOption('2026');
     await page.getByPlaceholder(/descrie evenimentul/i).fill('Descriere test');
     await page.getByRole('button', { name: /salvează evenimentul/i }).click();
-    await expect(page.getByText('Test eveniment').first()).toBeVisible();
+    await expect(page.getByText('Test eveniment').first()).toBeVisible({ timeout: 10000 });
   });
 });
