@@ -46,6 +46,16 @@ export function isUpcoming(dateString: string): boolean {
 }
 
 /**
+ * Returns true if today falls within the event's date range.
+ */
+export function isTodayEvent(dateString: string, endDateString: string | null): boolean {
+  const today = utcMidnight(new Date());
+  const start = parseUtcDate(dateString);
+  const end = endDateString ? parseUtcDate(endDateString) : start;
+  return today >= start && today <= end;
+}
+
+/**
  * Returns the number of days until an event (0 = today, negative = past).
  */
 export function daysUntil(dateString: string): number {
@@ -54,6 +64,7 @@ export function daysUntil(dateString: string): number {
   const diff = eventDate.getTime() - today.getTime();
   return Math.ceil(diff / (1000 * 60 * 60 * 24));
 }
+
 
 /**
  * Returns the current day index into a reading plan, based on plan start date.

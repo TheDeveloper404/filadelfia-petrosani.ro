@@ -9,13 +9,14 @@ interface EventCardProps {
   time: string | null;
   description: string;
   registrationUrl: string | null;
+  isToday?: boolean;
 }
 
-export default function EventCard({ title, date, endDate, time, description, registrationUrl }: EventCardProps) {
+export default function EventCard({ title, date, endDate, time, description, registrationUrl, isToday }: EventCardProps) {
   const dateDisplay = formatEventDateRange(date, endDate);
 
   return (
-    <Card className="overflow-hidden border-slate-200 transition hover:-translate-y-0.5 hover:shadow-lg">
+    <Card className={`overflow-hidden transition hover:-translate-y-0.5 hover:shadow-lg ${isToday ? 'border-secondary/40 bg-secondary/10 shadow-md shadow-secondary/15' : 'border-slate-100 bg-slate-50'}`}>
       <div className="space-y-2 p-5">
         <p className="text-[0.65rem] font-bold uppercase tracking-[0.18em] text-secondary">
           {dateDisplay}

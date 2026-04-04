@@ -6,7 +6,7 @@ import holidays from '@/data/holidays.json';
 import schedule from '@/data/schedule.json';
 import versesData from '@/data/verses.json';
 import { getVerseOfTheDay } from '@/utils/verse';
-import { isUpcoming } from '@/utils/date';
+import { isUpcoming, isTodayEvent } from '@/utils/date';
 import { getNextService } from '@/utils/schedule';
 import type { CustomEvent } from '@/pages/AdminPage';
 import { dbRead } from '@/lib/db';
@@ -171,19 +171,19 @@ export default function HomePage() {
                       key={service.id}
                       className={`rounded-2xl px-5 py-5 sm:px-7 sm:py-5 transition-all duration-200 cursor-default ${
                         isNext
-                          ? 'bg-secondary text-secondary-foreground shadow-md shadow-secondary/20 scale-[1.02] hover:scale-[1.05] hover:shadow-lg hover:shadow-secondary/30'
+                          ? 'border-secondary/40 bg-secondary/10 text-slate-900 shadow-md shadow-secondary/15'
                           : 'border border-slate-100 bg-slate-50 text-slate-700 hover:border-secondary/30 hover:bg-secondary/5 hover:shadow-md hover:scale-[1.02]'
                       }`}
                     >
-                      <p className={`text-xs font-bold uppercase tracking-widest ${isNext ? 'text-secondary-foreground/70' : 'text-slate-400'}`}>
+                      <p className={`text-xs font-bold uppercase tracking-widest ${isNext ? 'text-slate-500' : 'text-slate-400'}`}>
                         {service.dayLabel}&nbsp;·&nbsp;{service.time}
                         {service.endTime ? ` – ${service.endTime}` : ''}
                       </p>
-                      <p className={`mt-1 text-base font-bold ${isNext ? 'text-secondary-foreground' : 'text-slate-900'}`}>
+                      <p className={`mt-1 text-base font-bold ${isNext ? 'text-slate-900' : 'text-slate-900'}`}>
                         {service.title}
                       </p>
                       {service.isLive && (
-                        <p className={`mt-0.5 flex items-center gap-1.5 text-[0.65rem] font-bold uppercase tracking-widest ${isNext ? 'text-secondary-foreground/60' : 'text-secondary'}`}>
+                        <p className={`mt-0.5 flex items-center gap-1.5 text-[0.65rem] font-bold uppercase tracking-widest text-secondary`}>
                           {isLiveNow && <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-red-500 shrink-0" />}
                           live
                         </p>
@@ -205,7 +205,7 @@ export default function HomePage() {
                 {upcomingEvents.length > 0 ? (
                   <div className="max-h-[420px] overflow-y-auto space-y-3 pr-1 overscroll-contain" style={{ WebkitOverflowScrolling: 'touch' }}>
                     {upcomingEvents.map(event => (
-                      <EventCard key={event.id} {...event} />
+                      <EventCard key={event.id} {...event} isToday={isTodayEvent(event.date, event.endDate)} />
                     ))}
                   </div>
                 ) : (
