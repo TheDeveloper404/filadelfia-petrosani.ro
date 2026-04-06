@@ -15,12 +15,17 @@ function isStandalone(): boolean {
     || (navigator as Navigator & { standalone?: boolean }).standalone === true;
 }
 
+function isMobile(): boolean {
+  return /iphone|ipad|ipod|android/i.test(navigator.userAgent);
+}
+
 export default function InstallPrompt() {
   const [show, setShow] = useState(false);
   const [deferredPrompt, setDeferredPrompt] = useState<Event & { prompt: () => void } | null>(null);
   const os = getOS();
 
   useEffect(() => {
+    if (!isMobile()) return;
     if (isStandalone()) return;
     if (localStorage.getItem(STORAGE_KEY)) return;
 
