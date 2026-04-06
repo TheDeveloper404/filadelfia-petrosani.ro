@@ -21,6 +21,7 @@ export interface CustomEvent {
   description: string;
   registrationUrl: string | null;
   tags: string[];
+  isLive?: boolean;
 }
 
 export interface ScheduleService {
@@ -52,6 +53,7 @@ const emptyForm = () => ({
   location: '',
   description: '',
   registrationUrl: '',
+  isLive: false,
 });
 
 // ── Date / Time custom selects ──────────────────────────────────────────────
@@ -304,6 +306,7 @@ export default function AdminPage() {
       location: ev.location ?? '',
       description: ev.description,
       registrationUrl: ev.registrationUrl ?? '',
+      isLive: ev.isLive ?? false,
     });
     setShowForm(true);
     setFormError('');
@@ -324,6 +327,7 @@ export default function AdminPage() {
         location: form.location.trim() || null,
         description: form.description.trim(),
         registrationUrl: form.registrationUrl.trim() || null,
+        isLive: form.isLive,
       } : ev));
     } else {
       const newEvent: CustomEvent = {
@@ -336,6 +340,7 @@ export default function AdminPage() {
         description: form.description.trim(),
         registrationUrl: form.registrationUrl.trim() || null,
         tags: ['eveniment'],
+        isLive: form.isLive,
       };
       persistEvents([...events, newEvent]);
     }
@@ -630,6 +635,17 @@ export default function AdminPage() {
                     placeholder="Descrie evenimentul pe scurt..."
                     className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-800 outline-none transition focus:border-secondary focus:ring-2 focus:ring-secondary/20"
                   />
+                </div>
+
+                <div className="sm:col-span-2">
+                  <label className="flex cursor-pointer items-center gap-3">
+                    <div className="relative">
+                      <input type="checkbox" className="sr-only" checked={form.isLive} onChange={e => setForm(f => ({ ...f, isLive: e.target.checked }))} />
+                      <div className={`h-6 w-11 rounded-full transition-colors ${form.isLive ? 'bg-secondary' : 'bg-slate-300'}`} />
+                      <div className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform ${form.isLive ? 'translate-x-5' : 'translate-x-0.5'}`} />
+                    </div>
+                    <span className="text-sm font-semibold text-slate-700">Transmis live pe YouTube</span>
+                  </label>
                 </div>
 
                 <div className="sm:col-span-2">
