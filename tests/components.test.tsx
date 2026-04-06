@@ -26,7 +26,6 @@ describe('EventCard', () => {
     endDate: '2026-04-13',
     time: '10:00',
     description: 'Sărbătoarea Învierii.',
-    registrationUrl: null,
   };
 
   it('renders title and description', () => {
@@ -45,15 +44,6 @@ describe('EventCard', () => {
     expect(screen.queryByText('10:00')).not.toBeInTheDocument();
   });
 
-  it('renders registration link when provided', () => {
-    render(<EventCard {...base} registrationUrl="https://example.com" />);
-    expect(screen.getByRole('link', { name: /înregistrare/i })).toHaveAttribute('href', 'https://example.com');
-  });
-
-  it('does not render registration link when null', () => {
-    render(<EventCard {...base} />);
-    expect(screen.queryByRole('link', { name: /înregistrare/i })).not.toBeInTheDocument();
-  });
 
   it('shows date range for multi-day events', () => {
     render(<EventCard {...base} />);

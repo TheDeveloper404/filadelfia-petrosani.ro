@@ -8,12 +8,11 @@ interface EventCardProps {
   endDate: string | null;
   time: string | null;
   description: string;
-  registrationUrl: string | null;
   isLive?: boolean;
   isToday?: boolean;
 }
 
-export default function EventCard({ title, date, endDate, time, description, registrationUrl, isLive, isToday }: EventCardProps) {
+export default function EventCard({ title, date, endDate, time, description, isLive, isToday }: EventCardProps) {
   const dateDisplay = formatEventDateRange(date, endDate);
 
   return (
@@ -33,16 +32,6 @@ export default function EventCard({ title, date, endDate, time, description, reg
         )}
         <h3 className="text-lg font-semibold text-slate-900">{title}</h3>
         <p className="text-sm leading-6 text-slate-600">{description}</p>
-        {registrationUrl && (
-          <a
-            href={registrationUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex rounded-full bg-secondary px-4 py-1.5 text-xs font-bold text-secondary-foreground transition hover:bg-secondary/90"
-          >
-            Înregistrare
-          </a>
-        )}
       </div>
     </Card>
   );
