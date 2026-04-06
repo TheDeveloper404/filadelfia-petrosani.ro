@@ -4,6 +4,7 @@ import Nav from '@/components/Nav';
 import { WaveDivider } from '@/components/WaveDivider';
 import Footer from '@/components/Footer';
 import WelcomeModal from '@/components/WelcomeModal';
+import InstallPrompt from '@/components/InstallPrompt';
 import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/react';
 import { dbRead, dbWrite } from '@/lib/db';
@@ -40,6 +41,7 @@ export default function Layout({ children }: LayoutProps) {
   return (
     <div className="min-h-screen bg-slate-900 text-foreground antialiased">
       <WelcomeModal />
+      <InstallPrompt />
       <a href="#main-content" className="skip-link">
         Sari la conținut
       </a>
