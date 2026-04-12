@@ -7,7 +7,7 @@ import schedule from '@/data/schedule.json';
 import versesData from '@/data/verses.json';
 import { getVerseOfTheDay } from '@/utils/verse';
 import { isUpcoming, isTodayEvent } from '@/utils/date';
-import { getNextService } from '@/utils/schedule';
+import { getNextService, getServiceNextDate } from '@/utils/schedule';
 import type { CustomEvent } from '@/pages/AdminPage';
 import { dbRead } from '@/lib/db';
 
@@ -153,7 +153,7 @@ export default function HomePage() {
               <p className="mb-5 text-center text-base font-bold uppercase tracking-[0.3em] text-slate-700">
                 Program săptămânal
               </p>
-              <div className="grid grid-cols-2 gap-3 sm:flex sm:flex-wrap sm:justify-center">
+              <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:justify-center sm:items-stretch">
                 {[...services].sort((a, b) => {
                   const day = (d: number) => d === 0 ? 7 : d;
                   return day(a.dayOfWeek) !== day(b.dayOfWeek)
@@ -162,26 +162,27 @@ export default function HomePage() {
                 }).map(service => {
                   const isNext = nextService?.service.id === service.id && nextService.daysUntil === 0;
                   const now = new Date();
+                  const nextDate = getServiceNextDate(service, now);
+                  const dateLabel = `${String(nextDate.getDate()).padStart(2, '0')}.${String(nextDate.getMonth() + 1).padStart(2, '0')}`;
                   const [sh, sm] = service.time.split(':').map(Number);
                   const [eh, em] = service.endTime ? service.endTime.split(':').map(Number) : [sh + 2, 0];
                   const liveStart = (service as typeof service & { liveStartTime?: string }).liveStartTime ?? service.time;
                   const [lh, lm] = liveStart.split(':').map(Number);
                   const cur = now.getHours() * 60 + now.getMinutes();
-                  const isLiveNow = service.isLive && ((service as typeof service & { liveOverride?: boolean }).liveOverride || (now.getDay() === service.dayOfWeek && cur >= lh * 60 + (lm || 0) && cur < eh * 60 + (em || 0)));
+                  const isLiveNow = service.isLive && now.getDay() === service.dayOfWeek && cur >= lh * 60 + (lm || 0) && cur < eh * 60 + (em || 0);
                   return (
                     <div
                       key={service.id}
-                      className={`rounded-2xl px-5 py-5 sm:px-7 sm:py-5 transition-all duration-200 cursor-default ${
+                      className={`flex flex-col min-h-[7rem] rounded-2xl px-5 py-5 sm:px-7 sm:py-5 transition-all duration-200 cursor-default ${
                         isNext
                           ? 'border-secondary/40 bg-secondary/10 text-slate-900 shadow-md shadow-secondary/15'
                           : 'border border-slate-100 bg-slate-50 text-slate-700 hover:border-secondary/30 hover:bg-secondary/5 hover:shadow-md hover:scale-[1.02]'
                       }`}
                     >
-                      <p className={`text-xs font-bold uppercase tracking-widest ${isNext ? 'text-slate-500' : 'text-slate-400'}`}>
-                        {service.dayLabel}&nbsp;·&nbsp;{service.time}
-                        {service.endTime ? ` – ${service.endTime}` : ''}
+                      <p className={`text-xs font-bold uppercase tracking-wide ${isNext ? 'text-slate-500' : 'text-slate-400'}`}>
+                        {service.dayLabel}&nbsp;·&nbsp;{dateLabel}&nbsp;·&nbsp;{service.time}{service.endTime ? ` – ${service.endTime}` : ''}
                       </p>
-                      <p className={`mt-1 text-base font-bold ${isNext ? 'text-slate-900' : 'text-slate-900'}`}>
+                      <p className={`mt-1 flex-1 text-base font-bold text-slate-900`}>
                         {service.title}
                       </p>
                       {service.isLive && (

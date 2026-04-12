@@ -31,10 +31,33 @@ export interface ScheduleService {
   endTime: string | null;
   title: string;
   isLive: boolean;
-  liveOverride?: boolean;
+  specificDate?: string | null;
 }
 
-const DAY_LABELS_ADMIN = ['Duminică', 'Luni', 'Marți', 'Miercuri', 'Joi', 'Vineri', 'Sâmbătă'];
+const DAY_OPTIONS = [
+  { label: 'Luni', value: 1 },
+  { label: 'Marți', value: 2 },
+  { label: 'Miercuri', value: 3 },
+  { label: 'Joi', value: 4 },
+  { label: 'Vineri', value: 5 },
+  { label: 'Sâmbătă', value: 6 },
+  { label: 'Duminică', value: 0 },
+];
+const DAY_LABEL_MAP: Record<number, string> = { 0: 'Duminică', 1: 'Luni', 2: 'Marți', 3: 'Miercuri', 4: 'Joi', 5: 'Vineri', 6: 'Sâmbătă' };
+
+const dayOrder = (d: number) => d === 0 ? 7 : d;
+const sortServices = <T extends { dayOfWeek: number; time: string }>(list: T[]): T[] =>
+  [...list].sort((a, b) =>
+    dayOrder(a.dayOfWeek) !== dayOrder(b.dayOfWeek)
+      ? dayOrder(a.dayOfWeek) - dayOrder(b.dayOfWeek)
+      : a.time.localeCompare(b.time),
+  );
+
+const formatSpecificDate = (iso: string): string => {
+  const [y, m, d] = iso.split('-').map(Number);
+  const months = ['Ian', 'Feb', 'Mar', 'Apr', 'Mai', 'Iun', 'Iul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  return `${d} ${months[m - 1]} ${y}`;
+};
 
 const emptyServiceForm = () => ({
   dayOfWeek: '' as number | '',
@@ -42,6 +65,7 @@ const emptyServiceForm = () => ({
   endTime: '',
   title: '',
   isLive: false,
+  specificDate: '',
 });
 
 const emptyForm = () => ({
@@ -277,11 +301,12 @@ export default function AdminPage() {
 
     dbRead<ScheduleService[]>('schedule').then(remote => {
       if (remote !== undefined && Array.isArray(remote) && remote.length > 0) {
-        setServices(remote);
-        localStorage.setItem(SCHEDULE_KEY, JSON.stringify(remote));
+        const sorted = sortServices(remote);
+        setServices(sorted);
+        localStorage.setItem(SCHEDULE_KEY, JSON.stringify(sorted));
       } else {
         const stored = localStorage.getItem(SCHEDULE_KEY);
-        if (stored) { try { setServices(JSON.parse(stored)); } catch {} }
+        if (stored) { try { setServices(sortServices(JSON.parse(stored))); } catch {} }
       }
     });
   }, [unlocked]);
@@ -359,11 +384,6 @@ export default function AdminPage() {
     setTimeout(() => setBannerSaved(false), 2500);
   };
 
-  const handleToggleLiveOverride = (id: string) => {
-    const updated = services.map(s => s.id === id ? { ...s, liveOverride: !s.liveOverride } : s);
-    persistSchedule(updated);
-  };
-
   const handleLock = () => {
     sessionStorage.removeItem(SESSION_KEY);
     setUnlocked(false);
@@ -372,9 +392,7 @@ export default function AdminPage() {
   // ── Schedule handlers ──────────────────────────────────────────────────
 
   const persistSchedule = (list: ScheduleService[]) => {
-    const sorted = [...list].sort((a, b) =>
-      a.dayOfWeek !== b.dayOfWeek ? a.dayOfWeek - b.dayOfWeek : a.time.localeCompare(b.time),
-    );
+    const sorted = sortServices(list);
     setServices(sorted);
     localStorage.setItem(SCHEDULE_KEY, JSON.stringify(sorted));
     dbWrite('schedule', sorted);
@@ -382,7 +400,7 @@ export default function AdminPage() {
 
   const handleEditService = (svc: ScheduleService) => {
     setEditingServiceId(svc.id);
-    setServiceForm({ dayOfWeek: svc.dayOfWeek, time: svc.time, endTime: svc.endTime ?? '', title: svc.title, isLive: svc.isLive });
+    setServiceForm({ dayOfWeek: svc.dayOfWeek, time: svc.time, endTime: svc.endTime ?? '', title: svc.title, isLive: svc.isLive, specificDate: svc.specificDate ?? '' });
     setShowServiceForm(true);
     setServiceFormError('');
   };
@@ -395,17 +413,18 @@ export default function AdminPage() {
     const day = serviceForm.dayOfWeek as number;
     if (editingServiceId) {
       persistSchedule(services.map(s => s.id === editingServiceId ? {
-        ...s, dayOfWeek: day, dayLabel: DAY_LABELS_ADMIN[day],
+        ...s, dayOfWeek: day, dayLabel: DAY_LABEL_MAP[day],
         time: serviceForm.time, endTime: serviceForm.endTime || null,
         title: serviceForm.title.trim(), isLive: serviceForm.isLive,
+        specificDate: serviceForm.specificDate || null,
       } : s));
     } else {
       persistSchedule([...services, {
         id: `svc-${Date.now()}`,
-        dayOfWeek: day, dayLabel: DAY_LABELS_ADMIN[day],
+        dayOfWeek: day, dayLabel: DAY_LABEL_MAP[day],
         time: serviceForm.time, endTime: serviceForm.endTime || null,
         title: serviceForm.title.trim(), isLive: serviceForm.isLive,
-        tags: [],
+        specificDate: serviceForm.specificDate || null,
       } as ScheduleService]);
     }
 
@@ -736,20 +755,8 @@ export default function AdminPage() {
             <div className="border-b border-slate-100 bg-amber-50/40 px-8 py-6 space-y-4">
               <p className="text-xs font-bold uppercase tracking-[0.2em] text-slate-500">{editingServiceId ? 'Editează serviciu' : 'Serviciu nou'}</p>
               <div className="grid gap-4 sm:grid-cols-2">
-                <div>
-                  <label className="mb-1.5 block text-xs font-semibold text-slate-600">Zi <span className="text-red-500">*</span></label>
-                  <select
-                    value={serviceForm.dayOfWeek}
-                    onChange={e => setServiceForm(f => ({ ...f, dayOfWeek: e.target.value === '' ? '' : Number(e.target.value) }))}
-                    className={selectCls + ' w-full'}
-                  >
-                    <option value="">Selectează ziua</option>
-                    {DAY_LABELS_ADMIN.map((label, i) => (
-                      <option key={i} value={i}>{label}</option>
-                    ))}
-                  </select>
-                </div>
-                <div>
+                {/* Row 1: Titlu (full width) */}
+                <div className="sm:col-span-2">
                   <label className="mb-1.5 block text-xs font-semibold text-slate-600">Titlu <span className="text-red-500">*</span></label>
                   <input
                     type="text"
@@ -759,6 +766,32 @@ export default function AdminPage() {
                     className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-800 outline-none transition focus:border-secondary focus:ring-2 focus:ring-secondary/20"
                   />
                 </div>
+                {/* Row 2: Zi | Dată specifică */}
+                <div>
+                  <label className="mb-1.5 block text-xs font-semibold text-slate-600">Zi <span className="text-red-500">*</span></label>
+                  <select
+                    value={serviceForm.dayOfWeek}
+                    onChange={e => setServiceForm(f => ({ ...f, dayOfWeek: e.target.value === '' ? '' : Number(e.target.value) }))}
+                    className={selectCls + ' w-full'}
+                  >
+                    <option value="">Selectează ziua</option>
+                    {DAY_OPTIONS.map(opt => (
+                      <option key={opt.value} value={opt.value}>{opt.label}</option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="mb-1.5 block text-xs font-semibold text-slate-600">
+                    Dată specifică <span className="text-slate-400 font-normal">(opțional)</span>
+                  </label>
+                  <input
+                    type="date"
+                    value={serviceForm.specificDate}
+                    onChange={e => setServiceForm(f => ({ ...f, specificDate: e.target.value }))}
+                    className={selectCls + ' w-full'}
+                  />
+                </div>
+                {/* Row 3: Ora început | Ora sfârșit */}
                 <div>
                   <label className="mb-1.5 block text-xs font-semibold text-slate-600">Ora început <span className="text-red-500">*</span></label>
                   <TimeSelect value={serviceForm.time} onChange={v => setServiceForm(f => ({ ...f, time: v }))} />
@@ -767,6 +800,7 @@ export default function AdminPage() {
                   <label className="mb-1.5 block text-xs font-semibold text-slate-600">Ora sfârșit</label>
                   <TimeSelect value={serviceForm.endTime} onChange={v => setServiceForm(f => ({ ...f, endTime: v }))} />
                 </div>
+                {/* Row 4: Toggle live */}
                 <div className="sm:col-span-2">
                   <label className="flex cursor-pointer items-center gap-3">
                     <div className="relative">
@@ -795,26 +829,12 @@ export default function AdminPage() {
               <div key={svc.id} className="flex items-center justify-between gap-4 px-8 py-4">
                 <div className="min-w-0">
                   <p className="text-[0.65rem] font-bold uppercase tracking-wider text-secondary">
-                    {svc.dayLabel}&nbsp;·&nbsp;{svc.time}{svc.endTime ? ` – ${svc.endTime}` : ''}
+                    {svc.specificDate ? formatSpecificDate(svc.specificDate) : svc.dayLabel}&nbsp;·&nbsp;{svc.time}{svc.endTime ? ` – ${svc.endTime}` : ''}
                     {svc.isLive && <span className="ml-2 text-slate-400">· live</span>}
                   </p>
                   <p className="mt-0.5 font-semibold text-slate-900">{svc.title}</p>
                 </div>
-                <div className="flex shrink-0 items-center gap-3">
-                  {svc.isLive && (
-                    <button
-                      onClick={() => handleToggleLiveOverride(svc.id)}
-                      title={svc.liveOverride ? 'Dezactivează live forțat' : 'Forțează live acum'}
-                      className={`flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-bold transition ${
-                        svc.liveOverride
-                          ? 'bg-red-500 text-white hover:bg-red-600'
-                          : 'border border-slate-200 text-slate-400 hover:border-red-300 hover:text-red-500'
-                      }`}
-                    >
-                      {svc.liveOverride && <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-white shrink-0" />}
-                      {svc.liveOverride ? 'LIVE' : 'Forțează live'}
-                    </button>
-                  )}
+                <div className="flex shrink-0 items-center gap-1">
                   <button onClick={() => handleEditService(svc)} className="rounded-lg p-2 text-slate-400 transition hover:bg-secondary/10 hover:text-secondary">
                     <Pencil className="h-4 w-4" />
                   </button>
