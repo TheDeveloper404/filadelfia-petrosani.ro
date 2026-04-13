@@ -4,17 +4,15 @@ import siteConfig from '@/data/site-config.json';
 type LiveState = 'checking' | 'live' | 'offline';
 
 export default function LivePlayer() {
-  const [liveState, setLiveState] = useState<LiveState>('checking');
-  const iframeRef = useRef<HTMLIFrameElement>(null);
   const channelId = siteConfig.youtube.channelId;
   const uploadsPlaylist = channelId.replace(/^UC/, 'UU');
-
   const liveEmbedSrc = `https://www.youtube.com/embed/live_stream?channel=${channelId}&enablejsapi=1&rel=0&modestbranding=1`;
   const latestSrc = `https://www.youtube.com/embed?listType=playlist&list=${uploadsPlaylist}&rel=0&modestbranding=1`;
 
+  const [liveState, setLiveState] = useState<LiveState>('checking');
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+
   useEffect(() => {
-    // Once we confirm 'live', require 20s of continuous 'not live' signals before going offline.
-    // This prevents false drops caused by buffering/reconnect events mid-stream.
     let offlineTimer: ReturnType<typeof setTimeout> | null = null;
 
     const clearOfflineTimer = () => {
@@ -32,33 +30,30 @@ export default function LivePlayer() {
             setLiveState('live');
           } else if (isLive === false) {
             setLiveState(prev => {
-              if (prev === 'checking') {
-                // Still in initial check — go offline immediately
-                return 'offline';
-              }
-              // Already confirmed live — debounce before going offline
+              if (prev !== 'live') return 'offline';
+              // Confirmed live before — wait 30s of consistent offline signal
               if (!offlineTimer) {
                 offlineTimer = setTimeout(() => {
                   setLiveState('offline');
                   offlineTimer = null;
-                }, 20_000);
+                }, 30_000);
               }
               return prev;
             });
           }
         }
         if (data.event === 'onError') {
-          setLiveState(prev => prev === 'checking' ? 'offline' : prev);
+          setLiveState(prev => prev === 'live' ? prev : 'offline');
         }
       } catch { /* ignore non-JSON messages */ }
     };
 
     window.addEventListener('message', handleMessage);
 
-    // Fallback: if no detection after 8s, assume offline
+    // Give YouTube 15s to respond before assuming offline
     const fallback = setTimeout(() => {
       setLiveState(prev => prev === 'checking' ? 'offline' : prev);
-    }, 8000);
+    }, 15_000);
 
     return () => {
       window.removeEventListener('message', handleMessage);
@@ -69,11 +64,8 @@ export default function LivePlayer() {
 
   return (
     <div className="space-y-5">
-      {/* Status indicator */}
       <div className={`flex items-center gap-3 rounded-2xl border px-5 py-4 transition-colors ${
-        liveState === 'live'
-          ? 'border-red-200 bg-red-50'
-          : 'border-slate-200 bg-slate-50'
+        liveState === 'live' ? 'border-red-200 bg-red-50' : 'border-slate-200 bg-slate-50'
       }`}>
         {liveState === 'checking' && (
           <>
@@ -95,7 +87,6 @@ export default function LivePlayer() {
         )}
       </div>
 
-      {/* Player */}
       <div className="relative aspect-video overflow-hidden rounded-3xl bg-slate-950">
         <iframe
           ref={iframeRef}
