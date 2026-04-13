@@ -13,16 +13,43 @@ export default function LivePlayer() {
   const latestSrc = `https://www.youtube.com/embed?listType=playlist&list=${uploadsPlaylist}&rel=0&modestbranding=1`;
 
   useEffect(() => {
+    // Once we confirm 'live', require 20s of continuous 'not live' signals before going offline.
+    // This prevents false drops caused by buffering/reconnect events mid-stream.
+    let offlineTimer: ReturnType<typeof setTimeout> | null = null;
+
+    const clearOfflineTimer = () => {
+      if (offlineTimer) { clearTimeout(offlineTimer); offlineTimer = null; }
+    };
+
     const handleMessage = (event: MessageEvent) => {
       if (!String(event.origin).includes('youtube.com')) return;
       try {
         const data = JSON.parse(event.data as string);
         if (data.event === 'infoDelivery' && data.info) {
           const isLive = data.info.videoData?.isLive;
-          if (isLive === true) setLiveState('live');
-          else if (isLive === false) setLiveState('offline');
+          if (isLive === true) {
+            clearOfflineTimer();
+            setLiveState('live');
+          } else if (isLive === false) {
+            setLiveState(prev => {
+              if (prev === 'checking') {
+                // Still in initial check — go offline immediately
+                return 'offline';
+              }
+              // Already confirmed live — debounce before going offline
+              if (!offlineTimer) {
+                offlineTimer = setTimeout(() => {
+                  setLiveState('offline');
+                  offlineTimer = null;
+                }, 20_000);
+              }
+              return prev;
+            });
+          }
         }
-        if (data.event === 'onError') setLiveState('offline');
+        if (data.event === 'onError') {
+          setLiveState(prev => prev === 'checking' ? 'offline' : prev);
+        }
       } catch { /* ignore non-JSON messages */ }
     };
 
@@ -36,6 +63,7 @@ export default function LivePlayer() {
     return () => {
       window.removeEventListener('message', handleMessage);
       clearTimeout(fallback);
+      clearOfflineTimer();
     };
   }, []);
 
