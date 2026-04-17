@@ -3,13 +3,17 @@ import siteConfig from '@/data/site-config.json';
 
 type LiveState = 'checking' | 'live' | 'offline';
 
-export default function LivePlayer() {
+export default function LivePlayer({ onStateChange }: { onStateChange?: (live: boolean) => void }) {
   const channelId = siteConfig.youtube.channelId;
   const uploadsPlaylist = channelId.replace(/^UC/, 'UU');
   const liveEmbedSrc = `https://www.youtube.com/embed/live_stream?channel=${channelId}&enablejsapi=1&rel=0&modestbranding=1`;
   const latestSrc = `https://www.youtube.com/embed?listType=playlist&list=${uploadsPlaylist}&rel=0&modestbranding=1&autoplay=0`;
 
   const [liveState, setLiveState] = useState<LiveState>('checking');
+
+  useEffect(() => {
+    onStateChange?.(liveState === 'live');
+  }, [liveState]);
 
   useEffect(() => {
     let offlineTimer: ReturnType<typeof setTimeout> | null = null;
