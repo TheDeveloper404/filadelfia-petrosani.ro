@@ -3,72 +3,54 @@ import siteConfig from '@/data/site-config.json';
 
 type LiveState = 'checking' | 'live' | 'offline';
 
-export default function LivePlayer({ onStateChange }: { onStateChange?: (live: boolean) => void }) {
-  const channelId = siteConfig.youtube.channelId;
-  const uploadsPlaylist = channelId.replace(/^UC/, 'UU');
-  const liveEmbedSrc = `https://www.youtube.com/embed/live_stream?channel=${channelId}&enablejsapi=1&rel=0&modestbranding=1`;
-  const latestSrc = `https://www.youtube.com/embed?listType=playlist&list=${uploadsPlaylist}&rel=0&modestbranding=1&autoplay=0`;
+interface LiveStatus {
+  isLive: boolean;
+  videoId: string | null;
+  title: string | null;
+}
 
+const uploadsPlaylist = siteConfig.youtube.channelId.replace(/^UC/, 'UU');
+const latestSrc = `https://www.youtube.com/embed?listType=playlist&list=${uploadsPlaylist}&rel=0&modestbranding=1&autoplay=0`;
+
+export default function LivePlayer({ onStateChange }: { onStateChange?: (live: boolean) => void }) {
   const [liveState, setLiveState] = useState<LiveState>('checking');
+  const [videoId, setVideoId] = useState<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    fetch('/api/live-status')
+      .then(r => r.json() as Promise<LiveStatus>)
+      .then(data => {
+        if (cancelled) return;
+        if (data.isLive && data.videoId) {
+          setVideoId(data.videoId);
+          setLiveState('live');
+        } else {
+          setLiveState('offline');
+        }
+      })
+      .catch(() => {
+        if (!cancelled) setLiveState('offline');
+      });
+
+    return () => { cancelled = true; };
+  }, []);
 
   useEffect(() => {
     onStateChange?.(liveState === 'live');
   }, [liveState]);
 
-  useEffect(() => {
-    let offlineTimer: ReturnType<typeof setTimeout> | null = null;
-
-    const clearOfflineTimer = () => {
-      if (offlineTimer) { clearTimeout(offlineTimer); offlineTimer = null; }
-    };
-
-    const handleMessage = (event: MessageEvent) => {
-      if (!String(event.origin).includes('youtube.com')) return;
-      try {
-        const data = JSON.parse(event.data as string);
-        if (data.event === 'infoDelivery' && data.info) {
-          const isLive = data.info.videoData?.isLive;
-          if (isLive === true) {
-            clearOfflineTimer();
-            setLiveState('live');
-          } else if (isLive === false) {
-            setLiveState(prev => {
-              if (prev !== 'live') return 'offline';
-              if (!offlineTimer) {
-                offlineTimer = setTimeout(() => {
-                  setLiveState('offline');
-                  offlineTimer = null;
-                }, 30_000);
-              }
-              return prev;
-            });
-          }
-        }
-        if (data.event === 'onError') {
-          setLiveState(prev => prev === 'live' ? prev : 'offline');
-        }
-      } catch { /* ignore non-JSON */ }
-    };
-
-    window.addEventListener('message', handleMessage);
-    const fallback = setTimeout(() => {
-      setLiveState(prev => prev === 'checking' ? 'offline' : prev);
-    }, 15_000);
-
-    return () => {
-      window.removeEventListener('message', handleMessage);
-      clearTimeout(fallback);
-      clearOfflineTimer();
-    };
-  }, []);
+  const liveSrc = videoId
+    ? `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1`
+    : null;
 
   return (
     <div className="relative aspect-video overflow-hidden rounded-3xl bg-slate-950">
-      {/* Same key always — no remount, just src change to avoid pausing */}
       <iframe
         key="player"
         className="h-full w-full"
-        src={liveState === 'offline' ? latestSrc : liveEmbedSrc}
+        src={liveState === 'live' && liveSrc ? liveSrc : latestSrc}
         title={liveState === 'live' ? 'Transmisie live' : 'Ultimul program'}
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
         allowFullScreen
