@@ -22,10 +22,10 @@ export async function dbRead<T>(path: string): Promise<T | null | undefined> {
 export async function dbWrite<T>(path: string, data: T): Promise<void> {
   if (!BASE) return;
   try {
-    await fetch(`${BASE}/${path}.json`, {
-      method: 'PUT',
+    await fetch('/api/db-write', {
+      method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data),
+      body: JSON.stringify({ path, data }),
     });
   } catch {
     // network error — localStorage already saved locally
