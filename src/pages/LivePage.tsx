@@ -26,8 +26,10 @@ export default function LivePage() {
             Te invităm să urmărești programele noastre în direct.
           </p>
         </Container>
+        <div className="absolute inset-x-0 bottom-0 z-10">
+          <WaveDivider bottomColor="#d4ab84" height={70} />
+        </div>
       </section>
-      <WaveDivider bottomColor="#d4ab84" height={70} />
 
       {/* ── Player ── */}
       <section className="py-20 sm:py-24 bg-[#d4ab84]">
