@@ -18,7 +18,7 @@ export default function ContactPage() {
   const formRef = useRef<HTMLFormElement>(null);
   const [formState, setFormState] = useState<FormState>('idle');
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!formRef.current) return;
     setFormState('sending');
@@ -26,7 +26,8 @@ export default function ContactPage() {
       await emailjs.sendForm(SERVICE_ID, TEMPLATE_ID, formRef.current, { publicKey: PUBLIC_KEY });
       setFormState('success');
       formRef.current.reset();
-    } catch {
+    } catch (err) {
+      console.error('[EmailJS] error:', err);
       setFormState('error');
     }
   };
