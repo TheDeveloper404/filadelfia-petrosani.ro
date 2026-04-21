@@ -12,7 +12,7 @@ const PUBLIC_KEY  = import.meta.env.VITE_EMAILJS_PUBLIC_KEY  as string;
 
 type FormState = 'idle' | 'sending' | 'success' | 'error';
 
-const inputCls = 'w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-800 outline-none transition focus:border-secondary focus:ring-2 focus:ring-secondary/20 placeholder:text-slate-400';
+const inputCls = 'w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-base text-slate-800 outline-none transition focus:border-secondary focus:ring-2 focus:ring-secondary/20 placeholder:text-slate-400';
 
 export default function ContactPage() {
   const formRef = useRef<HTMLFormElement>(null);
