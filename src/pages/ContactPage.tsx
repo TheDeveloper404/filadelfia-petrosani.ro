@@ -47,14 +47,6 @@ export default function ContactPage() {
               {/* LEFT — Contact info */}
               <div className="p-4 sm:p-10 space-y-8">
 
-                {/* Address */}
-                <div>
-                  <p className="mb-3 text-base font-bold uppercase tracking-[0.3em] text-slate-700 text-center">Adresă</p>
-                  <div className="rounded-2xl border border-slate-200 bg-slate-50 px-7 py-5 text-center">
-                    <p className="text-lg font-semibold text-slate-800">{siteConfig.contact.address}</p>
-                  </div>
-                </div>
-
                 {/* Pastors */}
                 <div>
                   <p className="mb-3 text-base font-bold uppercase tracking-[0.3em] text-slate-700 text-center">Conducere</p>
@@ -125,8 +117,16 @@ export default function ContactPage() {
                 </div>
               </div>
 
-              {/* RIGHT — Map */}
-              <div className="p-4 sm:p-10">
+              {/* RIGHT — Address + Map */}
+              <div className="p-4 sm:p-10 space-y-6">
+                {/* Address */}
+                <div>
+                  <p className="mb-3 text-base font-bold uppercase tracking-[0.3em] text-slate-700 text-center">Adresă</p>
+                  <div className="rounded-2xl border border-slate-200 bg-slate-50 px-7 py-5 text-center">
+                    <p className="text-lg font-semibold text-slate-800">{siteConfig.contact.address}</p>
+                  </div>
+                </div>
+
                 <p className="mb-3 text-base font-bold uppercase tracking-[0.3em] text-slate-700 text-center">Harta locației</p>
                 {siteConfig.contact.mapEmbedUrl ? (
                   <div className="overflow-hidden rounded-2xl border border-slate-200">
