@@ -86,6 +86,8 @@ export default function ContactPage() {
                   </div>
                 </div>
 
+                <div className="border-t border-slate-100" />
+
                 {/* Secretariat */}
                 <div>
                   <p className="mb-3 text-base font-bold uppercase tracking-[0.3em] text-slate-700 text-center">Secretariat</p>
