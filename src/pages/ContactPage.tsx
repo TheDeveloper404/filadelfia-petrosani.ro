@@ -84,7 +84,7 @@ export default function ContactPage() {
                     <div className="flex items-center justify-between gap-4 py-4">
                       <div>
                         <p className="text-xs font-bold uppercase tracking-widest text-slate-400">Secretar</p>
-                        <p className="mt-1 text-base font-bold text-slate-900">Marco Chiș</p>
+                        <p className="mt-1 text-base font-bold text-slate-900">Marko Kiss</p>
                       </div>
                       <a
                         href="tel:+40769653161"
