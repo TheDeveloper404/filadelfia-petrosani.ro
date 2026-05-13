@@ -4,6 +4,7 @@ node_modules/
 # Build output
 dist/
 .astro/
+docs
 
 # Environment files — never commit
 .env

@@ -267,9 +267,6 @@ export default function AdminPage() {
   const [banner, setBanner] = useState({ active: false, message: '' });
   const [bannerSaved, setBannerSaved] = useState(false);
 
-  // Stats
-  const [stats, setStats] = useState<Record<string, number>>({});
-
   // Confirm delete
   const [confirmDelete, setConfirmDelete] = useState<{ type: 'event' | 'service'; id: string; label: string } | null>(null);
 
@@ -282,10 +279,6 @@ export default function AdminPage() {
 
     dbRead<{ active: boolean; message: string }>('maintenanceBanner').then(remote => {
       if (remote && typeof remote === 'object') setBanner(remote);
-    });
-
-    dbRead<Record<string, number>>('stats').then(remote => {
-      if (remote && typeof remote === 'object') setStats(remote);
     });
 
     dbRead<CustomEvent[]>('events').then(remote => {
@@ -548,35 +541,6 @@ export default function AdminPage() {
             </div>
           </div>
         </Card>
-
-        {/* ── Stats card ── */}
-        {(() => {
-          const today = new Date().toISOString().slice(0, 10);
-          const todayCount = stats[today] ?? 0;
-          const weekCount = Array.from({ length: 7 }, (_, i) => {
-            const d = new Date();
-            d.setDate(d.getDate() - i);
-            return stats[d.toISOString().slice(0, 10)] ?? 0;
-          }).reduce((a, b) => a + b, 0);
-          return (
-            <Card className="overflow-hidden p-0 lg:col-span-2">
-              <div className="border-b border-slate-100 bg-gradient-to-r from-slate-50 to-white px-8 py-6">
-                <h2 className="text-xl font-bold text-slate-900">Statistici vizitatori</h2>
-                <p className="mt-1 text-sm text-slate-500">Sesiuni unice — o sesiune per tab de browser.</p>
-              </div>
-              <div className="grid grid-cols-2 divide-x divide-slate-100 px-0">
-                <div className="px-8 py-6 text-center">
-                  <p className="text-4xl font-bold text-slate-900">{todayCount}</p>
-                  <p className="mt-1 text-sm font-semibold text-slate-500">Azi</p>
-                </div>
-                <div className="px-8 py-6 text-center">
-                  <p className="text-4xl font-bold text-slate-900">{weekCount}</p>
-                  <p className="mt-1 text-sm font-semibold text-slate-500">Ultimele 7 zile</p>
-                </div>
-              </div>
-            </Card>
-          );
-        })()}
 
         {/* ── Events card ── */}
         <Card className="overflow-hidden p-0">
