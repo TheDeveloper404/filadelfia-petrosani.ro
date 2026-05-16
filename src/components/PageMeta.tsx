@@ -7,7 +7,7 @@ interface PageMetaProps {
 
 export default function PageMeta({ title, description }: PageMetaProps) {
   useEffect(() => {
-    if (title.startsWith('Biserica Filadelfia')) {
+    if (title.startsWith('Biserica Filadelfia') || title.startsWith('Biserica Penticostală')) {
       document.title = title;
     } else {
       document.title = `Biserica Filadelfia | ${title.replace(/\s*[|—–-]+\s*(Biserica\s+)?Filadelfia\s*/i, '').trim()}`;

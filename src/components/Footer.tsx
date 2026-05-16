@@ -11,16 +11,19 @@ export default function Footer() {
 
       {/* ── Main grid ── */}
       <div className="border-b border-white/8">
-        <Container className="py-14 grid gap-0 md:grid-cols-[1fr_1px_1fr_1px_1fr]">
+        <Container className="py-14 grid gap-0 md:grid-cols-[1fr_1px_1fr_1px_1fr] max-w-[1400px]">
 
           {/* Col 1 — Brand */}
           <div className="flex flex-col items-center md:items-start gap-4 pr-0 md:pr-10 text-center md:text-left">
             <Link to="/" className="flex items-center gap-3 text-white hover:text-white w-fit">
-              <img src="/logo.png" alt="Logo Filadelfia" className="h-12 w-12 sm:h-16 sm:w-16 object-contain" />
-              <span className="text-4xl sm:text-4xl font-bold leading-tight">{siteConfig.churchName}</span>
+              <img src="/logo.png" alt="Logo Filadelfia" className="h-12 w-12 object-contain" />
+              <div className="flex flex-col leading-tight">
+                <span className="text-4xl font-bold text-white">Filadelfia</span>
+                <span className="text-xs font-medium tracking-widest text-slate-400 uppercase">Biserica Penticostală</span>
+              </div>
             </Link>
             <p className="text-xl text-slate-400 leading-relaxed">
-              O comunitate vie în prezența lui Dumnezeu
+              Prin ceea ce facem, căutăm să inspirăm oameni spre credință, speranță și o viață trăită alături de Hristos.
             </p>
           </div>
 
@@ -87,7 +90,7 @@ export default function Footer() {
 
       {/* ── Bottom bar ── */}
       <div className="py-4">
-        <Container className="text-center text-sm text-slate-700">
+        <Container className="text-center text-sm text-slate-700 max-w-[1400px]">
           <span onClick={() => setShowEgg(e => !e)} className="cursor-default select-none">
             &copy; {new Date().getFullYear()} {siteConfig.churchName}. Toate drepturile rezervate.
           </span>

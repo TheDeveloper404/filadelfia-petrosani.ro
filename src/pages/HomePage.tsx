@@ -75,7 +75,7 @@ export default function HomePage() {
 
   return (
     <div>
-      <PageMeta title="Biserica Filadelfia | Petroșani" description={siteConfig.description} />
+      <PageMeta title="Biserica Penticostală Filadelfia | Petroșani" description={siteConfig.description} />
 
       {/* ── Hero ── */}
       <section className="relative overflow-hidden bg-slate-900 text-white hero-full-height">
@@ -114,8 +114,8 @@ export default function HomePage() {
               <span className="mt-2 block text-2xl font-light tracking-[0.2em] text-slate-400 sm:text-4xl">— Petroșani —</span>
             </h1>
 
-            <p className="mt-6 max-w-xl text-2xl leading-9 text-slate-200">
-              {siteConfig.tagline}
+            <p className="mt-6 max-w-2xl text-xl leading-9 text-slate-200">
+              Indiferent dacă aveți o relație cu Isus de mult timp sau sunteți la început în descoperirea credinței, la Biserica Penticostală Filadelfia din Petroșani vă este alături pentru a vă sprijini în apropierea de Dumnezeu și în înțelegerea mântuirii oferite prin har.
             </p>
 
             <div className="mt-10 flex flex-col items-center gap-3 sm:flex-row">
@@ -148,12 +148,12 @@ export default function HomePage() {
               <h2 className="mt-2 text-4xl font-bold text-slate-900 sm:text-5xl">Program & Comunitate</h2>
             </div>
 
-            {/* Program săptămânal — horizontal strip */}
-            <div className="border-b border-slate-100 px-4 py-5 sm:px-10 sm:py-7">
-              <p className="mb-5 text-center text-base font-bold uppercase tracking-[0.3em] text-slate-700">
+            {/* Program săptămânal — list */}
+            <div className="border-b border-slate-100">
+              <p className="px-4 pt-6 pb-4 text-center text-base font-bold uppercase tracking-[0.3em] text-slate-700 sm:px-10">
                 Program săptămânal
               </p>
-              <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:justify-center sm:items-stretch">
+              <div className="grid gap-3 p-4 sm:grid-cols-2 sm:p-8">
                 {[...services].sort((a, b) => {
                   const day = (d: number) => d === 0 ? 7 : d;
                   return day(a.dayOfWeek) !== day(b.dayOfWeek)
@@ -173,23 +173,31 @@ export default function HomePage() {
                   return (
                     <div
                       key={service.id}
-                      className={`flex flex-col min-h-[7rem] rounded-2xl px-5 py-5 sm:px-7 sm:py-5 transition-all duration-200 cursor-default ${
+                      className={`relative overflow-hidden rounded-2xl border px-5 py-4 transition-all ${
                         isNext
-                          ? 'border-secondary/40 bg-secondary/10 text-slate-900 shadow-md shadow-secondary/15'
-                          : 'border border-slate-100 bg-slate-50 text-slate-700 hover:border-secondary/30 hover:bg-secondary/5 hover:shadow-md hover:scale-[1.02]'
+                          ? 'border-secondary/40 bg-secondary/8 shadow-sm shadow-secondary/10'
+                          : 'border-slate-100 bg-slate-50 hover:border-secondary/20 hover:bg-secondary/4'
                       }`}
                     >
-                      <p className={`text-xs font-bold uppercase tracking-wide ${isNext ? 'text-slate-500' : 'text-slate-400'}`}>
-                        {service.dayLabel}&nbsp;·&nbsp;{dateLabel}&nbsp;·&nbsp;{service.time}{service.endTime ? ` – ${service.endTime}` : ''}
-                      </p>
-                      <p className={`mt-1 flex-1 text-base font-bold text-slate-900`}>
-                        {service.title}
-                      </p>
-                      {service.isLive && (
-                        <p className={`mt-0.5 flex items-center gap-1.5 text-[0.65rem] font-bold uppercase tracking-widest text-secondary`}>
-                          {isLiveNow && <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-red-500 shrink-0" />}
-                          live
-                        </p>
+                      <div className="flex items-start justify-between gap-3">
+                        <div>
+                          <p className="text-xs font-bold uppercase tracking-widest text-secondary">{service.dayLabel} · {dateLabel}</p>
+                          <p className="mt-1.5 text-lg font-bold text-slate-900">{service.title}</p>
+                        </div>
+                        <div className="shrink-0 text-right">
+                          <p className="rounded-lg bg-white px-3 py-2 text-base font-semibold text-slate-700 shadow-sm border border-slate-100">
+                            {service.time}{service.endTime ? ` – ${service.endTime}` : ''}
+                          </p>
+                          {isLiveNow && (
+                            <p className="mt-1.5 flex items-center justify-end gap-1 text-[0.65rem] font-bold uppercase tracking-widest text-red-500">
+                              <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-red-500" />
+                              live
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                      {isNext && (
+                        <p className="mt-2 text-xs font-semibold text-secondary/70">Urmează</p>
                       )}
                     </div>
                   );
@@ -236,7 +244,7 @@ export default function HomePage() {
       <section className="py-20 sm:py-28 bg-[#d4ab84]">
         <Container>
           <div className="mx-auto max-w-3xl text-center">
-            <p className="text-base font-semibold uppercase tracking-[0.3em] text-slate-700">Cine suntem</p>
+            <p className="text-base font-semibold uppercase tracking-[0.3em] text-slate-700">Cine suntem?</p>
             <h2 className="mt-3 text-4xl font-bold sm:text-5xl text-slate-900">Misiunea Noastră</h2>
 
             <div className="mt-8 space-y-5 text-lg leading-8 text-slate-800">

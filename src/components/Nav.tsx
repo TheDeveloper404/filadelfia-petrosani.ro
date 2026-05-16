@@ -9,7 +9,7 @@ const navLinks = [
   { to: '/live', label: 'Live' },
   { to: '/despre-noi', label: 'Despre noi' },
   { to: '/plan-citire', label: 'Plan Biblic' },
-  { to: '/stiri', label: 'Știri' },
+  { to: '/stiri', label: 'Articole' },
   { to: '/contact', label: 'Contact' },
 ];
 
@@ -37,10 +37,13 @@ export default function Nav() {
         scrolled ? 'border-b border-white/8 shadow-lg shadow-black/20' : ''
       }`}
     >
-      <Container className="flex items-center justify-between py-3">
-        <Link to="/" className="flex items-center gap-3 text-3xl font-bold text-white hover:text-white">
+      <Container className="flex items-center justify-between py-3 max-w-[1400px]">
+        <Link to="/" className="flex items-center gap-3 text-white hover:text-white">
           <img src="/logo.png" alt="Logo Filadelfia" className="h-12 w-12 object-contain" fetchPriority="high" />
-          <span className="hidden sm:inline text-2xl sm:text-4xl">{siteConfig.churchName}</span>
+          <div className="hidden sm:flex flex-col leading-tight">
+            <span className="text-4xl font-bold text-white">Filadelfia</span>
+            <span className="text-xs font-medium tracking-widest text-slate-400 uppercase">Biserica Penticostală</span>
+          </div>
         </Link>
 
         {/* Desktop nav */}
@@ -51,7 +54,7 @@ export default function Nav() {
               <Link
                 key={link.to}
                 to={link.to}
-                className={`nav-link px-4 py-3 text-lg font-medium transition-colors duration-200 ${
+                className={`nav-link px-4 py-3 text-xl font-medium transition-colors duration-200 ${
                   active ? 'nav-active text-white' : 'text-slate-300 hover:text-white'
                 }`}
               >

@@ -4,9 +4,8 @@ import Container from '@/components/ui/container';
 import PageMeta from '@/components/PageMeta';
 import { WaveDivider } from '@/components/WaveDivider';
 
-const API_URL =
-  'https://crestintotal.ro/wp-json/wp/v2/posts?categories=35117&per_page=4&orderby=date&order=desc&_fields=id,title,date,link,excerpt,jetpack_featured_media_url';
-const CACHE_KEY = 'filadelfia_stiri_cache';
+const CATEGORY_SLUG = 'anunturi';
+const CACHE_KEY = 'filadelfia_articole_anunturi_cache';
 const CACHE_TTL = 2 * 60 * 60 * 1000;
 
 interface Article {
@@ -19,16 +18,9 @@ interface Article {
 }
 
 function stripHtml(html: string): string {
-  return html
-    .replace(/<[^>]*>/g, '')
-    .replace(/&nbsp;/g, ' ')
-    .replace(/&amp;/g, '&')
-    .replace(/&lt;/g, '<')
-    .replace(/&gt;/g, '>')
-    .replace(/&quot;/g, '"')
-    .replace(/&#039;/g, "'")
-    .replace(/\s+/g, ' ')
-    .trim();
+  const tmp = document.createElement('div');
+  tmp.innerHTML = html;
+  return (tmp.textContent ?? tmp.innerText ?? '').replace(/\s+/g, ' ').trim();
 }
 
 function formatDate(dateStr: string): string {
@@ -46,7 +38,15 @@ async function fetchArticles(): Promise<Article[]> {
     }
   } catch { /* ignore */ }
 
-  const res = await fetch(API_URL);
+  const catRes = await fetch(`https://crestintotal.ro/wp-json/wp/v2/categories?slug=${CATEGORY_SLUG}`);
+  if (!catRes.ok) throw new Error(`HTTP ${catRes.status}`);
+  const cats = await catRes.json();
+  if (!cats.length) throw new Error('Category not found');
+  const categoryId: number = cats[0].id;
+
+  const res = await fetch(
+    `https://crestintotal.ro/wp-json/wp/v2/posts?categories=${categoryId}&per_page=4&orderby=date&order=desc&_fields=id,title,date,link,excerpt,jetpack_featured_media_url`
+  );
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   const articles: Article[] = await res.json();
   localStorage.setItem(CACHE_KEY, JSON.stringify({ timestamp: Date.now(), articles }));
@@ -62,13 +62,13 @@ export default function StiriPage() {
   useEffect(() => {
     fetchArticles()
       .then(data => startTransition(() => setArticles(data)))
-      .catch(() => setError('Știrile nu pot fi încărcate momentan. Încearcă din nou mai târziu.'))
+      .catch(() => setError('Articolele nu pot fi încărcate momentan. Încearcă din nou mai târziu.'))
       .finally(() => setLoading(false));
   }, []);
 
   return (
     <div>
-      <PageMeta title="Știri — Filadelfia" description="Ultimele știri creștine de la crestintotal.ro" />
+      <PageMeta title="Articole — Filadelfia" description="Articole și anunțuri creștine de la crestintotal.ro" />
 
       {/* Hero */}
       <section className="relative overflow-hidden bg-slate-900 py-24 text-white">
@@ -79,7 +79,7 @@ export default function StiriPage() {
           <p className="mb-3 text-sm font-semibold uppercase tracking-[0.3em] text-slate-400">
             Actualitate creștină
           </p>
-          <h1 className="text-5xl font-bold tracking-tight sm:text-6xl md:text-7xl" style={{ color: '#d4ab84' }}>Știri</h1>
+          <h1 className="text-5xl font-bold tracking-tight sm:text-6xl md:text-7xl" style={{ color: '#d4ab84' }}>Articole</h1>
           <p className="mx-auto mt-4 max-w-lg text-xl leading-8 text-slate-300">
             Ultimele articole de la{' '}
             <a href="https://crestintotal.ro" target="_blank" rel="noopener noreferrer" className="text-secondary hover:underline">
@@ -98,7 +98,7 @@ export default function StiriPage() {
 
             <div className="border-b border-slate-100 px-4 py-6 sm:px-10 sm:py-8 text-center">
             <p className="mt-3 text-base font-semibold uppercase tracking-[0.3em]" style={{ color: '#d4ab84' }}>CITEȘTE ACUM</p>
-              <h2 className="mt-2 text-4xl font-bold text-slate-900 sm:text-5xl">Cele mai recente știri din lumea creștină</h2>
+              <h2 className="mt-2 text-4xl font-bold text-slate-900 sm:text-5xl">Cele mai recente articole din lumea creștină</h2>
             </div>
 
             <div className="p-4 sm:p-10">
@@ -107,7 +107,7 @@ export default function StiriPage() {
                   onClick={() => setShowPopup(true)}
                   className="inline-flex items-center gap-2 rounded-full bg-secondary px-6 py-3 text-sm font-bold text-secondary-foreground transition hover:bg-secondary/90 shadow-md shadow-secondary/20"
                 >
-                  Vezi toate știrile pe crestintotal.ro
+                  Vezi toate articolele pe crestintotal.ro
                 </button>
               </div>
               {loading && (
@@ -120,7 +120,7 @@ export default function StiriPage() {
                 <div className="rounded-2xl bg-slate-50 py-16 text-center">
                   <p className="text-sm font-semibold text-slate-500">{error}</p>
                   <a
-                    href="https://crestintotal.ro/category/stiri/"
+                    href="https://crestintotal.ro/category/anunturi/"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="mt-4 inline-flex items-center gap-2 rounded-full bg-secondary px-5 py-2.5 text-sm font-bold text-secondary-foreground transition hover:bg-secondary/90"
@@ -132,7 +132,7 @@ export default function StiriPage() {
 
               {!loading && !error && articles.length === 0 && (
                 <div className="rounded-2xl bg-slate-50 py-16 text-center">
-                  <p className="text-sm font-semibold text-slate-500">Nicio știre disponibilă momentan.</p>
+                  <p className="text-sm font-semibold text-slate-500">Niciun articol disponibil momentan.</p>
                 </div>
               )}
 
@@ -148,7 +148,7 @@ export default function StiriPage() {
                         className="group flex flex-col overflow-hidden rounded-2xl border border-slate-100 bg-white transition hover:border-secondary/30 hover:shadow-md"
                       >
                         {article.jetpack_featured_media_url && (
-                          <div className="h-48 overflow-hidden bg-slate-100">
+                          <div className="h-80 overflow-hidden bg-slate-100">
                             <img
                               src={article.jetpack_featured_media_url}
                               alt={stripHtml(article.title.rendered)}
@@ -190,14 +190,14 @@ export default function StiriPage() {
                   <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15v-4H7l5-8v4h4l-5 8z"/>
                 </svg>
               </span>
-              <h3 className="text-xl font-bold text-slate-900">Știri creștine</h3>
+              <h3 className="text-xl font-bold text-slate-900">Articole creștine</h3>
             </div>
             <p className="mt-3 text-base leading-7 text-slate-600">
               Vei fi direcționat către crestintotal.ro unde găsești toate știrile și articolele creștine.
             </p>
             <div className="mt-6 flex gap-3">
               <button
-                onClick={() => { setShowPopup(false); window.open('https://crestintotal.ro/category/stiri/', '_blank'); }}
+                onClick={() => { setShowPopup(false); window.open('https://crestintotal.ro/category/anunturi/', '_blank'); }}
                 className="flex-1 rounded-full bg-secondary px-5 py-2.5 text-sm font-bold text-secondary-foreground transition hover:bg-secondary/90"
               >
                 Deschide crestintotal.ro
