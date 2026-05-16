@@ -1,10 +1,16 @@
 import { useEffect, useRef } from 'react';
-import plan from '@/data/reading-plan.json';
+import planJson from '@/data/reading-plan.json';
 import PageMeta from '@/components/PageMeta';
 import { formatDateRo, getReadingPlanDayIndex } from '@/utils/date';
 import Container from '@/components/ui/container';
 import Badge from '@/components/ui/badge';
 import { WaveDivider } from '@/components/WaveDivider';
+
+interface ReadingEntry {
+  reading: string;
+}
+
+const plan = planJson as typeof planJson & { readings: ReadingEntry[] };
 
 export default function ReadingPlanPage() {
   const dayIndex = getReadingPlanDayIndex(plan.startDate, plan.readings.length);
@@ -60,7 +66,7 @@ export default function ReadingPlanPage() {
               <div className="flex flex-col items-center justify-center gap-6 p-8 sm:p-12 text-center">
                 <p className="text-xs font-bold uppercase tracking-[0.3em] text-slate-400">{todayLabel}</p>
                 <p className="text-5xl font-bold text-slate-900 leading-tight">
-                  {todayReading ? (todayReading as any).reading : '—'}
+                  {todayReading ? todayReading.reading : '—'}
                 </p>
                 <p className="text-sm text-slate-400">Ziua {dayIndex + 1} din {plan.readings.length}</p>
 
@@ -100,7 +106,7 @@ export default function ReadingPlanPage() {
                         <div className="flex items-center gap-3">
                           <span className="text-xs font-bold text-slate-400 w-14 shrink-0">Ziua {index + 1}</span>
                           <span className={`text-sm font-semibold ${isToday ? 'text-slate-900' : 'text-slate-700'}`}>
-                            {(row as any).reading}
+                            {row.reading}
                           </span>
                         </div>
                         {isToday ? <Badge>Astăzi</Badge> : isPast ? <span className="text-slate-400 text-sm">✓</span> : null}

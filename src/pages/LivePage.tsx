@@ -69,7 +69,7 @@ export default function LivePage() {
                 </button>
               </div>
               <div className="grid gap-6 sm:grid-cols-2 mt-10">
-                {['KQ_L_iq47zs', 'adU7LVlbv5A', 'Z14325kTf0E', '4rxOvnmSuu8', 'FJFZyKbFueI', 'sS6zzDwsVtY'].map(id => (
+                {siteConfig.youtube.featuredVideoIds.map(id => (
                   <div key={id} className="aspect-video overflow-hidden rounded-2xl bg-slate-950">
                     <iframe
                       className="h-full w-full"
