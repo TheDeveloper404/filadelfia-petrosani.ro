@@ -164,12 +164,6 @@ export default function HomePage() {
                   const now = new Date();
                   const nextDate = getServiceNextDate(service, now);
                   const dateLabel = `${String(nextDate.getDate()).padStart(2, '0')}.${String(nextDate.getMonth() + 1).padStart(2, '0')}`;
-                  const [sh, sm] = service.time.split(':').map(Number);
-                  const [eh, em] = service.endTime ? service.endTime.split(':').map(Number) : [sh + 2, 0];
-                  const liveStart = (service as typeof service & { liveStartTime?: string }).liveStartTime ?? service.time;
-                  const [lh, lm] = liveStart.split(':').map(Number);
-                  const cur = now.getHours() * 60 + now.getMinutes();
-                  const isLiveNow = service.isLive && now.getDay() === service.dayOfWeek && cur >= lh * 60 + (lm || 0) && cur < eh * 60 + (em || 0);
                   return (
                     <div
                       key={service.id}
@@ -188,12 +182,6 @@ export default function HomePage() {
                           <p className="rounded-lg bg-white px-3 py-2 text-base font-semibold text-slate-700 shadow-sm border border-slate-100">
                             {service.time}{service.endTime ? ` – ${service.endTime}` : ''}
                           </p>
-                          {isLiveNow && (
-                            <p className="mt-1.5 flex items-center justify-end gap-1 text-[0.65rem] font-bold uppercase tracking-widest text-red-500">
-                              <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-red-500" />
-                              live
-                            </p>
-                          )}
                         </div>
                       </div>
                       {isNext && (

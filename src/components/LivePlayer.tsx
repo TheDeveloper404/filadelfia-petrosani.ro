@@ -34,6 +34,7 @@ export default function LivePlayer({ onStateChange }: { onStateChange?: (live: b
         if (data.isLive && data.videoId) {
           setVideoId(data.videoId);
           setLiveState('live');
+          setPlaying(true);
         } else {
           setLiveState('offline');
         }

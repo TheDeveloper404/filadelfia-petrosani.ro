@@ -26,7 +26,10 @@ export default function ReadingPlanPage() {
     container.scrollBy({ top: row.getBoundingClientRect().top - container.getBoundingClientRect().top - container.clientHeight / 2 + row.clientHeight / 2, behavior });
   };
 
-  useEffect(() => { scrollToToday('instant'); }, []);
+  useEffect(() => {
+    const t = setTimeout(() => scrollToToday('instant'), 100);
+    return () => clearTimeout(t);
+  }, []);
 
   return (
     <div>
