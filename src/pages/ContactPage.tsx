@@ -1,10 +1,33 @@
+import { useState, useRef } from 'react';
+import emailjs from '@emailjs/browser';
 import siteConfig from '@/data/site-config.json';
 import PageMeta from '@/components/PageMeta';
 import Container from '@/components/ui/container';
 import { Button } from '@/components/ui/button';
 import { WaveDivider } from '@/components/WaveDivider';
 
+type FormState = 'idle' | 'sending' | 'success' | 'error';
+
 export default function ContactPage() {
+  const formRef = useRef<HTMLFormElement>(null);
+  const [formState, setFormState] = useState<FormState>('idle');
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setFormState('sending');
+    try {
+      await emailjs.sendForm(
+        import.meta.env.VITE_EMAILJS_SERVICE_ID,
+        import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
+        formRef.current!,
+        { publicKey: import.meta.env.VITE_EMAILJS_PUBLIC_KEY }
+      );
+      setFormState('success');
+      formRef.current?.reset();
+    } catch {
+      setFormState('error');
+    }
+  };
 
   return (
     <div>
@@ -168,15 +191,63 @@ export default function ContactPage() {
             </div>
 
             <div className="p-4 sm:p-10 max-w-2xl mx-auto">
-              <div className="flex flex-col items-center gap-4 py-12 text-center">
-                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-secondary/15">
-                  <svg className="h-8 w-8 text-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25H4.5a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5H4.5a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
-                  </svg>
+              {formState === 'success' ? (
+                <div className="flex flex-col items-center gap-4 py-12 text-center">
+                  <div className="flex h-16 w-16 items-center justify-center rounded-full bg-green-100">
+                    <svg className="h-8 w-8 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                    </svg>
+                  </div>
+                  <h3 className="text-xl font-bold text-slate-900">Mesaj trimis!</h3>
+                  <p className="text-slate-500 max-w-sm">Îți mulțumim. Te vom contacta în cel mai scurt timp posibil.</p>
+                  <button onClick={() => setFormState('idle')} className="mt-2 text-sm font-semibold text-secondary hover:underline">
+                    Trimite alt mesaj
+                  </button>
                 </div>
-                <h3 className="text-xl font-bold text-slate-900">Funcționalitate în curând</h3>
-                <p className="text-slate-500 max-w-sm">Formularul de contact va fi disponibil în curând. Până atunci ne poți contacta telefonic.</p>
-              </div>
+              ) : (
+                <form ref={formRef} onSubmit={handleSubmit} className="space-y-5">
+                  <div>
+                    <label className="mb-1.5 block text-sm font-semibold text-slate-700">Nume</label>
+                    <input
+                      type="text"
+                      name="name"
+                      required
+                      placeholder="Numele tău"
+                      className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-secondary focus:ring-2 focus:ring-secondary/20"
+                    />
+                  </div>
+                  <div>
+                    <label className="mb-1.5 block text-sm font-semibold text-slate-700">Email</label>
+                    <input
+                      type="email"
+                      name="email"
+                      required
+                      placeholder="email@exemplu.com"
+                      className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-secondary focus:ring-2 focus:ring-secondary/20"
+                    />
+                  </div>
+                  <div>
+                    <label className="mb-1.5 block text-sm font-semibold text-slate-700">Mesaj</label>
+                    <textarea
+                      name="message"
+                      required
+                      rows={5}
+                      placeholder="Scrie mesajul tău aici..."
+                      className="w-full resize-none rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-secondary focus:ring-2 focus:ring-secondary/20"
+                    />
+                  </div>
+                  {formState === 'error' && (
+                    <p className="text-sm font-semibold text-red-500">A apărut o eroare. Încearcă din nou sau contactează-ne telefonic.</p>
+                  )}
+                  <Button
+                    type="submit"
+                    disabled={formState === 'sending'}
+                    className="w-full bg-secondary text-secondary-foreground hover:bg-secondary/90"
+                  >
+                    {formState === 'sending' ? 'Se trimite...' : 'Trimite mesajul'}
+                  </Button>
+                </form>
+              )}
             </div>
           </div>
         </Container>
