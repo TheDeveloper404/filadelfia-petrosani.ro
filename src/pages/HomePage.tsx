@@ -228,35 +228,83 @@ export default function HomePage() {
         </Container>
       </section>
 
-      {/* ── Misiunea Noastră ── */}
+      {/* ── Misiune, Viziune și Valori ── */}
       <section className="py-20 sm:py-28 bg-[#d4ab84]">
         <Container>
-          <div className="mx-auto max-w-3xl text-center">
-            <p className="text-base font-semibold uppercase tracking-[0.3em] text-slate-700">Cine suntem?</p>
-            <h2 className="mt-3 text-4xl font-bold sm:text-5xl text-slate-900">Misiunea Noastră</h2>
 
-            <div className="mt-8 space-y-5 text-lg leading-8 text-slate-800">
-              <p>
-                Misiunea Bisericii Filadelfia este să-L onoreze pe Dumnezeu prin creșterea unor oameni transformați,
-                care trăiesc după modelul lui Cristos în fiecare aspect al vieții. Ne ghidăm după chemarea lui Isus
-                din Matei 28:19-20, asumându-ne responsabilitatea de a ajuta oamenii să devină ucenici, să își declare
-                credința prin botez și să trăiască în ascultare de învățătura Lui.
-              </p>
-              <p>
-                Ne dorim să construim o comunitate autentică, în care dragostea, maturitatea spirituală și generozitatea
-                nu sunt doar valori declarate, ci realități trăite, astfel încât gloria lui Dumnezeu să fie vizibilă
-                atât în biserică, cât și în afara ei.
-              </p>
+          {/* Section label */}
+          <div className="mb-12 text-center">
+            <p className="text-base font-semibold uppercase tracking-[0.3em] text-slate-700">Cine suntem?</p>
+          </div>
+
+          {/* Two columns */}
+          <div className="grid gap-12 lg:grid-cols-2 lg:gap-16 items-start">
+
+            {/* LEFT — title + image */}
+            <div className="flex flex-col items-center gap-14">
+              <h2 className="text-4xl font-bold text-slate-900 sm:text-5xl text-center">Misiune, Viziune și Valori</h2>
+              <img
+                src="/filadelfia.jpg"
+                alt="Biserica Penticostală Filadelfia Petroșani"
+                className="w-full rounded-3xl object-cover shadow-xl shadow-slate-900/20"
+                style={{ maxHeight: '400px' }}
+              />
+              <Link
+                to="/despre-noi"
+                className="inline-flex items-center gap-2 rounded-full bg-slate-900 px-7 py-3 text-sm font-bold text-white transition hover:bg-slate-800"
+              >
+                Află mai multe despre noi
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                </svg>
+              </Link>
             </div>
 
-            <blockquote className="mt-12 rounded-2xl border border-slate-900/15 bg-slate-900/10 px-6 py-8 sm:px-10">
-              <p className="text-base leading-8 text-slate-800 italic">
-                „Prin urmare, duceți-vă și faceți ucenici din toate neamurile, botezându-i în Numele Tatălui,
-                al Fiului și al Duhului Sfânt și învățându-i să păzească tot ce v-am poruncit! Și iată că Eu
-                sunt cu voi în toate zilele, până la sfârșitul veacului!"
-              </p>
-              <footer className="mt-4 text-sm font-bold tracking-wide text-slate-700">Matei 28:19-20</footer>
-            </blockquote>
+            {/* RIGHT — three sections */}
+            <div className="flex flex-col divide-y divide-slate-900/15">
+
+              {/* Misiune */}
+              <div className="pb-8">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="h-7 w-1 rounded-full bg-slate-900/40" />
+                  <h3 className="text-lg font-bold text-slate-900">Misiune</h3>
+                </div>
+                <p className="text-base leading-7 text-slate-800">
+                  Misiunea Bisericii Filadelfia este să-L onoreze pe Dumnezeu prin creșterea unor oameni
+                  transformați, care trăiesc după modelul lui Cristos în fiecare aspect al vieții. Ne ghidăm
+                  după chemarea lui Isus din Matei 28:19-20 — să facem ucenici, să-i botezăm și să-i învățăm
+                  să trăiască în ascultare de Cuvântul Lui.
+                </p>
+              </div>
+
+              {/* Viziune */}
+              <div className="py-8">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="h-7 w-1 rounded-full bg-slate-900/40" />
+                  <h3 className="text-lg font-bold text-slate-900">Viziune</h3>
+                </div>
+                <p className="text-base leading-7 text-slate-800">
+                  Să fim o biserică vie și relevantă, un loc în care fiecare om — indiferent de unde vine —
+                  poate întâlni pe Dumnezeu, poate crește în credință și poate contribui la transformarea
+                  comunității din Petroșani și a lumii din jur.
+                </p>
+              </div>
+
+              {/* Valori */}
+              <div className="pt-8">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="h-7 w-1 rounded-full bg-slate-900/40" />
+                  <h3 className="text-lg font-bold text-slate-900">Valori</h3>
+                </div>
+                <ul className="space-y-2 text-base leading-7 text-slate-800">
+                  <li className="flex items-start gap-2"><span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-slate-900/30" /><span><strong className="text-slate-900">Credință</strong> — ancorată în Biblie și trăită zilnic</span></li>
+                  <li className="flex items-start gap-2"><span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-slate-900/30" /><span><strong className="text-slate-900">Comunitate</strong> — autentică, primitoare și plină de dragoste</span></li>
+                  <li className="flex items-start gap-2"><span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-slate-900/30" /><span><strong className="text-slate-900">Slujire</strong> — cu bucurie, în Duh și în Adevăr</span></li>
+                  <li className="flex items-start gap-2"><span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-slate-900/30" /><span><strong className="text-slate-900">Generozitate</strong> — față de aproapele nostru și față de lume</span></li>
+                </ul>
+              </div>
+
+            </div>
           </div>
         </Container>
       </section>
