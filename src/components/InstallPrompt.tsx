@@ -20,6 +20,7 @@ function isMobile(): boolean {
 }
 
 export default function InstallPrompt() {
+  return null;
   const [show, setShow] = useState(false);
   const [deferredPrompt, setDeferredPrompt] = useState<Event & { prompt: () => void } | null>(null);
   const os = getOS();
