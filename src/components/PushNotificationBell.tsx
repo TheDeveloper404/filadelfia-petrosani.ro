@@ -16,22 +16,11 @@ export default function PushNotificationPrompt() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (!('serviceWorker' in navigator) || !('PushManager' in window) || !VAPID_PUBLIC) return;
-    if (Notification.permission === 'denied') return;
     if (localStorage.getItem(DISMISSED_KEY)) return;
+    if (!('Notification' in window)) return;
+    if (Notification.permission === 'denied') return;
 
-    // Check if already subscribed, then show popup after delay
-    const timer = setTimeout(async () => {
-      try {
-        const reg = await navigator.serviceWorker.ready;
-        const sub = await reg.pushManager.getSubscription();
-        if (!sub) setShow(true);
-      } catch {
-        // SW not available (dev mode) — show popup anyway
-        setShow(true);
-      }
-    }, 10_000);
-
+    const timer = setTimeout(() => setShow(true), 10_000);
     return () => clearTimeout(timer);
   }, []);
 
@@ -43,13 +32,17 @@ export default function PushNotificationPrompt() {
   const subscribe = async () => {
     setLoading(true);
     try {
+      if (!('serviceWorker' in navigator) || !('PushManager' in window) || !VAPID_PUBLIC) {
+        dismiss();
+        return;
+      }
       const permission = await Notification.requestPermission();
       if (permission !== 'granted') { dismiss(); return; }
 
       const reg = await navigator.serviceWorker.ready;
       const sub = await reg.pushManager.subscribe({
         userVisibleOnly: true,
-        applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC!).buffer as ArrayBuffer,
+        applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC).buffer as ArrayBuffer,
       });
       await fetch('/api/subscribe', {
         method: 'POST',
@@ -57,7 +50,7 @@ export default function PushNotificationPrompt() {
         body: JSON.stringify(sub.toJSON()),
       });
     } catch {
-      // user denied or error
+      // user denied or SW not ready — silently dismiss
     } finally {
       dismiss();
     }
