@@ -179,7 +179,7 @@ export default function HomePage() {
                           <p className="mt-1.5 text-lg font-bold text-slate-900">{service.title}</p>
                         </div>
                         <div className="shrink-0 text-right">
-                          <p className="rounded-lg bg-white px-3 py-2 text-base font-semibold text-slate-700 shadow-sm border border-slate-100">
+                          <p className="text-sm font-semibold text-slate-500 sm:rounded-lg sm:bg-white sm:px-3 sm:py-2 sm:text-base sm:text-slate-700 sm:shadow-sm sm:border sm:border-slate-100">
                             {service.time}{service.endTime ? ` – ${service.endTime}` : ''}
                           </p>
                         </div>
