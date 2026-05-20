@@ -109,12 +109,20 @@ export default function ContactPage() {
                         <p className="text-xs font-bold uppercase tracking-widest text-slate-400">Secretar</p>
                         <p className="mt-1 text-base font-bold text-slate-900">Marko Kiss</p>
                       </div>
-                      <a
-                        href="tel:+40769653161"
-                        className="shrink-0 rounded-full bg-secondary/10 border border-secondary/20 px-4 py-2 text-sm font-bold text-slate-800 transition hover:bg-secondary/20"
-                      >
-                        0769 653 161
-                      </a>
+                      <div className="flex flex-col items-end gap-2">
+                        <a
+                          href="tel:+40769653161"
+                          className="shrink-0 rounded-full bg-secondary/10 border border-secondary/20 px-4 py-2 text-sm font-bold text-slate-800 transition hover:bg-secondary/20"
+                        >
+                          0769 653 161
+                        </a>
+                        <a
+                          href="mailto:biserica.filadelfia96@gmail.com"
+                          className="shrink-0 rounded-full bg-secondary/10 border border-secondary/20 px-4 py-2 text-sm font-bold text-slate-800 transition hover:bg-secondary/20"
+                        >
+                          biserica.filadelfia96@gmail.com
+                        </a>
+                      </div>
                     </div>
                   </div>
                 </div>
