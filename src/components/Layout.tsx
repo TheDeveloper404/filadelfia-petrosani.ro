@@ -37,10 +37,14 @@ function MaintenancePage({ message }: { message: string }) {
 export default function Layout({ children }: LayoutProps) {
   const location = useLocation();
   const [maintenance, setMaintenance] = useState<{ active: boolean; message: string } | null>(null);
+  const [announcement, setAnnouncement] = useState<{ active: boolean; message: string } | null>(null);
 
   useEffect(() => {
     dbRead<{ active: boolean; message: string }>('maintenanceBanner').then(remote => {
       if (remote && typeof remote === 'object') setMaintenance(remote);
+    });
+    dbRead<{ active: boolean; message: string }>('announcementBanner').then(remote => {
+      if (remote && typeof remote === 'object') setAnnouncement(remote);
     });
   }, []);
 
@@ -71,6 +75,11 @@ export default function Layout({ children }: LayoutProps) {
         Sari la conținut
       </a>
       <Nav />
+      {announcement?.active && announcement.message && (
+        <div className="bg-amber-500 px-4 py-2.5 text-center text-sm font-semibold text-amber-950">
+          {announcement.message}
+        </div>
+      )}
       <main key={location.key} id="main-content" className="page-enter flex-1">
         {children}
         <div className="h-[70px] bg-[#d4ab84]" aria-hidden="true" />

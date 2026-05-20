@@ -263,9 +263,13 @@ export default function AdminPage() {
   const [serviceFormError, setServiceFormError] = useState('');
 
 
-  // Maintenance banner
+  // Maintenance mode (full-screen)
   const [banner, setBanner] = useState({ active: false, message: '' });
   const [bannerSaved, setBannerSaved] = useState(false);
+
+  // Announcement banner (live căzut / anunț)
+  const [announcement, setAnnouncement] = useState({ active: false, message: '' });
+  const [announcementSaved, setAnnouncementSaved] = useState(false);
 
   // Confirm delete
   const [confirmDelete, setConfirmDelete] = useState<{ type: 'event' | 'service'; id: string; label: string } | null>(null);
@@ -279,6 +283,10 @@ export default function AdminPage() {
 
     dbRead<{ active: boolean; message: string }>('maintenanceBanner').then(remote => {
       if (remote && typeof remote === 'object') setBanner(remote);
+    });
+
+    dbRead<{ active: boolean; message: string }>('announcementBanner').then(remote => {
+      if (remote && typeof remote === 'object') setAnnouncement(remote);
     });
 
     dbRead<CustomEvent[]>('events').then(remote => {
@@ -375,6 +383,12 @@ export default function AdminPage() {
     dbWrite('maintenanceBanner', banner);
     setBannerSaved(true);
     setTimeout(() => setBannerSaved(false), 2500);
+  };
+
+  const handleSaveAnnouncement = () => {
+    dbWrite('announcementBanner', announcement);
+    setAnnouncementSaved(true);
+    setTimeout(() => setAnnouncementSaved(false), 2500);
   };
 
   const handleLock = () => {
@@ -502,31 +516,31 @@ export default function AdminPage() {
 
       <div className="mx-auto max-w-6xl grid grid-cols-1 lg:grid-cols-2 gap-6 px-6 py-10 items-start">
 
-        {/* ── Maintenance banner card ── */}
+        {/* ── Maintenance mode card ── */}
         <Card className="overflow-hidden p-0 lg:col-span-2">
           <div className="border-b border-slate-100 bg-gradient-to-r from-slate-50 to-white px-8 py-6 flex items-center justify-between gap-4">
             <div>
-              <h2 className="text-xl font-bold text-slate-900">Mesaj de indisponibilitate</h2>
-              <p className="mt-1 text-sm text-slate-500">Banner afișat pe toate paginile — mentenanță, live căzut, anunț urgent.</p>
+              <h2 className="text-xl font-bold text-slate-900">Mod mentenanță</h2>
+              <p className="mt-1 text-sm text-slate-500">Afișează o pagină completă de mentenanță în locul site-ului. Adminul are acces în continuare la <code className="text-xs bg-slate-100 px-1 rounded">/admin</code>.</p>
             </div>
             <label className="flex cursor-pointer items-center gap-3 shrink-0">
-              <span className={`text-sm font-bold ${banner.active ? 'text-amber-600' : 'text-slate-400'}`}>
+              <span className={`text-sm font-bold ${banner.active ? 'text-red-600' : 'text-slate-400'}`}>
                 {banner.active ? 'Activ' : 'Inactiv'}
               </span>
               <div className="relative" onClick={() => setBanner(b => ({ ...b, active: !b.active }))}>
-                <div className={`h-7 w-14 rounded-full transition-colors ${banner.active ? 'bg-amber-500' : 'bg-slate-300'}`} />
+                <div className={`h-7 w-14 rounded-full transition-colors ${banner.active ? 'bg-red-500' : 'bg-slate-300'}`} />
                 <div className={`absolute top-1 h-5 w-5 rounded-full bg-white shadow transition-transform ${banner.active ? 'translate-x-8' : 'translate-x-1'}`} />
               </div>
             </label>
           </div>
           <div className="px-8 py-6 space-y-4">
             <div>
-              <label className="mb-1.5 block text-xs font-semibold text-slate-600">Mesaj</label>
+              <label className="mb-1.5 block text-xs font-semibold text-slate-600">Mesaj afișat pe pagina de mentenanță</label>
               <input
                 type="text"
                 value={banner.message}
                 onChange={e => setBanner(b => ({ ...b, message: e.target.value }))}
-                placeholder="ex: Livestream-ul nu este disponibil momentan. Revenim în curând."
+                placeholder="ex: Efectuăm câteva îmbunătățiri. Vă mulțumim pentru răbdare."
                 className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-800 outline-none transition focus:border-secondary focus:ring-2 focus:ring-secondary/20"
               />
             </div>
@@ -538,6 +552,46 @@ export default function AdminPage() {
                 Salvează
               </button>
               {bannerSaved && <span className="text-sm font-semibold text-green-600">✓ Salvat</span>}
+            </div>
+          </div>
+        </Card>
+
+        {/* ── Announcement banner card ── */}
+        <Card className="overflow-hidden p-0 lg:col-span-2">
+          <div className="border-b border-slate-100 bg-gradient-to-r from-slate-50 to-white px-8 py-6 flex items-center justify-between gap-4">
+            <div>
+              <h2 className="text-xl font-bold text-slate-900">Banner anunț</h2>
+              <p className="mt-1 text-sm text-slate-500">Banner discret afișat în partea de sus a site-ului — live căzut, anunț urgent, informație temporară.</p>
+            </div>
+            <label className="flex cursor-pointer items-center gap-3 shrink-0">
+              <span className={`text-sm font-bold ${announcement.active ? 'text-amber-600' : 'text-slate-400'}`}>
+                {announcement.active ? 'Activ' : 'Inactiv'}
+              </span>
+              <div className="relative" onClick={() => setAnnouncement(a => ({ ...a, active: !a.active }))}>
+                <div className={`h-7 w-14 rounded-full transition-colors ${announcement.active ? 'bg-amber-500' : 'bg-slate-300'}`} />
+                <div className={`absolute top-1 h-5 w-5 rounded-full bg-white shadow transition-transform ${announcement.active ? 'translate-x-8' : 'translate-x-1'}`} />
+              </div>
+            </label>
+          </div>
+          <div className="px-8 py-6 space-y-4">
+            <div>
+              <label className="mb-1.5 block text-xs font-semibold text-slate-600">Mesaj banner</label>
+              <input
+                type="text"
+                value={announcement.message}
+                onChange={e => setAnnouncement(a => ({ ...a, message: e.target.value }))}
+                placeholder="ex: Transmisia live nu este disponibilă momentan. Revenim în curând."
+                className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-800 outline-none transition focus:border-secondary focus:ring-2 focus:ring-secondary/20"
+              />
+            </div>
+            <div className="flex items-center gap-3">
+              <button
+                onClick={handleSaveAnnouncement}
+                className="rounded-full bg-secondary px-5 py-2.5 text-sm font-bold text-secondary-foreground transition hover:bg-secondary/90"
+              >
+                Salvează
+              </button>
+              {announcementSaved && <span className="text-sm font-semibold text-green-600">✓ Salvat</span>}
             </div>
           </div>
         </Card>
