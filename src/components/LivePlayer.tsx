@@ -35,6 +35,11 @@ export default function LivePlayer({ onStateChange }: { onStateChange?: (live: b
           setVideoId(data.videoId);
           setLiveState('live');
           setPlaying(true);
+          fetch('/api/notify-live', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ videoId: data.videoId, title: data.title }),
+          }).catch(() => {});
         } else {
           setLiveState('offline');
         }
