@@ -6,14 +6,40 @@ import Container from '@/components/ui/container';
 import { Button } from '@/components/ui/button';
 import { WaveDivider } from '@/components/WaveDivider';
 
-type FormState = 'idle' | 'sending' | 'success' | 'error';
+type FormState = 'idle' | 'sending' | 'success' | 'error' | 'ratelimit';
+
+const RATE_KEY = 'filadelfia_contact_sends';
+const MAX_PER_HOUR = 2;
+
+function checkRateLimit(): boolean {
+  try {
+    const stored = localStorage.getItem(RATE_KEY);
+    const timestamps: number[] = stored ? JSON.parse(stored) : [];
+    const oneHourAgo = Date.now() - 60 * 60 * 1000;
+    const recent = timestamps.filter(t => t > oneHourAgo);
+    return recent.length < MAX_PER_HOUR;
+  } catch {
+    return true;
+  }
+}
+
+function recordSend() {
+  try {
+    const stored = localStorage.getItem(RATE_KEY);
+    const timestamps: number[] = stored ? JSON.parse(stored) : [];
+    const oneHourAgo = Date.now() - 60 * 60 * 1000;
+    const recent = timestamps.filter(t => t > oneHourAgo);
+    localStorage.setItem(RATE_KEY, JSON.stringify([...recent, Date.now()]));
+  } catch {}
+}
 
 export default function ContactPage() {
   const formRef = useRef<HTMLFormElement>(null);
   const [formState, setFormState] = useState<FormState>('idle');
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (!checkRateLimit()) { setFormState('ratelimit'); return; }
     setFormState('sending');
     try {
       await emailjs.sendForm(
@@ -22,6 +48,7 @@ export default function ContactPage() {
         formRef.current!,
         { publicKey: import.meta.env.VITE_EMAILJS_PUBLIC_KEY }
       );
+      recordSend();
       setFormState('success');
       formRef.current?.reset();
     } catch {
@@ -246,6 +273,9 @@ export default function ContactPage() {
                   </div>
                   {formState === 'error' && (
                     <p className="text-sm font-semibold text-red-500">A apărut o eroare. Încearcă din nou sau contactează-ne telefonic.</p>
+                  )}
+                  {formState === 'ratelimit' && (
+                    <p className="text-sm font-semibold text-amber-600">Ai trimis prea multe mesaje într-o oră. Te rugăm să încerci mai târziu.</p>
                   )}
                   <Button
                     type="submit"
