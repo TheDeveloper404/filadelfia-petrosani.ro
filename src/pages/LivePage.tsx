@@ -5,6 +5,7 @@ import PageMeta from '@/components/PageMeta';
 import Container from '@/components/ui/container';
 import { WaveDivider } from '@/components/WaveDivider';
 import siteConfig from '@/data/site-config.json';
+import PushNotificationPrompt from '@/components/PushNotificationBell';
 
 export default function LivePage() {
   const [showPopup, setShowPopup] = useState(false);
@@ -12,6 +13,7 @@ export default function LivePage() {
 
   return (
     <div>
+      <PushNotificationPrompt />
       <PageMeta title="Live — Biserica Filadelfia" description="Urmărește transmisia noastră live." />
 
       {/* Hero */}

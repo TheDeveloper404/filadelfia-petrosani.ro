@@ -20,14 +20,19 @@ export default function PushNotificationPrompt() {
     if (Notification.permission === 'denied') return;
     if (localStorage.getItem(DISMISSED_KEY)) return;
 
-    navigator.serviceWorker.ready.then(reg =>
-      reg.pushManager.getSubscription()
-    ).then(sub => {
-      if (!sub) {
-        const timer = setTimeout(() => setShow(true), 20_000);
-        return () => clearTimeout(timer);
+    // Check if already subscribed, then show popup after delay
+    const timer = setTimeout(async () => {
+      try {
+        const reg = await navigator.serviceWorker.ready;
+        const sub = await reg.pushManager.getSubscription();
+        if (!sub) setShow(true);
+      } catch {
+        // SW not available (dev mode) — show popup anyway
+        setShow(true);
       }
-    }).catch(() => {});
+    }, 10_000);
+
+    return () => clearTimeout(timer);
   }, []);
 
   const dismiss = () => {
