@@ -17,8 +17,6 @@ export default function PushNotificationPrompt() {
 
   useEffect(() => {
     if (localStorage.getItem(DISMISSED_KEY)) return;
-    if (!('Notification' in window)) return;
-    if (Notification.permission === 'denied') return;
 
     const timer = setTimeout(() => setShow(true), 10_000);
     return () => clearTimeout(timer);
