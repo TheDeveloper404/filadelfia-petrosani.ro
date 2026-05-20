@@ -34,17 +34,34 @@ function MaintenancePage({ message }: { message: string }) {
   );
 }
 
+const MAINTENANCE_CACHE = 'filadelfia_maintenance';
+const ANNOUNCEMENT_CACHE = 'filadelfia_announcement';
+
+function readCache<T>(key: string): T | null {
+  try { const v = localStorage.getItem(key); return v ? JSON.parse(v) : null; } catch { return null; }
+}
+
 export default function Layout({ children }: LayoutProps) {
   const location = useLocation();
-  const [maintenance, setMaintenance] = useState<{ active: boolean; message: string } | null>(null);
-  const [announcement, setAnnouncement] = useState<{ active: boolean; message: string } | null>(null);
+  const [maintenance, setMaintenance] = useState<{ active: boolean; message: string } | null>(
+    () => readCache(MAINTENANCE_CACHE)
+  );
+  const [announcement, setAnnouncement] = useState<{ active: boolean; message: string } | null>(
+    () => readCache(ANNOUNCEMENT_CACHE)
+  );
 
   useEffect(() => {
     dbRead<{ active: boolean; message: string }>('maintenanceBanner').then(remote => {
-      if (remote && typeof remote === 'object') setMaintenance(remote);
+      if (remote && typeof remote === 'object') {
+        localStorage.setItem(MAINTENANCE_CACHE, JSON.stringify(remote));
+        setMaintenance(remote);
+      }
     });
     dbRead<{ active: boolean; message: string }>('announcementBanner').then(remote => {
-      if (remote && typeof remote === 'object') setAnnouncement(remote);
+      if (remote && typeof remote === 'object') {
+        localStorage.setItem(ANNOUNCEMENT_CACHE, JSON.stringify(remote));
+        setAnnouncement(remote);
+      }
     });
   }, []);
 
