@@ -271,11 +271,6 @@ export default function AdminPage() {
   const [announcement, setAnnouncement] = useState({ active: false, message: '' });
   const [announcementSaved, setAnnouncementSaved] = useState(false);
 
-  // Live control
-  const [liveControl, setLiveControl] = useState({ active: false, videoId: '', title: '' });
-  const [liveControlSaved, setLiveControlSaved] = useState(false);
-  const [notifyLoading, setNotifyLoading] = useState(false);
-  const [notifyResult, setNotifyResult] = useState<string | null>(null);
 
   // Confirm delete
   const [confirmDelete, setConfirmDelete] = useState<{ type: 'event' | 'service'; id: string; label: string } | null>(null);
@@ -293,10 +288,6 @@ export default function AdminPage() {
 
     dbRead<{ active: boolean; message: string }>('announcementBanner').then(remote => {
       if (remote && typeof remote === 'object') setAnnouncement(remote);
-    });
-
-    dbRead<{ active: boolean; videoId: string; title: string }>('liveStatus').then(remote => {
-      if (remote && typeof remote === 'object') setLiveControl(remote);
     });
 
     dbRead<CustomEvent[]>('events').then(remote => {
@@ -399,35 +390,6 @@ export default function AdminPage() {
     dbWrite('announcementBanner', announcement);
     setAnnouncementSaved(true);
     setTimeout(() => setAnnouncementSaved(false), 2500);
-  };
-
-  const handleSaveLiveControl = () => {
-    dbWrite('liveStatus', liveControl);
-    setLiveControlSaved(true);
-    setTimeout(() => setLiveControlSaved(false), 2500);
-  };
-
-  const handleNotifyLive = async () => {
-    setNotifyLoading(true);
-    setNotifyResult(null);
-    try {
-      const res = await fetch('/api/notify-live', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          videoId: liveControl.videoId || 'manual',
-          title: liveControl.title || null,
-        }),
-      });
-      const data = await res.json() as { sent?: number; skipped?: boolean };
-      if (data.skipped) setNotifyResult('Notificare deja trimisă recent.');
-      else setNotifyResult(`Trimis către ${data.sent ?? 0} abonați.`);
-    } catch {
-      setNotifyResult('Eroare la trimitere.');
-    } finally {
-      setNotifyLoading(false);
-      setTimeout(() => setNotifyResult(null), 4000);
-    }
   };
 
   const handleLock = () => {
@@ -635,65 +597,7 @@ export default function AdminPage() {
           </div>
         </Card>
 
-        {/* ── Live control card ── */}
-        <Card className="overflow-hidden p-0 lg:col-span-2">
-          <div className="border-b border-slate-100 bg-gradient-to-r from-slate-50 to-white px-8 py-6 flex items-center justify-between gap-4">
-            <div>
-              <h2 className="text-xl font-bold text-slate-900">Control Live</h2>
-              <p className="mt-1 text-sm text-slate-500">Activează manual live-ul pe site și trimite notificări abonaților.</p>
-            </div>
-            <label className="flex cursor-pointer items-center gap-3 shrink-0">
-              <span className={`text-sm font-bold ${liveControl.active ? 'text-red-600' : 'text-slate-400'}`}>
-                {liveControl.active ? '● Live' : 'Offline'}
-              </span>
-              <div className="relative" onClick={() => setLiveControl(l => ({ ...l, active: !l.active }))}>
-                <div className={`h-7 w-14 rounded-full transition-colors ${liveControl.active ? 'bg-red-500' : 'bg-slate-300'}`} />
-                <div className={`absolute top-1 h-5 w-5 rounded-full bg-white shadow transition-transform ${liveControl.active ? 'translate-x-8' : 'translate-x-1'}`} />
-              </div>
-            </label>
-          </div>
-          <div className="px-8 py-6 space-y-4">
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div>
-                <label className="mb-1.5 block text-xs font-semibold text-slate-600">ID Video YouTube <span className="font-normal text-slate-400">(opțional)</span></label>
-                <input
-                  type="text"
-                  value={liveControl.videoId}
-                  onChange={e => setLiveControl(l => ({ ...l, videoId: e.target.value.trim() }))}
-                  placeholder="ex: dQw4w9WgXcQ"
-                  className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-800 outline-none transition focus:border-secondary focus:ring-2 focus:ring-secondary/20"
-                />
-              </div>
-              <div>
-                <label className="mb-1.5 block text-xs font-semibold text-slate-600">Titlu transmisie <span className="font-normal text-slate-400">(opțional)</span></label>
-                <input
-                  type="text"
-                  value={liveControl.title}
-                  onChange={e => setLiveControl(l => ({ ...l, title: e.target.value }))}
-                  placeholder="ex: Serviciu Divin — Duminică dimineața"
-                  className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-800 outline-none transition focus:border-secondary focus:ring-2 focus:ring-secondary/20"
-                />
-              </div>
-            </div>
-            <div className="flex flex-wrap items-center gap-3">
-              <button
-                onClick={handleSaveLiveControl}
-                className="rounded-full bg-secondary px-5 py-2.5 text-sm font-bold text-secondary-foreground transition hover:bg-secondary/90"
-              >
-                Salvează
-              </button>
-              <button
-                onClick={handleNotifyLive}
-                disabled={notifyLoading}
-                className="rounded-full bg-slate-900 px-5 py-2.5 text-sm font-bold text-white transition hover:bg-slate-700 disabled:opacity-60"
-              >
-                {notifyLoading ? 'Se trimite...' : 'Trimite notificare abonaților'}
-              </button>
-              {liveControlSaved && <span className="text-sm font-semibold text-green-600">✓ Salvat</span>}
-              {notifyResult && <span className="text-sm font-semibold text-slate-600">{notifyResult}</span>}
-            </div>
-          </div>
-        </Card>
+
 
         {/* ── Events card ── */}
         <Card className="overflow-hidden p-0">
