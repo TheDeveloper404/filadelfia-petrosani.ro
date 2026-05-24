@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import siteConfig from '@/data/site-config.json';
+import { dbRead } from '@/lib/db';
 
 type LiveState = 'checking' | 'live' | 'offline';
 
@@ -24,28 +25,38 @@ export default function LivePlayer({ onStateChange }: { onStateChange?: (live: b
 
   useEffect(() => {
     let cancelled = false;
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 5000);
 
-    fetch('/api/live-status', { signal: controller.signal })
-      .then(r => r.json() as Promise<LiveStatus>)
-      .then(data => {
-        if (cancelled) return;
-        if (data.isLive && data.videoId) {
-          setVideoId(data.videoId);
-          setLiveState('live');
-          setPlaying(true);
-          fetch('/api/notify-live', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ videoId: data.videoId, title: data.title }),
-          }).catch(() => {});
-        } else {
-          setLiveState('offline');
-        }
-      })
-      .catch(() => { if (!cancelled) setLiveState('offline'); })
-      .finally(() => clearTimeout(timeout));
+    dbRead<{ active: boolean; videoId: string; title: string }>('liveStatus').then(adminStatus => {
+      if (cancelled) return;
+
+      // Admin override takes priority
+      if (adminStatus?.active) {
+        const vid = adminStatus.videoId || null;
+        setVideoId(vid);
+        setLiveState('live');
+        setPlaying(true);
+        return;
+      }
+
+      // Fallback: YouTube API check
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 5000);
+
+      fetch('/api/live-status', { signal: controller.signal })
+        .then(r => r.json() as Promise<LiveStatus>)
+        .then(data => {
+          if (cancelled) return;
+          if (data.isLive && data.videoId) {
+            setVideoId(data.videoId);
+            setLiveState('live');
+            setPlaying(true);
+          } else {
+            setLiveState('offline');
+          }
+        })
+        .catch(() => { if (!cancelled) setLiveState('offline'); })
+        .finally(() => clearTimeout(timeout));
+    });
 
     return () => {
       cancelled = true;
