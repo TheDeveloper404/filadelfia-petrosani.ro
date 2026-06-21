@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { Plus, Trash2, Lock, Pencil } from 'lucide-react';
+import { Plus, Trash2, Lock, Pencil, RefreshCw } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import siteConfig from '@/data/site-config.json';
 import { dbRead, dbWrite } from '@/lib/db';
@@ -10,6 +10,35 @@ const ADMIN_PIN = import.meta.env.VITE_ADMIN_PIN ?? '';
 const EVENTS_KEY = 'filadelfia_events';
 const SCHEDULE_KEY = 'filadelfia_schedule';
 const SESSION_KEY = 'filadelfia_admin_unlocked';
+
+// ── Status servicii ──────────────────────────────────────────────────────────
+const FIREBASE_URL = import.meta.env.VITE_FIREBASE_DB_URL as string | undefined;
+const EMAILJS_CONFIGURED = !!(
+  import.meta.env.VITE_EMAILJS_SERVICE_ID &&
+  import.meta.env.VITE_EMAILJS_TEMPLATE_ID &&
+  import.meta.env.VITE_EMAILJS_PUBLIC_KEY
+);
+const VAPID_CONFIGURED = !!import.meta.env.VITE_VAPID_PUBLIC_KEY;
+
+// 'ok' = ping real reușit · 'down' = nu răspunde · 'config' = configurat (netestat live)
+// 'unconfigured' = lipsesc variabilele · 'checking' = verificare în curs
+type SvcState = 'checking' | 'ok' | 'down' | 'config' | 'unconfigured';
+interface SvcResult { state: SvcState; detail?: string }
+
+const SVC_LABELS: { key: string; label: string; hint: string }[] = [
+  { key: 'firebase', label: 'Firebase (bază de date)', hint: 'Stochează evenimente, program, abonări push' },
+  { key: 'vercel', label: 'Funcții Vercel', hint: 'Detectare live YouTube + trimitere notificări' },
+  { key: 'emailjs', label: 'EmailJS', hint: 'Formularul de contact' },
+  { key: 'push', label: 'Notificări Push / VAPID', hint: 'Anunț automat când începe transmisia live' },
+];
+
+const STATUS_META: Record<SvcState, { dot: string; text: string; label: string }> = {
+  checking: { dot: 'bg-slate-300 animate-pulse', text: 'text-slate-400', label: 'Se verifică…' },
+  ok: { dot: 'bg-green-500', text: 'text-green-600', label: 'Funcționează' },
+  down: { dot: 'bg-red-500', text: 'text-red-600', label: 'Nu răspunde' },
+  config: { dot: 'bg-amber-400', text: 'text-amber-600', label: 'Configurat' },
+  unconfigured: { dot: 'bg-slate-300', text: 'text-slate-400', label: 'Neconfigurat' },
+};
 
 export interface CustomEvent {
   id: string;
@@ -279,8 +308,49 @@ export default function AdminPage() {
   const [lastDeleted, setLastDeleted] = useState<{ type: 'event' | 'service'; item: CustomEvent | ScheduleService; label: string } | null>(null);
   const undoTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  // Status servicii
+  const [svcStatus, setSvcStatus] = useState<Record<string, SvcResult>>({
+    firebase: { state: 'checking' }, vercel: { state: 'checking' },
+    emailjs: { state: 'checking' }, push: { state: 'checking' },
+  });
+  const [svcChecking, setSvcChecking] = useState(false);
+  const [svcLastChecked, setSvcLastChecked] = useState<Date | null>(null);
+
+  const checkServices = async () => {
+    setSvcChecking(true);
+
+    // Firebase — ping real: HEAD/GET shallow la root
+    const firebase: SvcResult = await (async () => {
+      if (!FIREBASE_URL) return { state: 'unconfigured' };
+      try {
+        const res = await fetch(`${FIREBASE_URL}/.json?shallow=true`);
+        return res.ok ? { state: 'ok' } : { state: 'down', detail: `HTTP ${res.status}` };
+      } catch { return { state: 'down', detail: 'fără răspuns' }; }
+    })();
+
+    // Funcții Vercel — ping real la /api/live-status (în dev local funcțiile lipsesc → va apărea „nu răspunde")
+    const vercel: SvcResult = await (async () => {
+      try {
+        const res = await fetch('/api/live-status');
+        if (!res.ok) return { state: 'down', detail: `HTTP ${res.status}` };
+        await res.json();
+        return { state: 'ok' };
+      } catch { return { state: 'down', detail: 'fără răspuns' }; }
+    })();
+
+    // EmailJS & Push — fără endpoint public de health, doar verificare config
+    const emailjs: SvcResult = EMAILJS_CONFIGURED ? { state: 'config' } : { state: 'unconfigured' };
+    const push: SvcResult = VAPID_CONFIGURED ? { state: 'config' } : { state: 'unconfigured' };
+
+    setSvcStatus({ firebase, vercel, emailjs, push });
+    setSvcLastChecked(new Date());
+    setSvcChecking(false);
+  };
+
   useEffect(() => {
     if (!unlocked) return;
+
+    checkServices();
 
     dbRead<{ active: boolean; message: string }>('maintenanceBanner').then(remote => {
       if (remote && typeof remote === 'object') setBanner(remote);
@@ -516,6 +586,52 @@ export default function AdminPage() {
       </div>
 
       <div className="mx-auto max-w-6xl grid grid-cols-1 lg:grid-cols-2 gap-6 px-6 py-10 items-start">
+
+        {/* ── Status servicii card ── */}
+        <Card className="overflow-hidden p-0 lg:col-span-2">
+          <div className="border-b border-slate-100 bg-gradient-to-r from-slate-50 to-white px-8 py-6 flex items-center justify-between gap-4">
+            <div>
+              <h2 className="text-xl font-bold text-slate-900">Status servicii</h2>
+              <p className="mt-1 text-sm text-slate-500">
+                Verifică dacă serviciile externe răspund.
+                {svcLastChecked && (
+                  <span className="text-slate-400"> Ultima verificare: {svcLastChecked.toLocaleTimeString('ro-RO')}.</span>
+                )}
+              </p>
+            </div>
+            <button
+              onClick={checkServices}
+              disabled={svcChecking}
+              className="flex shrink-0 items-center gap-2 rounded-full border border-slate-200 px-5 py-2.5 text-sm font-bold text-slate-700 transition hover:bg-slate-50 disabled:opacity-60"
+            >
+              <RefreshCw className={`h-4 w-4 ${svcChecking ? 'animate-spin' : ''}`} />
+              {svcChecking ? 'Se verifică…' : 'Verifică acum'}
+            </button>
+          </div>
+          <div className="divide-y divide-slate-100">
+            {SVC_LABELS.map(({ key, label, hint }) => {
+              const result = svcStatus[key] ?? { state: 'checking' as SvcState };
+              const meta = STATUS_META[result.state];
+              return (
+                <div key={key} className="flex items-center justify-between gap-4 px-8 py-4">
+                  <div className="min-w-0">
+                    <p className="font-semibold text-slate-900">{label}</p>
+                    <p className="text-xs text-slate-400">{hint}</p>
+                  </div>
+                  <div className="flex shrink-0 items-center gap-2.5">
+                    <span className={`text-sm font-semibold ${meta.text}`}>
+                      {meta.label}{result.detail ? ` (${result.detail})` : ''}
+                    </span>
+                    <span className={`h-2.5 w-2.5 rounded-full ${meta.dot}`} />
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+          <div className="border-t border-slate-100 bg-slate-50/60 px-8 py-3 text-xs text-slate-400">
+            🟡 „Configurat" = cheile sunt setate corect, dar serviciul nu are un test public de stare (EmailJS s-a validat manual prin formulare de test). 🔴 În dezvoltare locală, funcțiile Vercel nu rulează — starea reală se vede pe site-ul publicat.
+          </div>
+        </Card>
 
         {/* ── Maintenance mode card ── */}
         <Card className="overflow-hidden p-0 lg:col-span-2">
