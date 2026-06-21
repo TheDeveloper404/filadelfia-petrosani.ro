@@ -11,8 +11,7 @@ evenimente, transmisiuni live YouTube, plan de citire, știri, contact și notif
 - **React Router 6**
 - **Firebase Realtime Database** (prin REST, fără SDK) — conținut editabil din `/admin`
 - **EmailJS** — formularul de contact
-- **Web Push (VAPID)** — notificări live
-- **Vercel Functions** (`api/*.ts`) — detectare live YouTube + trimitere notificări push
+- **Vercel Functions** (`api/*.ts`) — detectare live YouTube
 - **PWA** prin `vite-plugin-pwa` (service worker, instalabilă pe telefon)
 - Hostat pe **Vercel**
 
@@ -53,11 +52,9 @@ bundle-ul client (sunt publice); restul sunt **doar pe server** (Vercel) și nu 
 | Variabilă | Folosită pentru |
 |---|---|
 | `VITE_FIREBASE_DB_URL` | URL-ul Realtime Database (citire conținut) |
-| `VITE_ADMIN_PIN` | PIN-ul de acces la `/admin` (4 cifre) |
 | `VITE_EMAILJS_SERVICE_ID` | EmailJS — formular contact |
 | `VITE_EMAILJS_TEMPLATE_ID` | EmailJS — formular contact |
 | `VITE_EMAILJS_PUBLIC_KEY` | EmailJS — formular contact |
-| `VITE_VAPID_PUBLIC_KEY` | Cheia publică VAPID (abonare push) |
 
 ### Server (doar Vercel — **nu** prefix `VITE_`)
 
@@ -65,24 +62,20 @@ bundle-ul client (sunt publice); restul sunt **doar pe server** (Vercel) și nu 
 |---|---|
 | `FIREBASE_DB_URL` | URL-ul Realtime Database (scriere din funcții) |
 | `FIREBASE_DB_SECRET` | Secret de acces la DB pentru funcții |
-| `VAPID_PUBLIC_KEY` | Cheia publică VAPID (trebuie identică cu `VITE_VAPID_PUBLIC_KEY`) |
-| `VAPID_PRIVATE_KEY` | Cheia privată VAPID |
-| `VAPID_SUBJECT` | Subiect `mailto:` pentru web-push |
+| `ADMIN_PIN` | PIN-ul de acces la `/admin` (4 cifre) — validat server-side |
+| `ADMIN_SESSION_SECRET` | Cheie aleatoare pentru semnarea cookie-ului de sesiune admin |
 | `YOUTUBE_API_KEY` | YouTube Data API — detectare live |
 | `YOUTUBE_CHANNEL_ID` | ID-ul canalului YouTube |
 
-> `VITE_VAPID_PUBLIC_KEY` și `VAPID_PUBLIC_KEY` trebuie să fie **exact aceeași cheie**,
-> altfel abonările push eșuează la trimitere.
+> Autentificarea de admin e server-side: `/api/admin-login` validează `ADMIN_PIN` și emite un
+> cookie semnat (HttpOnly), iar `/api/db-write` îl cere. PIN-ul **nu** mai e expus în client.
 
 ## Structură
 
 ```
 api/                 Vercel Functions (serverless)
   live-status.ts     detectează dacă există transmisie live pe YouTube
-  notify-live.ts     trimite notificările push când e live
-  subscribe.ts       salvează/șterge abonările push
   db-write.ts        scriere în Realtime Database
-  _notify.ts         logica de trimitere web-push
 src/
   pages/             paginile (Home, Live, Contact, Admin, Știri, Despre, Plan citire)
   components/         componente UI + Layout
@@ -94,8 +87,8 @@ src/
 
 Protejată cu PIN (`VITE_ADMIN_PIN`). De aici se editează: evenimente, program săptămânal,
 mod mentenanță, banner de anunț. Conține și un card **„Status servicii"** care verifică în
-timp real dacă Firebase și funcțiile Vercel răspund (EmailJS și Push se afișează ca
-„configurat" — nu au un endpoint public de stare).
+timp real dacă Firebase și funcțiile Vercel răspund (EmailJS se afișează ca
+„configurat" — nu are un endpoint public de stare).
 
 ## Deploy
 

@@ -6,7 +6,6 @@ import { dbRead, dbWrite } from '@/lib/db';
 import PageMeta from '@/components/PageMeta';
 import defaultSchedule from '@/data/schedule.json';
 
-const ADMIN_PIN = import.meta.env.VITE_ADMIN_PIN ?? '';
 const EVENTS_KEY = 'filadelfia_events';
 const SCHEDULE_KEY = 'filadelfia_schedule';
 const SESSION_KEY = 'filadelfia_admin_unlocked';
@@ -18,7 +17,6 @@ const EMAILJS_CONFIGURED = !!(
   import.meta.env.VITE_EMAILJS_TEMPLATE_ID &&
   import.meta.env.VITE_EMAILJS_PUBLIC_KEY
 );
-const VAPID_CONFIGURED = !!import.meta.env.VITE_VAPID_PUBLIC_KEY;
 
 // 'ok' = ping real reușit · 'down' = nu răspunde · 'config' = configurat (netestat live)
 // 'unconfigured' = lipsesc variabilele · 'checking' = verificare în curs
@@ -27,9 +25,8 @@ interface SvcResult { state: SvcState; detail?: string }
 
 const SVC_LABELS: { key: string; label: string; hint: string }[] = [
   { key: 'firebase', label: 'Firebase (bază de date)', hint: 'Stochează evenimente, program, abonări push' },
-  { key: 'vercel', label: 'Funcții Vercel', hint: 'Detectare live YouTube + trimitere notificări' },
+  { key: 'vercel', label: 'Funcții Vercel', hint: 'Detectare live YouTube' },
   { key: 'emailjs', label: 'EmailJS', hint: 'Formularul de contact' },
-  { key: 'push', label: 'Notificări Push / VAPID', hint: 'Anunț automat când începe transmisia live' },
 ];
 
 const STATUS_META: Record<SvcState, { dot: string; text: string; label: string }> = {
@@ -192,33 +189,48 @@ function TimeSelect({ value, onChange }: { value: string; onChange: (v: string) 
 
 function PinScreen({ onUnlock }: { onUnlock: () => void }) {
   const [digits, setDigits] = useState(['', '', '', '']);
-  const [error, setError] = useState(false);
+  const [error, setError] = useState('');
+  const [checking, setChecking] = useState(false);
   const inputRefs = useRef<(HTMLInputElement | null)[]>([null, null, null, null]);
 
+  const submitPin = async (pin: string) => {
+    setChecking(true);
+    setError('');
+    try {
+      const res = await fetch('/api/admin-login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ pin }),
+      });
+      if (res.ok) {
+        sessionStorage.setItem(SESSION_KEY, '1');
+        onUnlock();
+        return;
+      }
+      const body = await res.json().catch(() => ({}));
+      setError(body.error ?? 'Cod incorect. Încearcă din nou.');
+    } catch {
+      setError('Eroare de rețea. Încearcă din nou.');
+    } finally {
+      setChecking(false);
+      setDigits(['', '', '', '']);
+      setTimeout(() => inputRefs.current[0]?.focus(), 50);
+    }
+  };
+
   const handleDigit = (index: number, value: string) => {
-    if (!/^\d?$/.test(value)) return;
+    if (!/^\d?$/.test(value) || checking) return;
     const next = [...digits];
     next[index] = value;
     setDigits(next);
-    setError(false);
+    if (error) setError('');
 
     if (value && index < 3) {
       inputRefs.current[index + 1]?.focus();
     }
 
     if (next.every(d => d !== '')) {
-      const pin = next.join('');
-      if (pin === ADMIN_PIN) {
-        sessionStorage.setItem(SESSION_KEY, '1');
-        onUnlock();
-      } else {
-        setError(true);
-        setTimeout(() => {
-          setDigits(['', '', '', '']);
-          setError(false);
-          inputRefs.current[0]?.focus();
-        }, 700);
-      }
+      submitPin(next.join(''));
     }
   };
 
@@ -249,9 +261,10 @@ function PinScreen({ onUnlock }: { onUnlock: () => void }) {
               maxLength={1}
               value={digits[i]}
               autoFocus={i === 0}
+              disabled={checking}
               onChange={e => handleDigit(i, e.target.value)}
               onKeyDown={e => handleKeyDown(i, e)}
-              className={`h-16 w-14 rounded-2xl border-2 bg-slate-800 text-center text-2xl font-bold text-white outline-none transition
+              className={`h-16 w-14 rounded-2xl border-2 bg-slate-800 text-center text-2xl font-bold text-white outline-none transition disabled:opacity-50
                 ${error
                   ? 'border-red-500 bg-red-950/60'
                   : digits[i]
@@ -262,8 +275,11 @@ function PinScreen({ onUnlock }: { onUnlock: () => void }) {
           ))}
         </div>
 
-        {error && (
-          <p className="mt-5 text-sm font-semibold text-red-400">Cod incorect. Încearcă din nou.</p>
+        {checking && (
+          <p className="mt-5 text-sm font-semibold text-slate-400">Se verifică…</p>
+        )}
+        {error && !checking && (
+          <p className="mt-5 text-sm font-semibold text-red-400">{error}</p>
         )}
       </div>
     </div>
@@ -311,7 +327,7 @@ export default function AdminPage() {
   // Status servicii
   const [svcStatus, setSvcStatus] = useState<Record<string, SvcResult>>({
     firebase: { state: 'checking' }, vercel: { state: 'checking' },
-    emailjs: { state: 'checking' }, push: { state: 'checking' },
+    emailjs: { state: 'checking' },
   });
   const [svcChecking, setSvcChecking] = useState(false);
   const [svcLastChecked, setSvcLastChecked] = useState<Date | null>(null);
@@ -328,12 +344,15 @@ export default function AdminPage() {
     };
     const isTimeout = (e: unknown) => e instanceof DOMException && e.name === 'AbortError';
 
-    // Firebase — ping real: GET shallow la root
+    // Firebase — ping real pe o cale citibilă de app (rădăcina e protejată → ar da fals 401)
     const firebase: SvcResult = await (async () => {
       if (!FIREBASE_URL) return { state: 'unconfigured' };
       try {
-        const res = await fetchWithTimeout(`${FIREBASE_URL}/.json?shallow=true`);
-        return res.ok ? { state: 'ok' } : { state: 'down', detail: `HTTP ${res.status}` };
+        const res = await fetchWithTimeout(`${FIREBASE_URL}/events.json?shallow=true`);
+        if (res.ok) return { state: 'ok' };
+        // 401/403 = serviciul răspunde, dar regula blochează citirea — tot „viu"
+        if (res.status === 401 || res.status === 403) return { state: 'ok', detail: 'protejat' };
+        return { state: 'down', detail: `HTTP ${res.status}` };
       } catch (e) { return { state: 'down', detail: isTimeout(e) ? 'timeout' : 'fără răspuns' }; }
     })();
 
@@ -347,11 +366,10 @@ export default function AdminPage() {
       } catch (e) { return { state: 'down', detail: isTimeout(e) ? 'timeout' : 'fără răspuns' }; }
     })();
 
-    // EmailJS & Push — fără endpoint public de health, doar verificare config
+    // EmailJS — fără endpoint public de health, doar verificare config
     const emailjs: SvcResult = EMAILJS_CONFIGURED ? { state: 'config' } : { state: 'unconfigured' };
-    const push: SvcResult = VAPID_CONFIGURED ? { state: 'config' } : { state: 'unconfigured' };
 
-    setSvcStatus({ firebase, vercel, emailjs, push });
+    setSvcStatus({ firebase, vercel, emailjs });
     setSvcLastChecked(new Date());
     setSvcChecking(false);
   };
