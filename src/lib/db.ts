@@ -19,15 +19,22 @@ export async function dbRead<T>(path: string): Promise<T | null | undefined> {
   }
 }
 
-export async function dbWrite<T>(path: string, data: T): Promise<void> {
-  if (!BASE) return;
+// 'ok' = scris pe server · 'unauthorized' = sesiune lipsă/expirată (401)
+// 'error' = altă eroare de rețea/server · 'skipped' = Firebase neconfigurat
+export type DbWriteResult = 'ok' | 'unauthorized' | 'error' | 'skipped';
+
+export async function dbWrite<T>(path: string, data: T): Promise<DbWriteResult> {
+  if (!BASE) return 'skipped';
   try {
-    await fetch('/api/db-write', {
+    const res = await fetch('/api/db-write', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ path, data }),
     });
+    if (res.ok) return 'ok';
+    if (res.status === 401) return 'unauthorized';
+    return 'error';
   } catch {
-    // network error — localStorage already saved locally
+    return 'error'; // network error — localStorage already saved locally
   }
 }

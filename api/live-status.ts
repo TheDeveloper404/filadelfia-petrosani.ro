@@ -1,6 +1,10 @@
-// Vercel Serverless Function — YouTube live detection
+// Vercel Edge Function — YouTube live detection
 // Cost: 2 units/request (playlistItems.list + videos.list)
 // Cache: 30s at Vercel edge
+// runtime: 'edge' e OBLIGATORIU — handler-ul întoarce un Response (stil Fetch API);
+// fără el rulează pe Node și atârnă până la timeout (504).
+
+export const config = { runtime: 'edge' };
 
 const API_KEY = process.env.YOUTUBE_API_KEY ?? '';
 const CHANNEL_ID = process.env.YOUTUBE_CHANNEL_ID ?? 'UCgD-Qqh0_gQnBluzEEuPddw';

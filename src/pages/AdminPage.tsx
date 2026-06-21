@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { Plus, Trash2, Lock, Pencil, RefreshCw } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import siteConfig from '@/data/site-config.json';
-import { dbRead, dbWrite } from '@/lib/db';
+import { dbRead, dbWrite, type DbWriteResult } from '@/lib/db';
 import PageMeta from '@/components/PageMeta';
 import defaultSchedule from '@/data/schedule.json';
 
@@ -181,7 +181,7 @@ function TimeSelect({ value, onChange }: { value: string; onChange: (v: string) 
 
 // ── PIN Screen ─────────────────────────────────────────────────────────────
 
-function PinScreen({ onUnlock }: { onUnlock: () => void }) {
+function PinScreen({ onUnlock, notice }: { onUnlock: () => void; notice?: string }) {
   const [digits, setDigits] = useState(['', '', '', '']);
   const [error, setError] = useState('');
   const [checking, setChecking] = useState(false);
@@ -243,7 +243,10 @@ function PinScreen({ onUnlock }: { onUnlock: () => void }) {
           </div>
         </div>
         <h1 className="mb-2 text-2xl font-bold text-white">Zona Administrator</h1>
-        <p className="mb-10 text-slate-400 text-sm">Introdu codul de acces din 4 cifre</p>
+        <p className={`text-slate-400 text-sm ${notice ? 'mb-4' : 'mb-10'}`}>Introdu codul de acces din 4 cifre</p>
+        {notice && (
+          <p className="mb-8 mx-auto max-w-xs rounded-lg bg-amber-500/15 px-4 py-2 text-sm font-semibold text-amber-300">{notice}</p>
+        )}
 
         <div className="flex justify-center gap-3">
           {[0, 1, 2, 3].map(i => (
@@ -284,6 +287,20 @@ function PinScreen({ onUnlock }: { onUnlock: () => void }) {
 
 export default function AdminPage() {
   const [unlocked, setUnlocked] = useState(() => sessionStorage.getItem(SESSION_KEY) === '1');
+  const [authMsg, setAuthMsg] = useState('');
+  const [saveError, setSaveError] = useState('');
+
+  // Reacționează la rezultatul fiecărei scrieri pe server
+  const onWrite = (result: DbWriteResult) => {
+    if (result === 'unauthorized') {
+      sessionStorage.removeItem(SESSION_KEY);
+      setAuthMsg('Sesiunea a expirat. Autentifică-te din nou pentru a salva.');
+      setUnlocked(false);
+    } else if (result === 'error') {
+      setSaveError('Salvarea pe server a eșuat — modificarea e doar locală. Reîncearcă.');
+      setTimeout(() => setSaveError(''), 6000);
+    }
+  };
 
   // Events
   const [events, setEvents] = useState<CustomEvent[]>([]);
@@ -405,7 +422,7 @@ export default function AdminPage() {
   const persistEvents = (list: CustomEvent[]) => {
     setEvents(list);
     localStorage.setItem(EVENTS_KEY, JSON.stringify(list));
-    dbWrite('events', list);
+    dbWrite('events', list).then(onWrite);
   };
 
   const handleEditEvent = (ev: CustomEvent) => {
@@ -468,13 +485,13 @@ export default function AdminPage() {
   };
 
   const handleSaveBanner = () => {
-    dbWrite('maintenanceBanner', banner);
+    dbWrite('maintenanceBanner', banner).then(onWrite);
     setBannerSaved(true);
     setTimeout(() => setBannerSaved(false), 2500);
   };
 
   const handleSaveAnnouncement = () => {
-    dbWrite('announcementBanner', announcement);
+    dbWrite('announcementBanner', announcement).then(onWrite);
     setAnnouncementSaved(true);
     setTimeout(() => setAnnouncementSaved(false), 2500);
   };
@@ -490,7 +507,7 @@ export default function AdminPage() {
     const sorted = sortServices(list);
     setServices(sorted);
     localStorage.setItem(SCHEDULE_KEY, JSON.stringify(sorted));
-    dbWrite('schedule', sorted);
+    dbWrite('schedule', sorted).then(onWrite);
   };
 
   const handleEditService = (svc: ScheduleService) => {
@@ -579,7 +596,7 @@ export default function AdminPage() {
   // ── Render ─────────────────────────────────────────────────────────────
 
   if (!unlocked) {
-    return <PinScreen onUnlock={() => setUnlocked(true)} />;
+    return <PinScreen onUnlock={() => { setAuthMsg(''); setUnlocked(true); }} notice={authMsg} />;
   }
 
   return (
@@ -1015,6 +1032,13 @@ export default function AdminPage() {
         </Card>
 
       </div>
+
+      {/* ── Save error banner ── */}
+      {saveError && (
+        <div className="fixed top-6 left-1/2 z-50 -translate-x-1/2 rounded-2xl bg-red-600 px-6 py-3 shadow-xl">
+          <p className="text-sm font-semibold text-white">{saveError}</p>
+        </div>
+      )}
 
       {/* ── Undo banner ── */}
       {lastDeleted && (
