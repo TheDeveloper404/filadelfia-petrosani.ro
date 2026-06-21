@@ -12,11 +12,6 @@ const SESSION_KEY = 'filadelfia_admin_unlocked';
 
 // ── Status servicii ──────────────────────────────────────────────────────────
 const FIREBASE_URL = import.meta.env.VITE_FIREBASE_DB_URL as string | undefined;
-const EMAILJS_CONFIGURED = !!(
-  import.meta.env.VITE_EMAILJS_SERVICE_ID &&
-  import.meta.env.VITE_EMAILJS_TEMPLATE_ID &&
-  import.meta.env.VITE_EMAILJS_PUBLIC_KEY
-);
 
 // 'ok' = ping real reușit · 'down' = nu răspunde · 'config' = configurat (netestat live)
 // 'unconfigured' = lipsesc variabilele · 'checking' = verificare în curs
@@ -24,9 +19,8 @@ type SvcState = 'checking' | 'ok' | 'down' | 'config' | 'unconfigured';
 interface SvcResult { state: SvcState; detail?: string }
 
 const SVC_LABELS: { key: string; label: string; hint: string }[] = [
-  { key: 'firebase', label: 'Firebase (bază de date)', hint: 'Stochează evenimente, program, abonări push' },
-  { key: 'vercel', label: 'Funcții Vercel', hint: 'Detectare live YouTube' },
-  { key: 'emailjs', label: 'EmailJS', hint: 'Formularul de contact' },
+  { key: 'firebase', label: 'Firebase (bază de date)', hint: 'Stochează evenimente și program' },
+  { key: 'vercel', label: 'Funcții Vercel', hint: 'Detectare live YouTube, contact, login admin' },
 ];
 
 const STATUS_META: Record<SvcState, { dot: string; text: string; label: string }> = {
@@ -327,7 +321,6 @@ export default function AdminPage() {
   // Status servicii
   const [svcStatus, setSvcStatus] = useState<Record<string, SvcResult>>({
     firebase: { state: 'checking' }, vercel: { state: 'checking' },
-    emailjs: { state: 'checking' },
   });
   const [svcChecking, setSvcChecking] = useState(false);
   const [svcLastChecked, setSvcLastChecked] = useState<Date | null>(null);
@@ -366,10 +359,7 @@ export default function AdminPage() {
       } catch (e) { return { state: 'down', detail: isTimeout(e) ? 'timeout' : 'fără răspuns' }; }
     })();
 
-    // EmailJS — fără endpoint public de health, doar verificare config
-    const emailjs: SvcResult = EMAILJS_CONFIGURED ? { state: 'config' } : { state: 'unconfigured' };
-
-    setSvcStatus({ firebase, vercel, emailjs });
+    setSvcStatus({ firebase, vercel });
     setSvcLastChecked(new Date());
     setSvcChecking(false);
   };
@@ -1020,7 +1010,7 @@ export default function AdminPage() {
             })}
           </div>
           <div className="border-t border-slate-100 bg-slate-50/60 px-8 py-3 text-xs text-slate-400">
-            🟡 „Configurat" = cheile sunt setate corect, dar serviciul nu are un test public de stare (EmailJS s-a validat manual prin formulare de test). 🔴 În dezvoltare locală, funcțiile Vercel nu rulează — starea reală se vede pe site-ul publicat.
+            🔴 În dezvoltare locală, funcțiile Vercel nu rulează (apare „Nu răspunde") — starea reală se vede pe site-ul publicat. „Funcții Vercel" acoperă live YouTube, formularul de contact și login-ul de admin.
           </div>
         </Card>
 

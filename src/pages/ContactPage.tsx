@@ -1,5 +1,4 @@
 import { useState, useRef } from 'react';
-import emailjs from '@emailjs/browser';
 import siteConfig from '@/data/site-config.json';
 import PageMeta from '@/components/PageMeta';
 import Container from '@/components/ui/container';
@@ -8,49 +7,30 @@ import { WaveDivider } from '@/components/WaveDivider';
 
 type FormState = 'idle' | 'sending' | 'success' | 'error' | 'ratelimit';
 
-const RATE_KEY = 'filadelfia_contact_sends';
-const MAX_PER_HOUR = 2;
-
-function checkRateLimit(): boolean {
-  try {
-    const stored = localStorage.getItem(RATE_KEY);
-    const timestamps: number[] = stored ? JSON.parse(stored) : [];
-    const oneHourAgo = Date.now() - 60 * 60 * 1000;
-    const recent = timestamps.filter(t => t > oneHourAgo);
-    return recent.length < MAX_PER_HOUR;
-  } catch {
-    return true;
-  }
-}
-
-function recordSend() {
-  try {
-    const stored = localStorage.getItem(RATE_KEY);
-    const timestamps: number[] = stored ? JSON.parse(stored) : [];
-    const oneHourAgo = Date.now() - 60 * 60 * 1000;
-    const recent = timestamps.filter(t => t > oneHourAgo);
-    localStorage.setItem(RATE_KEY, JSON.stringify([...recent, Date.now()]));
-  } catch {}
-}
-
 export default function ContactPage() {
   const formRef = useRef<HTMLFormElement>(null);
   const [formState, setFormState] = useState<FormState>('idle');
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!checkRateLimit()) { setFormState('ratelimit'); return; }
     setFormState('sending');
     try {
-      await emailjs.sendForm(
-        import.meta.env.VITE_EMAILJS_SERVICE_ID,
-        import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
-        formRef.current!,
-        { publicKey: import.meta.env.VITE_EMAILJS_PUBLIC_KEY }
-      );
-      recordSend();
-      setFormState('success');
-      formRef.current?.reset();
+      const fd = new FormData(formRef.current!);
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: fd.get('name'),
+          email: fd.get('email'),
+          message: fd.get('message'),
+        }),
+      });
+      if (res.ok) {
+        setFormState('success');
+        formRef.current?.reset();
+        return;
+      }
+      setFormState(res.status === 429 ? 'ratelimit' : 'error');
     } catch {
       setFormState('error');
     }

@@ -52,9 +52,6 @@ bundle-ul client (sunt publice); restul sunt **doar pe server** (Vercel) și nu 
 | Variabilă | Folosită pentru |
 |---|---|
 | `VITE_FIREBASE_DB_URL` | URL-ul Realtime Database (citire conținut) |
-| `VITE_EMAILJS_SERVICE_ID` | EmailJS — formular contact |
-| `VITE_EMAILJS_TEMPLATE_ID` | EmailJS — formular contact |
-| `VITE_EMAILJS_PUBLIC_KEY` | EmailJS — formular contact |
 
 ### Server (doar Vercel — **nu** prefix `VITE_`)
 
@@ -64,6 +61,10 @@ bundle-ul client (sunt publice); restul sunt **doar pe server** (Vercel) și nu 
 | `FIREBASE_DB_SECRET` | Secret de acces la DB pentru funcții |
 | `ADMIN_PIN` | PIN-ul de acces la `/admin` (4 cifre) — validat server-side |
 | `ADMIN_SESSION_SECRET` | Cheie aleatoare pentru semnarea cookie-ului de sesiune admin |
+| `EMAILJS_SERVICE_ID` | EmailJS — formular contact (trimitere server-side) |
+| `EMAILJS_TEMPLATE_ID` | EmailJS — formular contact |
+| `EMAILJS_PUBLIC_KEY` | EmailJS — cheia publică (user_id) |
+| `EMAILJS_PRIVATE_KEY` | EmailJS — cheia privată (accessToken); necesită „Allow API for non-browser" în dashboard |
 | `YOUTUBE_API_KEY` | YouTube Data API — detectare live |
 | `YOUTUBE_CHANNEL_ID` | ID-ul canalului YouTube |
 
@@ -75,7 +76,10 @@ bundle-ul client (sunt publice); restul sunt **doar pe server** (Vercel) și nu 
 ```
 api/                 Vercel Functions (serverless)
   live-status.ts     detectează dacă există transmisie live pe YouTube
-  db-write.ts        scriere în Realtime Database
+  admin-login.ts     login admin (validează PIN, emite cookie de sesiune)
+  db-write.ts        scriere în Realtime Database (cere sesiune admin)
+  contact.ts         trimite formularul de contact (EmailJS server-side + rate-limit)
+  _auth.ts           helpere sesiune admin (HMAC, cookie)
 src/
   pages/             paginile (Home, Live, Contact, Admin, Știri, Despre, Plan citire)
   components/         componente UI + Layout
@@ -87,8 +91,7 @@ src/
 
 Protejată cu PIN (`VITE_ADMIN_PIN`). De aici se editează: evenimente, program săptămânal,
 mod mentenanță, banner de anunț. Conține și un card **„Status servicii"** care verifică în
-timp real dacă Firebase și funcțiile Vercel răspund (EmailJS se afișează ca
-„configurat" — nu are un endpoint public de stare).
+timp real dacă Firebase și funcțiile Vercel răspund.
 
 ## Deploy
 
