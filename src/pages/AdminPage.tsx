@@ -319,23 +319,32 @@ export default function AdminPage() {
   const checkServices = async () => {
     setSvcChecking(true);
 
-    // Firebase — ping real: HEAD/GET shallow la root
+    // fetch cu timeout — altfel un host care nu răspunde lasă spinnerul învârtindu-se la nesfârșit
+    const fetchWithTimeout = async (url: string, ms = 8000): Promise<Response> => {
+      const ctrl = new AbortController();
+      const t = setTimeout(() => ctrl.abort(), ms);
+      try { return await fetch(url, { signal: ctrl.signal }); }
+      finally { clearTimeout(t); }
+    };
+    const isTimeout = (e: unknown) => e instanceof DOMException && e.name === 'AbortError';
+
+    // Firebase — ping real: GET shallow la root
     const firebase: SvcResult = await (async () => {
       if (!FIREBASE_URL) return { state: 'unconfigured' };
       try {
-        const res = await fetch(`${FIREBASE_URL}/.json?shallow=true`);
+        const res = await fetchWithTimeout(`${FIREBASE_URL}/.json?shallow=true`);
         return res.ok ? { state: 'ok' } : { state: 'down', detail: `HTTP ${res.status}` };
-      } catch { return { state: 'down', detail: 'fără răspuns' }; }
+      } catch (e) { return { state: 'down', detail: isTimeout(e) ? 'timeout' : 'fără răspuns' }; }
     })();
 
     // Funcții Vercel — ping real la /api/live-status (în dev local funcțiile lipsesc → va apărea „nu răspunde")
     const vercel: SvcResult = await (async () => {
       try {
-        const res = await fetch('/api/live-status');
+        const res = await fetchWithTimeout('/api/live-status');
         if (!res.ok) return { state: 'down', detail: `HTTP ${res.status}` };
         await res.json();
         return { state: 'ok' };
-      } catch { return { state: 'down', detail: 'fără răspuns' }; }
+      } catch (e) { return { state: 'down', detail: isTimeout(e) ? 'timeout' : 'fără răspuns' }; }
     })();
 
     // EmailJS & Push — fără endpoint public de health, doar verificare config
@@ -586,52 +595,6 @@ export default function AdminPage() {
       </div>
 
       <div className="mx-auto max-w-6xl grid grid-cols-1 lg:grid-cols-2 gap-6 px-6 py-10 items-start">
-
-        {/* ── Status servicii card ── */}
-        <Card className="overflow-hidden p-0 lg:col-span-2">
-          <div className="border-b border-slate-100 bg-gradient-to-r from-slate-50 to-white px-8 py-6 flex items-center justify-between gap-4">
-            <div>
-              <h2 className="text-xl font-bold text-slate-900">Status servicii</h2>
-              <p className="mt-1 text-sm text-slate-500">
-                Verifică dacă serviciile externe răspund.
-                {svcLastChecked && (
-                  <span className="text-slate-400"> Ultima verificare: {svcLastChecked.toLocaleTimeString('ro-RO')}.</span>
-                )}
-              </p>
-            </div>
-            <button
-              onClick={checkServices}
-              disabled={svcChecking}
-              className="flex shrink-0 items-center gap-2 rounded-full border border-slate-200 px-5 py-2.5 text-sm font-bold text-slate-700 transition hover:bg-slate-50 disabled:opacity-60"
-            >
-              <RefreshCw className={`h-4 w-4 ${svcChecking ? 'animate-spin' : ''}`} />
-              {svcChecking ? 'Se verifică…' : 'Verifică acum'}
-            </button>
-          </div>
-          <div className="divide-y divide-slate-100">
-            {SVC_LABELS.map(({ key, label, hint }) => {
-              const result = svcStatus[key] ?? { state: 'checking' as SvcState };
-              const meta = STATUS_META[result.state];
-              return (
-                <div key={key} className="flex items-center justify-between gap-4 px-8 py-4">
-                  <div className="min-w-0">
-                    <p className="font-semibold text-slate-900">{label}</p>
-                    <p className="text-xs text-slate-400">{hint}</p>
-                  </div>
-                  <div className="flex shrink-0 items-center gap-2.5">
-                    <span className={`text-sm font-semibold ${meta.text}`}>
-                      {meta.label}{result.detail ? ` (${result.detail})` : ''}
-                    </span>
-                    <span className={`h-2.5 w-2.5 rounded-full ${meta.dot}`} />
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-          <div className="border-t border-slate-100 bg-slate-50/60 px-8 py-3 text-xs text-slate-400">
-            🟡 „Configurat" = cheile sunt setate corect, dar serviciul nu are un test public de stare (EmailJS s-a validat manual prin formulare de test). 🔴 În dezvoltare locală, funcțiile Vercel nu rulează — starea reală se vede pe site-ul publicat.
-          </div>
-        </Card>
 
         {/* ── Maintenance mode card ── */}
         <Card className="overflow-hidden p-0 lg:col-span-2">
@@ -995,6 +958,52 @@ export default function AdminPage() {
               ✓ Program actualizat cu succes
             </div>
           )}
+        </Card>
+
+        {/* ── Status servicii card (jos de tot) ── */}
+        <Card className="overflow-hidden p-0 lg:col-span-2">
+          <div className="border-b border-slate-100 bg-gradient-to-r from-slate-50 to-white px-8 py-6 flex items-center justify-between gap-4">
+            <div>
+              <h2 className="text-xl font-bold text-slate-900">Status servicii</h2>
+              <p className="mt-1 text-sm text-slate-500">
+                Verifică dacă serviciile externe răspund.
+                {svcLastChecked && (
+                  <span className="text-slate-400"> Ultima verificare: {svcLastChecked.toLocaleTimeString('ro-RO')}.</span>
+                )}
+              </p>
+            </div>
+            <button
+              onClick={checkServices}
+              disabled={svcChecking}
+              className="flex shrink-0 items-center gap-2 rounded-full border border-slate-200 px-5 py-2.5 text-sm font-bold text-slate-700 transition hover:bg-slate-50 disabled:opacity-60"
+            >
+              <RefreshCw className={`h-4 w-4 ${svcChecking ? 'animate-spin' : ''}`} />
+              {svcChecking ? 'Se verifică…' : 'Verifică acum'}
+            </button>
+          </div>
+          <div className="divide-y divide-slate-100">
+            {SVC_LABELS.map(({ key, label, hint }) => {
+              const result = svcStatus[key] ?? { state: 'checking' as SvcState };
+              const meta = STATUS_META[result.state];
+              return (
+                <div key={key} className="flex items-center justify-between gap-4 px-8 py-4">
+                  <div className="min-w-0">
+                    <p className="font-semibold text-slate-900">{label}</p>
+                    <p className="text-xs text-slate-400">{hint}</p>
+                  </div>
+                  <div className="flex shrink-0 items-center gap-2.5">
+                    <span className={`text-sm font-semibold ${meta.text}`}>
+                      {meta.label}{result.detail ? ` (${result.detail})` : ''}
+                    </span>
+                    <span className={`h-2.5 w-2.5 rounded-full ${meta.dot}`} />
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+          <div className="border-t border-slate-100 bg-slate-50/60 px-8 py-3 text-xs text-slate-400">
+            🟡 „Configurat" = cheile sunt setate corect, dar serviciul nu are un test public de stare (EmailJS s-a validat manual prin formulare de test). 🔴 În dezvoltare locală, funcțiile Vercel nu rulează — starea reală se vede pe site-ul publicat.
+          </div>
         </Card>
 
       </div>
