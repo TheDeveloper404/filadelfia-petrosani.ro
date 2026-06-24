@@ -115,7 +115,7 @@ export default function HomePage() {
             </h1>
 
             <p className="mt-6 max-w-2xl text-xl leading-9 text-slate-200">
-              Indiferent dacă aveți o relație cu Isus de mult timp sau sunteți la început în descoperirea credinței, la Biserica Penticostală Filadelfia din Petroșani vă este alături pentru a vă sprijini în apropierea de Dumnezeu și în înțelegerea mântuirii oferite prin har.
+              Indiferent dacă aveți o relație cu Isus de mult timp sau sunteți la început în descoperirea credinței, Biserica Penticostală Filadelfia din Petroșani vă este alături pentru a vă sprijini în apropierea de Dumnezeu și în înțelegerea mântuirii oferite prin har.
             </p>
 
             <div className="mt-10 flex flex-col items-center gap-3 sm:flex-row">
