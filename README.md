@@ -1,6 +1,6 @@
-# filadelfia.live
+# filadelfia-petrosani.ro
 
-Aplicație web (PWA) pentru **Biserica Filadelfia Petroșani** — program săptămânal,
+Website-ul **Biserica Filadelfia Petroșani** — program săptămânal,
 evenimente, transmisiuni live YouTube, plan de citire, știri, contact și notificări push
 „când începe live-ul".
 
