@@ -70,40 +70,6 @@ test.describe('ReadingPlanPage', () => {
 });
 
 // ============================================================
-// Știri Page
-// ============================================================
-test.describe('StiriPage', () => {
-  test('renders heading', async ({ page }) => {
-    await page.goto('/stiri');
-    await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
-  });
-
-  test('shows loading spinner then content', async ({ page }) => {
-    await page.goto('/stiri');
-    // Wait for page chunk to render (heading appears)
-    await expect(page.getByRole('heading', { level: 1 })).toBeVisible({ timeout: 10000 });
-    // Wait for spinner to disappear and content to load
-    await expect(page.locator('.animate-spin')).not.toBeVisible({ timeout: 10000 });
-    // Should show either articles or error message
-    const articles = page.locator('a[href*="crestintotal.ro"]');
-    const error = page.getByText(/nu pot fi încărcate/i);
-    const articlesCount = await articles.count();
-    const errorCount = await error.count();
-    expect(articlesCount + errorCount).toBeGreaterThan(0);
-  });
-
-  test('article links open externally', async ({ page }) => {
-    await page.goto('/stiri');
-    await expect(page.locator('.animate-spin')).not.toBeVisible({ timeout: 10000 });
-    const articleLinks = page.locator('a[href*="crestintotal.ro"]');
-    if (await articleLinks.count() > 0) {
-      await expect(articleLinks.first()).toHaveAttribute('target', '_blank');
-      await expect(articleLinks.first()).toHaveAttribute('rel', 'noopener noreferrer');
-    }
-  });
-});
-
-// ============================================================
 // Admin Page
 // ============================================================
 

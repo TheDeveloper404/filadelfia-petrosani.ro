@@ -40,12 +40,6 @@ test.describe('Navigation', () => {
     await expect(page).toHaveURL('/plan-citire');
   });
 
-  test('navigates to Stiri page', async ({ page }) => {
-    await page.goto('/');
-    await nav(page).getByRole('link', { name: /știri/i }).click();
-    await expect(page).toHaveURL('/stiri');
-  });
-
   test('Arhivă popup appears and closes', async ({ page }) => {
     await page.goto('/live');
     await page.getByRole('button', { name: /vezi toate predicile/i }).click();

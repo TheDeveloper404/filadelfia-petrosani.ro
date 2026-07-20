@@ -5,7 +5,6 @@ import { MemoryRouter } from 'react-router-dom';
 import HomePage from '../src/pages/HomePage';
 import LivePage from '../src/pages/LivePage';
 import ContactPage from '../src/pages/ContactPage';
-import StiriPage from '../src/pages/StiriPage';
 import ReadingPlanPage from '../src/pages/ReadingPlanPage';
 import AdminPage from '../src/pages/AdminPage';
 
@@ -131,78 +130,6 @@ describe('ReadingPlanPage', () => {
     // Should render multiple day rows
     const rows = screen.getAllByText(/geneza|matei|psalmul|marcu|luca|fapte/i);
     expect(rows.length).toBeGreaterThan(0);
-  });
-});
-
-// ============================================================
-// StiriPage
-// ============================================================
-describe('StiriPage', () => {
-  beforeEach(() => localStorage.clear());
-
-  it('shows loading spinner initially', () => {
-    global.fetch = vi.fn(() => new Promise(() => {})) as unknown as typeof fetch;
-    renderPage(<StiriPage />);
-    expect(document.querySelector('.animate-spin')).toBeInTheDocument();
-  });
-
-  it('renders articles after successful fetch', async () => {
-    const mockArticles = [
-      {
-        id: 1,
-        title: { rendered: 'Articol de test' },
-        date: '2026-03-31T09:00:00',
-        link: 'https://crestintotal.ro/articol-1',
-        excerpt: { rendered: '<p>Descriere scurtă a articolului.</p>' },
-        jetpack_featured_media_url: '',
-      },
-    ];
-    global.fetch = vi.fn().mockResolvedValue({
-      ok: true,
-      json: async () => mockArticles,
-    }) as unknown as typeof fetch;
-
-    renderPage(<StiriPage />);
-    await waitFor(() => screen.getByText('Articol de test'));
-    expect(screen.getByText('Articol de test')).toBeInTheDocument();
-    expect(screen.getByText(/descriere scurtă/i)).toBeInTheDocument();
-  });
-
-  it('shows error message when fetch fails', async () => {
-    global.fetch = vi.fn().mockRejectedValue(new Error('Network error')) as unknown as typeof fetch;
-    renderPage(<StiriPage />);
-    await waitFor(() => screen.getByText(/nu pot fi încărcate/i));
-    expect(screen.getByText(/nu pot fi încărcate/i)).toBeInTheDocument();
-  });
-
-  it('shows error when API returns non-ok response', async () => {
-    global.fetch = vi.fn().mockResolvedValue({ ok: false, status: 500 }) as unknown as typeof fetch;
-    renderPage(<StiriPage />);
-    await waitFor(() => screen.getByText(/nu pot fi încărcate/i));
-    expect(screen.getByText(/nu pot fi încărcate/i)).toBeInTheDocument();
-  });
-
-  it('uses cached articles from localStorage', async () => {
-    const cached = {
-      timestamp: Date.now(),
-      articles: [
-        {
-          id: 99,
-          title: { rendered: 'Din cache' },
-          date: '2026-01-01T00:00:00',
-          link: 'https://example.com',
-          excerpt: { rendered: '<p>Conținut din cache.</p>' },
-          jetpack_featured_media_url: '',
-        },
-      ],
-    };
-    localStorage.setItem('filadelfia_stiri_cache', JSON.stringify(cached));
-    global.fetch = vi.fn() as unknown as typeof fetch;
-
-    renderPage(<StiriPage />);
-    await waitFor(() => screen.getByText('Din cache'));
-    expect(screen.getByText('Din cache')).toBeInTheDocument();
-    expect(global.fetch).not.toHaveBeenCalled();
   });
 });
 

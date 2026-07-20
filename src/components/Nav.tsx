@@ -9,7 +9,6 @@ const navLinks = [
   { to: '/live', label: 'Live' },
   { to: '/despre-noi', label: 'Despre noi' },
   { to: '/plan-citire', label: 'Plan Biblic' },
-  { to: '/stiri', label: 'Articole' },
   { to: '/contact', label: 'Contact' },
 ];
 
