@@ -1,14 +1,9 @@
-// Vercel Edge Function — Firebase write proxy
-// Direct writes to Firebase are blocked (rules: ".write": false)
-// This function writes using server-side credentials (FIREBASE_DB_SECRET)
+// Scriere în baza de date locală (SQLite pe VPS).
 // Acces permis DOAR cu o sesiune de admin validă (cookie semnat) — vezi api/admin-login.ts
 
 import { SESSION_COOKIE, verifySession, getCookie } from './_auth';
+import { kvPut } from './_db';
 
-export const config = { runtime: 'edge' };
-
-const DB_URL = process.env.FIREBASE_DB_URL ?? '';
-const DB_SECRET = process.env.FIREBASE_DB_SECRET ?? '';
 const SESSION_SECRET = process.env.ADMIN_SESSION_SECRET ?? '';
 
 // Doar aceste căi pot fi scrise din admin (defense-in-depth)
@@ -19,8 +14,8 @@ export default async function handler(request: Request): Promise<Response> {
     return respond({ error: 'Method Not Allowed' }, 405);
   }
 
-  if (!DB_URL || !DB_SECRET || !SESSION_SECRET) {
-    console.error('[db-write] env-uri lipsă (FIREBASE_* / ADMIN_SESSION_SECRET)');
+  if (!SESSION_SECRET) {
+    console.error('[db-write] env lipsă (ADMIN_SESSION_SECRET)');
     return respond({ error: 'Not configured' }, 503);
   }
 
@@ -45,17 +40,7 @@ export default async function handler(request: Request): Promise<Response> {
   }
 
   try {
-    const res = await fetch(`${DB_URL}/${path}.json?auth=${DB_SECRET}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data),
-    });
-
-    if (!res.ok) {
-      console.error('[db-write] Firebase error', res.status);
-      return respond({ error: 'Firebase write failed' }, res.status);
-    }
-
+    kvPut(path, data);
     return respond({ ok: true }, 200);
   } catch (err) {
     console.error('[db-write] unexpected error', err);

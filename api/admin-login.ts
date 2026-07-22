@@ -1,17 +1,14 @@
-// Vercel Edge Function — login admin cu rate-limiting.
+// Login admin cu rate-limiting.
 // Validează PIN-ul server-side (env ADMIN_PIN) și emite un cookie de sesiune semnat.
-// Brute-force protection pe două straturi (contoare în Firebase):
+// Brute-force protection pe două straturi (contoare în SQLite, vezi api/_db.ts):
 //   1. per-IP (IP de încredere din x-real-ip): 5 încercări greșite → blocare 15 min
 //   2. global: prag mare cu cooldown scurt — cap pe rata totală chiar dacă IP-ul e ocolit
 
 import { createSession, SESSION_COOKIE, SESSION_MAX_AGE, timingSafeEqual, clientIpKey } from './_auth';
-
-export const config = { runtime: 'edge' };
+import { kvGet, kvPut, kvDelete } from './_db';
 
 const ADMIN_PIN = process.env.ADMIN_PIN ?? '';
 const SESSION_SECRET = process.env.ADMIN_SESSION_SECRET ?? '';
-const DB_URL = process.env.FIREBASE_DB_URL ?? '';
-const DB_SECRET = process.env.FIREBASE_DB_SECRET ?? '';
 
 // Per-IP
 const MAX_FAILS = 5;
@@ -24,24 +21,22 @@ const GLOBAL_LOCK_MS = 2 * 60 * 1000;    // cooldown 2 min
 interface Attempt { fails: number; lockUntil: number }
 interface Global { fails: number; windowStart: number; lockUntil: number }
 
-const dbUrl = (path: string) => `${DB_URL}/admin_login_attempts/${path}.json?auth=${DB_SECRET}`;
-const getJson = <T>(url: string) => fetch(url).then(r => (r.ok ? r.json() : null)).catch(() => null) as Promise<T | null>;
-const putJson = (url: string, v: unknown) =>
-  fetch(url, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(v) }).catch(() => {});
+const kvKey = (path: string) => `admin_login_attempts/${path}`;
 
 export default async function handler(request: Request): Promise<Response> {
   if (request.method !== 'POST') return json({ error: 'Method Not Allowed' }, 405);
 
-  if (!ADMIN_PIN || !SESSION_SECRET || !DB_URL || !DB_SECRET) {
-    console.error('[admin-login] env-uri lipsă (ADMIN_PIN / ADMIN_SESSION_SECRET / FIREBASE_*)');
+  if (!ADMIN_PIN || !SESSION_SECRET) {
+    console.error('[admin-login] env-uri lipsă (ADMIN_PIN / ADMIN_SESSION_SECRET)');
     return json({ error: 'Autentificare neconfigurată pe server.' }, 503);
   }
 
   const now = Date.now();
-  const ipUrl = dbUrl(clientIpKey(request));
-  const globalUrl = dbUrl('_global');
+  const ipKey = kvKey(clientIpKey(request));
+  const globalKey = kvKey('_global');
 
-  const [ipRec, gRec] = await Promise.all([getJson<Attempt>(ipUrl), getJson<Global>(globalUrl)]);
+  const ipRec = kvGet<Attempt>(ipKey);
+  const gRec = kvGet<Global>(globalKey);
 
   // Blocat per-IP sau global?
   if (ipRec?.lockUntil && ipRec.lockUntil > now) {
@@ -69,7 +64,8 @@ export default async function handler(request: Request): Promise<Response> {
       ? { fails: 0, windowStart: now, lockUntil: now + GLOBAL_LOCK_MS }
       : { fails: gFails, windowStart: inWindow ? gRec!.windowStart : now, lockUntil: 0 };
 
-    await Promise.all([putJson(ipUrl, nextIp), putJson(globalUrl, nextGlobal)]);
+    kvPut(ipKey, nextIp);
+    kvPut(globalKey, nextGlobal);
 
     return json(
       nextIp.lockUntil > now
@@ -80,7 +76,7 @@ export default async function handler(request: Request): Promise<Response> {
   }
 
   // Succes — resetează contorul per-IP și emite sesiunea (globalul decade singur prin fereastră)
-  await fetch(ipUrl, { method: 'DELETE' }).catch(() => {});
+  kvDelete(ipKey);
   const token = await createSession(SESSION_SECRET);
   return json({ ok: true }, 200, {
     'Set-Cookie': `${SESSION_COOKIE}=${token}; HttpOnly; Secure; SameSite=Strict; Path=/; Max-Age=${SESSION_MAX_AGE}`,

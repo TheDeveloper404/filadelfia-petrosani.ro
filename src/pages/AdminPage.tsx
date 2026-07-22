@@ -11,16 +11,14 @@ const SCHEDULE_KEY = 'filadelfia_schedule';
 const SESSION_KEY = 'filadelfia_admin_unlocked';
 
 // ── Status servicii ──────────────────────────────────────────────────────────
-const FIREBASE_URL = import.meta.env.VITE_FIREBASE_DB_URL as string | undefined;
-
 // 'ok' = ping real reușit · 'down' = nu răspunde · 'config' = configurat (netestat live)
 // 'unconfigured' = lipsesc variabilele · 'checking' = verificare în curs
 type SvcState = 'checking' | 'ok' | 'down' | 'config' | 'unconfigured';
 interface SvcResult { state: SvcState; detail?: string }
 
 const SVC_LABELS: { key: string; label: string; hint: string }[] = [
-  { key: 'firebase', label: 'Firebase (bază de date)', hint: 'Stochează evenimente și program' },
-  { key: 'vercel', label: 'Funcții Vercel', hint: 'Detectare live YouTube, contact, login admin' },
+  { key: 'database', label: 'Bază de date (VPS)', hint: 'Stochează evenimente și program' },
+  { key: 'api', label: 'Server API (VPS)', hint: 'Detectare live YouTube, contact, login admin' },
 ];
 
 const STATUS_META: Record<SvcState, { dot: string; text: string; label: string }> = {
@@ -337,7 +335,7 @@ export default function AdminPage() {
 
   // Status servicii
   const [svcStatus, setSvcStatus] = useState<Record<string, SvcResult>>({
-    firebase: { state: 'checking' }, vercel: { state: 'checking' },
+    database: { state: 'checking' }, api: { state: 'checking' },
   });
   const [svcChecking, setSvcChecking] = useState(false);
   const [svcLastChecked, setSvcLastChecked] = useState<Date | null>(null);
@@ -354,20 +352,17 @@ export default function AdminPage() {
     };
     const isTimeout = (e: unknown) => e instanceof DOMException && e.name === 'AbortError';
 
-    // Firebase — ping real pe o cale citibilă de app (rădăcina e protejată → ar da fals 401)
-    const firebase: SvcResult = await (async () => {
-      if (!FIREBASE_URL) return { state: 'unconfigured' };
+    // Bază de date locală — ping real pe o cale citibilă
+    const database: SvcResult = await (async () => {
       try {
-        const res = await fetchWithTimeout(`${FIREBASE_URL}/events.json?shallow=true`);
+        const res = await fetchWithTimeout('/api/db-read?path=events');
         if (res.ok) return { state: 'ok' };
-        // 401/403 = serviciul răspunde, dar regula blochează citirea — tot „viu"
-        if (res.status === 401 || res.status === 403) return { state: 'ok', detail: 'protejat' };
         return { state: 'down', detail: `HTTP ${res.status}` };
       } catch (e) { return { state: 'down', detail: isTimeout(e) ? 'timeout' : 'fără răspuns' }; }
     })();
 
-    // Funcții Vercel — ping real la /api/live-status (în dev local funcțiile lipsesc → va apărea „nu răspunde")
-    const vercel: SvcResult = await (async () => {
+    // Server API (VPS) — ping real la /api/live-status
+    const api: SvcResult = await (async () => {
       try {
         const res = await fetchWithTimeout('/api/live-status');
         if (!res.ok) return { state: 'down', detail: `HTTP ${res.status}` };
@@ -376,7 +371,7 @@ export default function AdminPage() {
       } catch (e) { return { state: 'down', detail: isTimeout(e) ? 'timeout' : 'fără răspuns' }; }
     })();
 
-    setSvcStatus({ firebase, vercel });
+    setSvcStatus({ database, api });
     setSvcLastChecked(new Date());
     setSvcChecking(false);
   };
@@ -1027,7 +1022,7 @@ export default function AdminPage() {
             })}
           </div>
           <div className="border-t border-slate-100 bg-slate-50/60 px-8 py-3 text-xs text-slate-400">
-            🔴 În dezvoltare locală, funcțiile Vercel nu rulează (apare „Nu răspunde") — starea reală se vede pe site-ul publicat. „Funcții Vercel" acoperă live YouTube, formularul de contact și login-ul de admin.
+            🔴 În dezvoltare locală, server-ul API (VPS) nu rulează (apare „Nu răspunde") — starea reală se vede pe site-ul publicat. „Server API" acoperă live YouTube, formularul de contact și login-ul de admin.
           </div>
         </Card>
 

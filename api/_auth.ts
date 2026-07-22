@@ -55,10 +55,12 @@ export function getCookie(request: Request, name: string): string | undefined {
   return undefined;
 }
 
-// Cheie Firebase-safe derivată din IP-ul clientului (pentru rate-limiting).
+// Cheie sigură derivată din IP-ul clientului (pentru rate-limiting).
 // IMPORTANT: `x-forwarded-for` e setabil de client (spoofing → bypass rate-limit).
-// Pe Vercel, `x-real-ip` e setat de infrastructură (de încredere); ca fallback luăm
-// entry-ul cel mai din DREAPTA din XFF (cel adăugat de Vercel), nu primul.
+// nginx (vezi /etc/nginx/sites-available/filadelfia-app) setează `x-real-ip` din
+// $remote_addr — de încredere DOAR pentru trafic care trece prin nginx. Node ascultă
+// exclusiv pe 127.0.0.1 (server/index.ts), deci nu poate fi lovit direct, ocolind proxy-ul.
+// Fallback: entry-ul cel mai din DREAPTA din XFF (cel adăugat de nginx), nu primul.
 export function clientIpKey(request: Request): string {
   const realIp = request.headers.get('x-real-ip')?.trim();
   const xffParts = (request.headers.get('x-forwarded-for') ?? '')
