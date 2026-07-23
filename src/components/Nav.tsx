@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { Link, useLocation } from 'react-router-dom';
 import Container from '@/components/ui/container';
+import { Button } from '@/components/ui/button';
 import siteConfig from '@/data/site-config.json';
 
 const navLinks = [
@@ -9,6 +10,7 @@ const navLinks = [
   { to: '/live', label: 'Live' },
   { to: '/despre-noi', label: 'Despre noi' },
   { to: '/plan-citire', label: 'Plan Biblic' },
+  { to: 'https://seminarulteologicfiladelfia.ro', label: 'Seminar Teologic', external: true },
   { to: '/contact', label: 'Contact' },
 ];
 
@@ -16,6 +18,7 @@ export default function Nav() {
   const location = useLocation();
   const [scrolled, setScrolled] = useState(() => window.scrollY > 10);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [pendingExternalUrl, setPendingExternalUrl] = useState<string | null>(null);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 10);
@@ -48,15 +51,16 @@ export default function Nav() {
         {/* Desktop nav */}
         <nav data-testid="desktop-nav" className="hidden md:flex items-center gap-1">
           {navLinks.map(link => {
-            const active = location.pathname === link.to;
-            return (
-              <Link
-                key={link.to}
-                to={link.to}
-                className={`nav-link px-4 py-3 text-xl font-medium transition-colors duration-200 ${
-                  active ? 'nav-active text-white' : 'text-slate-300 hover:text-white'
-                }`}
-              >
+            const active = !link.external && location.pathname === link.to;
+            const className = `nav-link px-4 py-3 text-xl font-medium transition-colors duration-200 ${
+              active ? 'nav-active text-white' : 'text-slate-300 hover:text-white'
+            }`;
+            return link.external ? (
+              <button key={link.to} type="button" onClick={() => setPendingExternalUrl(link.to)} className={className}>
+                {link.label}
+              </button>
+            ) : (
+              <Link key={link.to} to={link.to} className={className}>
                 {link.label}
               </Link>
             );
@@ -103,15 +107,25 @@ export default function Nav() {
       >
         <nav className="flex flex-col p-3 gap-1">
           {navLinks.map(link => {
-            const active = location.pathname === link.to;
-            return (
+            const active = !link.external && location.pathname === link.to;
+            const className = `rounded-2xl px-5 py-3.5 text-base font-semibold transition-all ${
+              active ? 'bg-secondary/20 text-secondary' : 'text-slate-300 hover:bg-white/8 hover:text-white'
+            }`;
+            return link.external ? (
+              <button
+                key={link.to}
+                type="button"
+                onClick={() => { setMenuOpen(false); setPendingExternalUrl(link.to); }}
+                className={`text-left ${className}`}
+              >
+                {link.label}
+              </button>
+            ) : (
               <Link
                 key={link.to}
                 to={link.to}
                 onClick={() => setMenuOpen(false)}
-                className={`rounded-2xl px-5 py-3.5 text-base font-semibold transition-all ${
-                  active ? 'bg-secondary/20 text-secondary' : 'text-slate-300 hover:bg-white/8 hover:text-white'
-                }`}
+                className={className}
               >
                 {link.label}
               </Link>
@@ -120,6 +134,41 @@ export default function Nav() {
         </nav>
       </div>
       </div>
+
+      {pendingExternalUrl && createPortal(
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm px-4"
+          onClick={() => setPendingExternalUrl(null)}
+        >
+          <div
+            role="dialog"
+            aria-modal="true"
+            className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-2xl"
+            onClick={e => e.stopPropagation()}
+          >
+            <h2 className="text-lg font-bold text-slate-900">Vei fi direcționat către un alt site</h2>
+            <p className="mt-2 text-sm text-slate-600">
+              Vei fi direcționat către <span className="font-semibold">{pendingExternalUrl.replace(/^https?:\/\//, '')}</span>, site-ul Seminarului Teologic Filadelfia.
+            </p>
+            <div className="mt-6 flex justify-end gap-3">
+              <Button variant="outline" size="sm" onClick={() => setPendingExternalUrl(null)}>
+                Anulează
+              </Button>
+              <Button
+                variant="secondary"
+                size="sm"
+                onClick={() => {
+                  window.open(pendingExternalUrl, '_blank', 'noopener,noreferrer');
+                  setPendingExternalUrl(null);
+                }}
+              >
+                Continuă
+              </Button>
+            </div>
+          </div>
+        </div>,
+        document.body
+      )}
     </header>
   );
 }

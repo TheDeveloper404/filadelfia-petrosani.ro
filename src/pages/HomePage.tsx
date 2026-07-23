@@ -154,15 +154,13 @@ export default function HomePage() {
                 Program săptămânal
               </p>
               <div className="grid gap-3 p-4 sm:grid-cols-2 sm:p-8">
-                {[...services].sort((a, b) => {
-                  const day = (d: number) => d === 0 ? 7 : d;
-                  return day(a.dayOfWeek) !== day(b.dayOfWeek)
-                    ? day(a.dayOfWeek) - day(b.dayOfWeek)
-                    : a.time.localeCompare(b.time);
-                }).map(service => {
-                  const isNext = nextService?.service.id === service.id && nextService.daysUntil === 0;
+                {(() => {
                   const now = new Date();
-                  const nextDate = getServiceNextDate(service, now);
+                  return [...services]
+                    .map(service => ({ service, nextDate: getServiceNextDate(service, now) }))
+                    .sort((a, b) => a.nextDate.getTime() - b.nextDate.getTime());
+                })().map(({ service, nextDate }) => {
+                  const isNext = nextService?.service.id === service.id && nextService.daysUntil === 0;
                   const dateLabel = `${String(nextDate.getDate()).padStart(2, '0')}.${String(nextDate.getMonth() + 1).padStart(2, '0')}`;
                   return (
                     <div
