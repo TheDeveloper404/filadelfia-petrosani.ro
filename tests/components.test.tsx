@@ -1,5 +1,5 @@
-import { describe, it, expect, vi } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 
 import EventCard from '../src/components/EventCard';
@@ -150,34 +150,39 @@ describe('Nav', () => {
 // LivePlayer
 // ============================================================
 describe('LivePlayer', () => {
-  it('shows offline message outside service windows', () => {
-    // Monday 12:00 — no service
-    vi.setSystemTime(new Date('2026-03-30T12:00:00'));
-    render(<LivePlayer />);
-    expect(screen.getByText(/nu se transmite live/i)).toBeInTheDocument();
-    vi.useRealTimers();
+  beforeEach(() => {
+    vi.stubGlobal('fetch', vi.fn());
   });
 
-  it('shows live iframe during Sunday morning service', () => {
-    // Sunday 10:00 — inside 09:00–13:00 window
-    vi.setSystemTime(new Date('2026-03-29T10:00:00'));
-    render(<LivePlayer />);
-    expect(screen.getByTitle(/transmisie live/i)).toBeInTheDocument();
-    vi.useRealTimers();
+  afterEach(() => {
+    vi.unstubAllGlobals();
   });
 
-  it('shows live iframe during Thursday evening service', () => {
-    // Thursday 19:00 — inside 18:00–21:00 window
-    vi.setSystemTime(new Date('2026-04-02T19:00:00'));
-    render(<LivePlayer />);
-    expect(screen.getByTitle(/transmisie live/i)).toBeInTheDocument();
-    vi.useRealTimers();
+  it('shows a loading spinner while checking status', () => {
+    (fetch as unknown as ReturnType<typeof vi.fn>).mockReturnValue(new Promise(() => {}));
+    const { container } = render(<LivePlayer />);
+    expect(container.querySelector('.animate-spin')).toBeInTheDocument();
   });
 
-  it('shows last recorded video iframe when offline', () => {
-    vi.setSystemTime(new Date('2026-03-30T12:00:00'));
+  it('shows the last recorded video iframe when not live', async () => {
+    (fetch as unknown as ReturnType<typeof vi.fn>).mockResolvedValue({
+      json: () => Promise.resolve({ isLive: false, videoId: null, title: null }),
+    });
     render(<LivePlayer />);
-    expect(screen.getByTitle(/ultimul program/i)).toBeInTheDocument();
-    vi.useRealTimers();
+    await waitFor(() => expect(screen.getByTitle(/ultimul program/i)).toBeInTheDocument());
+  });
+
+  it('shows the live iframe when the API reports a live broadcast', async () => {
+    (fetch as unknown as ReturnType<typeof vi.fn>).mockResolvedValue({
+      json: () => Promise.resolve({ isLive: true, videoId: 'abc123', title: 'Slujba de duminică' }),
+    });
+    render(<LivePlayer />);
+    await waitFor(() => expect(screen.getByTitle(/transmisie live/i)).toBeInTheDocument());
+  });
+
+  it('falls back to the last recorded video when the status check fails', async () => {
+    (fetch as unknown as ReturnType<typeof vi.fn>).mockRejectedValue(new Error('network error'));
+    render(<LivePlayer />);
+    await waitFor(() => expect(screen.getByTitle(/ultimul program/i)).toBeInTheDocument());
   });
 });

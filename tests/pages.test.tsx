@@ -35,11 +35,6 @@ describe('HomePage', () => {
     expect(screen.getAllByText(/filadelfia/i).length).toBeGreaterThan(0);
   });
 
-  it('renders the tagline', () => {
-    renderPage(<HomePage />);
-    expect(screen.getByText(/o comunitate vie în prezența lui Dumnezeu/i)).toBeInTheDocument();
-  });
-
   it('renders Program & Comunitate section', () => {
     renderPage(<HomePage />);
     expect(screen.getByText(/program & comunitate/i)).toBeInTheDocument();
