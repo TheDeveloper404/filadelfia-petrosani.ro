@@ -492,6 +492,7 @@ export default function AdminPage() {
   };
 
   const handleLock = () => {
+    fetch('/api/admin-logout', { method: 'POST' });
     sessionStorage.removeItem(SESSION_KEY);
     setUnlocked(false);
   };

@@ -4,6 +4,7 @@ import { serve } from '@hono/node-server';
 import { Hono } from 'hono';
 
 import adminLogin from '../api/admin-login';
+import adminLogout from '../api/admin-logout';
 import dbWrite from '../api/db-write';
 import dbRead from '../api/db-read';
 import liveStatus from '../api/live-status';
@@ -12,6 +13,7 @@ import contact from '../api/contact';
 const app = new Hono();
 
 app.post('/api/admin-login', (c) => adminLogin(c.req.raw));
+app.post('/api/admin-logout', (c) => adminLogout(c.req.raw));
 app.post('/api/db-write', (c) => dbWrite(c.req.raw));
 app.get('/api/db-read', (c) => dbRead(c.req.raw));
 app.get('/api/live-status', () => liveStatus());
