@@ -86,10 +86,15 @@ jobs:
           # State = all currently open alert numbers, so fixed/dismissed alerts drop off on their own.
           jq -c '[.[].number]' /tmp/alerts.json > "$STATE_FILE"
 
-          if ! git diff --quiet -- "$STATE_FILE"; then
+          # `git diff --quiet` on a file never before tracked always reports "no changes"
+          # (untracked files aren't diffed), so this guard never fired on the very first run —
+          # the state file was written locally but never committed, meaning every scheduled run
+          # would silently re-notify the same alerts forever (confirmed empirically 2026-08-19).
+          # Stage first, then diff the index against HEAD — that correctly sees a brand-new file.
+          git add "$STATE_FILE"
+          if ! git diff --cached --quiet -- "$STATE_FILE"; then
             git config user.name "github-actions[bot]"
             git config user.email "github-actions[bot]@users.noreply.github.com"
-            git add "$STATE_FILE"
             git commit -m "chore: update dependabot alert notification state [skip ci]"
             git push
           fi
