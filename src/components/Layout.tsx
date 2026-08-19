@@ -7,7 +7,7 @@ import WelcomeModal from '@/components/WelcomeModal';
 import InstallPrompt from '@/components/InstallPrompt';
 import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/react';
-import { dbRead, dbWrite } from '@/lib/db';
+import { dbRead } from '@/lib/db';
 
 interface LayoutProps {
   children: ReactNode;
@@ -62,15 +62,6 @@ export default function Layout({ children }: LayoutProps) {
         localStorage.setItem(ANNOUNCEMENT_CACHE, JSON.stringify(remote));
         setAnnouncement(remote);
       }
-    });
-  }, []);
-
-  useEffect(() => {
-    if (sessionStorage.getItem('filadelfia_visited')) return;
-    sessionStorage.setItem('filadelfia_visited', '1');
-    const today = new Date().toISOString().slice(0, 10);
-    dbRead<number>(`stats/${today}`).then(count => {
-      dbWrite(`stats/${today}`, (count ?? 0) + 1);
     });
   }, []);
 
