@@ -1,0 +1,89 @@
+name: Dependabot Slack Alert
+
+# `dependabot_alert` is a repository webhook event, not a GitHub Actions trigger — there is no
+# `on: dependabot_alert`. Polling daily via the REST API is the supported way to get these into
+# Actions without standing up an external webhook receiver.
+on:
+  schedule:
+    - cron: "0 8 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  security-events: read
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Fetch open Dependabot alerts
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh api "repos/${{ github.repository }}/dependabot/alerts?state=open&per_page=100" > /tmp/alerts.json
+
+      - name: Notify Slack for new alerts and update state
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          REPO: ${{ github.repository }}
+        run: |
+          STATE_FILE=".github/dependabot-alert-state.json"
+          [ -f "$STATE_FILE" ] || echo "[]" > "$STATE_FILE"
+          SEEN=$(cat "$STATE_FILE")
+
+          jq -c '.[]' /tmp/alerts.json | while IFS= read -r alert; do
+            NUMBER=$(echo "$alert" | jq -r '.number')
+            ALREADY_SEEN=$(echo "$SEEN" | jq --argjson n "$NUMBER" 'any(. == $n)')
+            [ "$ALREADY_SEEN" = "true" ] && continue
+
+            PACKAGE=$(echo "$alert" | jq -r '.security_vulnerability.package.name')
+            SEVERITY=$(echo "$alert" | jq -r '.security_vulnerability.severity')
+            SUMMARY=$(echo "$alert" | jq -r '.security_advisory.summary')
+            RANGE=$(echo "$alert" | jq -r '.security_vulnerability.vulnerable_version_range')
+            URL=$(echo "$alert" | jq -r '.html_url')
+
+            case "$SEVERITY" in
+              critical) EMOJI=":red_circle:" ;;
+              high) EMOJI=":orange_circle:" ;;
+              moderate) EMOJI=":large_yellow_circle:" ;;
+              *) EMOJI=":white_circle:" ;;
+            esac
+
+            PAYLOAD=$(jq -n \
+              --arg text "$EMOJI *Dependabot alert (${SEVERITY}): ${PACKAGE}*" \
+              --arg range "$RANGE" \
+              --arg summary "$SUMMARY" \
+              --arg url "$URL" \
+              --arg repo "$REPO" \
+              '{
+                text: $text,
+                blocks: [
+                  { type: "section", text: { type: "mrkdwn", text: $text } },
+                  { type: "section", fields: [
+                      { type: "mrkdwn", text: ("*Repo:*\n" + $repo) },
+                      { type: "mrkdwn", text: ("*Interval vulnerabil:*\n" + $range) }
+                    ]
+                  },
+                  { type: "section", text: { type: "mrkdwn", text: ("*Detalii:*\n" + $summary) } },
+                  { type: "actions", elements: [
+                      { type: "button", text: { type: "plain_text", text: "Vezi pe GitHub" }, url: $url }
+                    ]
+                  }
+                ]
+              }')
+
+            curl -sf -X POST -H 'Content-type: application/json' --data "$PAYLOAD" "$SLACK_WEBHOOK_URL"
+          done
+
+          # State = all currently open alert numbers, so fixed/dismissed alerts drop off on their own.
+          jq -c '[.[].number]' /tmp/alerts.json > "$STATE_FILE"
+
+          if ! git diff --quiet -- "$STATE_FILE"; then
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git add "$STATE_FILE"
+            git commit -m "chore: update dependabot alert notification state [skip ci]"
+            git push
+          fi
