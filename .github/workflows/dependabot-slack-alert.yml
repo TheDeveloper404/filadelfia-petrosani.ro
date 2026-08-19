@@ -19,9 +19,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # GITHUB_TOKEN nu are voie la endpoint-ul Dependabot Alerts indiferent de
+      # `permissions: security-events: read` din workflow (403 Resource not accessible by
+      # integration, confirmat empiric 2026-08-19) — API-ul cere strict un PAT cu scope
+      # "Dependabot alerts". DEPENDABOT_PAT e un fine-grained PAT (Liviu, read-only pe acest
+      # repo, expiră în 90 zile).
       - name: Fetch open Dependabot alerts
         env:
-          GH_TOKEN: ${{ github.token }}
+          GH_TOKEN: ${{ secrets.DEPENDABOT_PAT }}
         run: |
           gh api "repos/${{ github.repository }}/dependabot/alerts?state=open&per_page=100" > /tmp/alerts.json
 
