@@ -5,7 +5,8 @@ name: Dependabot Slack Alert
 # Actions without standing up an external webhook receiver.
 on:
   schedule:
-    - cron: "0 8 * * *"
+    # Luni 09:00 ora României (EEST, UTC+3) — 08:00 local iarna (EET), cron nu ține cont de DST.
+    - cron: "0 6 * * 1"
   workflow_dispatch:
 
 permissions:

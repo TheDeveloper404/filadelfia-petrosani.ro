@@ -7,6 +7,10 @@ server-dist/
 .astro/
 docs
 
+# Documentație internă de proiect — nu în repo (public). Jurnalul de lucru, backlog-ul.
+/CHANGELOG.md
+/BACKLOG.md
+
 # Environment files — never commit
 .env
 .env.local
