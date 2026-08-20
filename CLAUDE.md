@@ -1,7 +1,7 @@
 # CLAUDE.md — filadelfia.live
 
 Regulile de proces generale (clasificare SMALL/NORMAL/CRITICAL, quality gates, mod de lucru cu
-Liviu) trăiesc în instrucțiunile globale. Acest fișier conține DOAR ce e specific acestui proiect.
+userul) trăiesc în instrucțiunile globale. Acest fișier conține DOAR ce e specific acestui proiect.
 
 ## Convenții rapide
 
