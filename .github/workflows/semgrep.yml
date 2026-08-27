@@ -1,26 +1,44 @@
-on:
-  workflow_dispatch: {}
-  pull_request: {}
-  push:
-    branches:
-    - main
-    - master
-    paths:
-    - .github/workflows/semgrep.yml
-  schedule:
-  # random HH:MM to avoid a load spike on GitHub Actions at 00:00
-  - cron: 15 12 * * *
 name: Semgrep
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    # Rulare periodică independentă de push-uri, la fel ca CodeQL — prinde findere noi în reguli
+    # publicate ulterior de Semgrep, nu doar în cod nou.
+    - cron: "0 4 * * 1"
+
 jobs:
   semgrep:
-    name: semgrep/ci
     runs-on: ubuntu-latest
     permissions:
+      security-events: write
       contents: read
-    env:
-      SEMGREP_APP_TOKEN: ${{ secrets.SEMGREP_APP_TOKEN }}
-    container:
-      image: semgrep/semgrep
     steps:
-    - uses: actions/checkout@v6
-    - run: semgrep ci
+      - uses: actions/checkout@v4
+
+      # Instalat pe runner (nu în container Docker) — `upload-sarif` de mai jos e o acțiune JS și are
+      # nevoie de Node.js din runner-ul standard; un container `semgrep/semgrep` separat nu-l are.
+      - name: Install Semgrep
+        run: pip install semgrep
+
+      # Reguli publice, gratuite (fără cont semgrep.dev / token) — securitate + secrete + OWASP +
+      # stack-ul proiectului (TypeScript/React). `--sarif` + upload la GitHub Code Scanning ca să
+      # apară exact ca findere-le CodeQL (tab Security + adnotări pe PR), nu ca un simplu log de job.
+      - name: Run Semgrep
+        run: |
+          semgrep scan \
+            --config p/security-audit \
+            --config p/secrets \
+            --config p/owasp-top-ten \
+            --config p/typescript \
+            --config p/react \
+            --sarif --output semgrep.sarif
+        continue-on-error: true
+
+      - uses: github/codeql-action/upload-sarif@v4.37.3
+        with:
+          sarif_file: semgrep.sarif
+          category: semgrep
